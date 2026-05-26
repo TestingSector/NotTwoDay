@@ -1,31 +1,41 @@
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("./assets/fonts/ibm-plex-sans/IBMPlexSans-Regular.ttf");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("./assets/fonts/ibm-plex-sans/IBMPlexSans-Medium.ttf");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("./assets/fonts/ibm-plex-sans/IBMPlexSans-SemiBold.ttf");
+  font-weight: 600;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, sans-serif;
+  --color-shell: #052657;
 
-  --background: #f5f1ea;
-  --surface: #ebe4d8;
+  --color-surface: #faf5ec;
+  --color-surface-secondary: #f4eae2;
 
-  --primary: #1f3558;
-  --secondary: #8b3e3e;
+  --color-accent: #b0102b;
 
-  --text-primary: #1a1a1a;
-  --text-secondary: #5f5f5f;
+  --color-text: #111827;
+  --color-text-secondary: #6b7280;
 
-  --border: #d8d0c3;
+  --color-border: #d8d3ca;
 
-  --radius: 18px;
-
-  color: var(--text-primary);
-  background: var(--background);
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
 }
 
 * {
@@ -37,11 +47,13 @@ body {
   min-width: 320px;
   min-height: 100vh;
 
-  background: var(--background);
-  color: var(--text-primary);
+  background: var(--color-shell);
+  color: var(--color-text);
 
   overflow: hidden;
-overscroll-behavior: none;
+  overscroll-behavior: none;
+
+  font-family: "IBM Plex Sans", sans-serif;
 }
 
 button,

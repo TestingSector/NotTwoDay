@@ -1,43 +1,82 @@
+import type { Task } from "../shared/types/task";
+
 type TestCardProps = {
-  title: string;
-  gost: string;
-  author: string;
-  createdAt: string;
+  task: Task;
+
+  isFirst?: boolean;
 };
 
 export const TestCard = ({
-  title,
-  gost,
-  author,
-  createdAt,
+  task,
+  isFirst,
 }: TestCardProps) => {
+  const isActive =
+    task.status === "active";
+
+  const isCompleted =
+    task.status === "completed";
+
   return (
-    <article className="border-b border-[var(--color-border)] py-2.5 transition-colors active:bg-black/5">
-      <div className="flex items-start gap-3">
-        <div className="mt-1 h-11 w-[3px] rounded-full bg-[var(--color-accent)]/80" />
+    <article
+      className={`border-b border-[var(--color-border)] pb-6 transition-colors active:bg-black/[0.02] ${
+        isFirst ? "" : "pt-6"
+      } ${
+  isCompleted
+    ? "opacity-60"
+    : ""
+}`}
+    >
+      <div className="flex items-stretch gap-3">
+        <div
+          className={`my-1 w-[3px] rounded-full ${
+            isActive
+              ? "bg-[var(--color-success)]"
+              : "bg-[var(--color-accent)]"
+          }`}
+        />
 
         <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="truncate text-[13px] font-semibold leading-tight text-[var(--color-text)]">
-              {title}
+            <h2 className="truncate text-[14px] font-semibold tracking-[-0.01em] text-[var(--color-text)]">
+              {task.title}
             </h2>
 
-            <p className="mt-1 text-sm leading-tight text-[var(--color-text-secondary)]">
-              {gost}
+            <p className="mt-1 text-[13px] leading-tight text-[var(--color-text-secondary)]">
+              {task.gost}
             </p>
 
-            <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
-              {author}
+            <p className="mt-1 text-[12px] text-[var(--color-text-secondary)]">
+              {task.customer}
             </p>
+
+            {isActive && (
+              <div className="mt-3 flex items-center gap-2">
+                <div className="rounded-[14px] bg-[var(--color-success-soft)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-success)]">
+                  В работе
+                </div>
+
+                <div className="rounded-[14px] border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-text-secondary)]">
+                  {task.executor}
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="flex flex-col items-end gap-4">
-            <div className="rounded-xl border border-[var(--color-border)] bg-white/50 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)]">
-              18ч
+          <div className="flex h-full flex-col items-end justify-between gap-2">
+            <div className="flex items-center gap-2">
+              {task.isUrgent && (
+                <div className="rounded-[14px] bg-[var(--color-accent)] px-2.5 py-1 text-[11px] font-medium text-white">
+                  Срочно
+                </div>
+              )}
+
+              <div className="rounded-[14px] border border-[var(--color-border)] bg-[var(--color-surface-secondary)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-text)]">
+                {task.estimatedTime}
+              </div>
             </div>
 
             <span className="text-[11px] text-[var(--color-text-secondary)]">
-              {createdAt}
+              {task.createdAt}
             </span>
           </div>
         </div>

@@ -1,39 +1,56 @@
 import { NavLink } from "react-router-dom";
+import {
+  LayoutList,
+  BriefcaseBusiness,
+} from "lucide-react";
 
 const navItems = [
   {
-    label: "Мои",
+    label: "Загрузка",
     path: "/",
+    icon: LayoutList,
   },
   {
-    label: "Очередь",
+    label: "Мои",
     path: "/queue",
-  },
-  {
-    label: "Профиль",
-    path: "/profile",
+    icon: BriefcaseBusiness,
   },
 ];
 
 export const BottomNav = () => {
   return (
-    <nav className="fixed bottom-3 left-1/2 z-50 w-[calc(100%-24px)] max-w-[380px] -translate-x-1/2 rounded-[28px] border border-white/10 bg-[rgba(250,245,236,0.88)] backdrop-blur-xl">
-      <div className="flex items-center justify-around px-6 py-4">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              `text-sm font-medium transition-colors ${
-                isActive
-                  ? "text-[var(--color-accent)]"
-                  : "text-[var(--color-text-secondary)]"
-              }`
-            }
-          >
-            {item.label}
-          </NavLink>
-        ))}
+    <nav className="fixed bottom-0 left-0 right-0 border-t border-[var(--color-border)] bg-[var(--color-surface)]">
+      <div className="mx-auto flex max-w-md items-center px-2 py-1">
+        {navItems.map((item, index) => {
+          const Icon = item.icon;
+
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `flex flex-1 flex-col items-center gap-0.5 px-2 py-2 transition-colors ${
+                  index !== navItems.length - 1
+                    ? "border-r border-[var(--color-border)]"
+                    : ""
+                } ${
+                  isActive
+                    ? "text-[var(--color-accent)]"
+                    : "text-[var(--color-text-secondary)]"
+                }`
+              }
+            >
+              <Icon
+                size={17}
+                strokeWidth={2}
+              />
+
+              <span className="text-[10px] font-medium">
+                {item.label}
+              </span>
+            </NavLink>
+          );
+        })}
       </div>
     </nav>
   );

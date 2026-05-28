@@ -1,6 +1,7 @@
 import type { Task } from "../shared/types/task";
 import { formatTaskDate } from "../shared/lib/date";
-
+import {getTaskCreator, getTaskExecutor} from "../shared/lib/task";
+import { getShortName } from "../shared/lib/user";
 type TestCardProps = {
   task: Task;
 
@@ -16,7 +17,8 @@ export const TestCard = ({
 
   const isCompleted =
     task.status === "completed";
-
+  const creator = getTaskCreator(task.creatorId);
+  const executor = getTaskExecutor(task.executorId);
   return (
     <article
       className={`border-b border-[var(--color-border)] pb-6 transition-colors active:bg-black/[0.02] ${
@@ -47,17 +49,17 @@ export const TestCard = ({
             </p>
 
             <p className="mt-1 text-[12px] text-[var(--color-text-secondary)]">
-              {task.customer}
+              {creator ? getShortName(creator) : ""}
             </p>
 
-            {isActive && (
+            {task.status === "active" && (
               <div className="mt-3 flex items-center gap-2">
                 <div className="rounded-[14px] bg-[var(--color-success-soft)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-success)]">
                   В работе
                 </div>
 
                 <div className="rounded-[14px] border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-text-secondary)]">
-                  {task.executor}
+                  {executor ? getShortName(executor) : ""}
                 </div>
               </div>
             )}

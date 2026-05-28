@@ -1,12 +1,12 @@
-import type { Task } from "../types/task";
+import type { Task }
+  from "../types/task";
+
+import type { User }
+  from "../types/user";
 
 const getTaskPriority = (
   task: Task,
 ) => {
-  /*
-    0 = highest priority
-  */
-
   if (
     task.status === "active"
   ) {
@@ -37,10 +37,6 @@ export const sortTasks = (
       const priorityB =
         getTaskPriority(b);
 
-      /*
-        1. Priority groups
-      */
-
       if (
         priorityA !== priorityB
       ) {
@@ -50,14 +46,63 @@ export const sortTasks = (
         );
       }
 
-      /*
-        2. Newest first
-      */
-
       return (
         b.createdAt -
         a.createdAt
       );
     },
+  );
+};
+
+export const getDashboardTasks = (
+  tasks: Task[],
+  user: User,
+) => {
+  if (
+    user.role ===
+      "dispatcher" ||
+    user.role === "admin"
+  ) {
+    return sortTasks(tasks);
+  }
+
+  if (
+    user.role === "engineer"
+  ) {
+    return sortTasks(
+      tasks.filter(
+        (task) =>
+          !task.executorId,
+      ),
+    );
+  }
+
+  if (
+    user.role === "customer"
+  ) {
+    return sortTasks(
+      tasks.filter(
+        (task) =>
+          task.creatorId ===
+          user.id,
+      ),
+    );
+  }
+
+  return [];
+};
+
+export const getMyTasks = (
+  tasks: Task[],
+  user: User,
+) => {
+  return sortTasks(
+    tasks.filter(
+      (task) =>
+        task.executorId ===
+          user.id ||
+        (task.isUrgent &&
+          !task.executorId),
+    ),
   );
 };

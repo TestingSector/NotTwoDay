@@ -5,19 +5,12 @@ export type TaskStatus =
 
 export type Task = {
   id: string;
-
   title: string;
   gost: string;
-
-  customer: string;
-
   createdAt: number;
-
   status: TaskStatus;
-
-  executor?: string;
-
   isUrgent?: boolean;
-
   estimatedTime: string;
+  creatorId: string;
+  executorId?: string;
 };

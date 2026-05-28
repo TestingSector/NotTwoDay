@@ -1,39 +1,27 @@
-import {
-  Search,
-  SlidersHorizontal,
-} from "lucide-react";
+import { Search } from "lucide-react";
 
 import { TestCard } from "../widgets/TestCard";
 
 import { tasks } from "../shared/mocks/tasks";
-import { sortTasks }
-  from "../shared/lib/tasks";
+
+import { currentUser } from "../shared/mocks/currentUser";
+
+import { getMyTasks } from "../shared/lib/tasks";
 
 export const MyTasksPage = () => {
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[var(--color-surface)]">
       <header className="px-4 pt-8">
-        <div className="flex items-end justify-between">
-          <div>
-            <h1 className="text-[28px] font-semibold tracking-[-0.03em] text-[var(--color-text)]">
-              Мои задачи
-            </h1>
+        <h1 className="text-[28px] font-semibold tracking-[-0.03em] text-[var(--color-text)]">
+          Мои задачи
+        </h1>
 
-            <p className="mt-1 text-[14px] text-[var(--color-text-secondary)]">
-              12 активных задач
-            </p>
-          </div>
-
-          <button className="flex h-11 w-11 items-center justify-center rounded-[18px] border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-[var(--color-text)] transition-colors active:bg-black/[0.03]">
-            <SlidersHorizontal
-              size={18}
-              strokeWidth={2}
-            />
-          </button>
-        </div>
+        <p className="mt-1 text-[14px] text-[var(--color-text-secondary)]">
+          12 активных задач
+        </p>
       </header>
 
-      <section className="px-4 pt-6">
+      <section className="px-4 pt-5">
         <div className="flex items-center gap-3 rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface-secondary)] px-4 py-3">
           <Search
             size={18}
@@ -48,7 +36,7 @@ export const MyTasksPage = () => {
           />
         </div>
 
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+        <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
           <button className="shrink-0 rounded-[16px] border border-[var(--color-border)] bg-[var(--color-surface-secondary)] px-3 py-2 text-[12px] font-medium text-[var(--color-text)]">
             Статус
           </button>
@@ -64,14 +52,14 @@ export const MyTasksPage = () => {
       </section>
 
       <section className="flex-1 overflow-y-auto px-4 pt-6 pb-28">
-        {sortTasks(tasks).map(
-          (task, index) => (
+        {getMyTasks(tasks, currentUser).map((task, index) => (
             <TestCard
               key={task.id}
               task={task}
               isFirst={index === 0}
             />
-        ))}
+          ),
+        )}
       </section>
     </div>
   );

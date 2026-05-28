@@ -9,7 +9,7 @@ import { getDashboardTasks }
 
 export const DashboardPage = () => {
   return (
-    <div className="flex h-full w-full flex-col bg-[var(--color-shell)]">
+    <div className="flex min-h-screen w-full flex-col bg-[var(--color-shell)]">
       <div className="shrink-0 px-4 pt-6">
         <TasksOverview />
       </div>

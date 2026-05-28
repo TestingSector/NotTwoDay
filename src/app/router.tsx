@@ -2,8 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 
 import { Layout } from "./layout";
 
-import { MyTestsPage } from "../pages/MyTestsPage";
-import { QueuePage } from "../pages/QueuePage";
+import { DashboardPage } from "../pages/DashboardPage";
+import { MyTasksPage } from "../pages/MyTasksPage";
 import { ProfilePage } from "../pages/ProfilePage";
 export const router = createBrowserRouter([
   {
@@ -12,11 +12,11 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <MyTestsPage />,
+        element: <DashboardPage />,
       },
       {
-        path: "queue",
-        element: <QueuePage />,
+        path: "tasks",
+        element: <MyTasksPage />,
       },
       {
         path: "profile",

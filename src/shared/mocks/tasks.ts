@@ -9,7 +9,7 @@ export const tasks: Task[] = [
 
     customer: "Клименко О.Н.",
 
-    createdAt: "18 мая",
+    createdAt: 1716825600000,
 
     status: "pending",
 
@@ -24,7 +24,7 @@ export const tasks: Task[] = [
 
     customer: "Иванов А.А.",
 
-    createdAt: "18 мая",
+    createdAt: 1716825600000,
 
     status: "active",
 
@@ -41,7 +41,7 @@ export const tasks: Task[] = [
 
     customer: "Петров И.И.",
 
-    createdAt: "18 мая",
+    createdAt: 1716825600000,
 
     status: "pending",
 
@@ -58,7 +58,7 @@ export const tasks: Task[] = [
 
     customer: "Начаркина А.Е.",
 
-    createdAt: "18 мая",
+    createdAt: 1716825600000,
 
     status: "pending",
 
@@ -75,7 +75,7 @@ export const tasks: Task[] = [
 
     customer: "Начаркина А.Е.",
 
-    createdAt: "18 мая",
+    createdAt: 1716825600000,
 
     status: "pending",
 

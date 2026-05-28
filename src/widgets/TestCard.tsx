@@ -1,4 +1,5 @@
 import type { Task } from "../shared/types/task";
+import { formatTaskDate } from "../shared/lib/date";
 
 type TestCardProps = {
   task: Task;
@@ -76,7 +77,7 @@ export const TestCard = ({
             </div>
 
             <span className="text-[11px] text-[var(--color-text-secondary)]">
-              {task.createdAt}
+              {formatTaskDate(task.createdAt)}
             </span>
           </div>
         </div>

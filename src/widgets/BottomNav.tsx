@@ -12,7 +12,7 @@ const navItems = [
   },
   {
     label: "Мои",
-    path: "/queue",
+    path: "/tasks",
     icon: BriefcaseBusiness,
   },
 ];

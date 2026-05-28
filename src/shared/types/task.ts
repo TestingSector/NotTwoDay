@@ -11,7 +11,7 @@ export type Task = {
 
   customer: string;
 
-  createdAt: string;
+  createdAt: number;
 
   status: TaskStatus;
 

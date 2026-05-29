@@ -33,7 +33,7 @@ export class Task {
   @ManyToOne(() => User, {
     nullable: true,
   })
-  executor?: User;
+  executor?: User | null;
 
   @Column({
     type: 'enum',
@@ -54,4 +54,10 @@ export class Task {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  completedAt?: Date;
 }

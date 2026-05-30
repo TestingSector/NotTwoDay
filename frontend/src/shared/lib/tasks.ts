@@ -37,22 +37,34 @@ export const getDashboardTasks = (tasks: Task[], user: User) => {
     return sortTasks(tasks);
   }
 
-  if (user.role === "engineer") {
-    return sortTasks(tasks.filter((task) => !task.executor?.id));
+  if (user.role === "customer") {
+    return sortTasks(tasks.filter((task) => task.status !== "completed"));
   }
 
-  if (user.role === "customer") {
-    return sortTasks(tasks.filter((task) => task.creator.id === user.id));
+  if (user.role === "engineer") {
+    return sortTasks(tasks);
   }
 
   return [];
 };
 
 export const getMyTasks = (tasks: Task[], user: User) => {
-  return sortTasks(
-    tasks.filter(
-      (task) =>
-        task.executor?.id === user.id || (task.isUrgent && !task.executor),
-    ),
-  );
+  if (user.role === "customer") {
+    return sortTasks(tasks.filter((task) => task.creator.id === user.id));
+  }
+
+  if (user.role === "engineer") {
+    return sortTasks(
+      tasks.filter(
+        (task) =>
+          task.executor?.id === user.id || (task.isUrgent && !task.executor),
+      ),
+    );
+  }
+
+  if (user.role === "dispatcher") {
+    return sortTasks(tasks.filter((task) => task.isUrgent && !task.executor));
+  }
+
+  return sortTasks(tasks);
 };

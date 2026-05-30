@@ -12,8 +12,6 @@ export const DashboardPage = () => {
   useEffect(() => {
     getTasks()
       .then((data) => {
-        console.log("DATA", data);
-
         setTasks(data);
       })
       .catch((error) => {
@@ -22,7 +20,7 @@ export const DashboardPage = () => {
   }, []);
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-[var(--color-shell)]">
+    <div className="flex min-h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
       <div className="shrink-0 px-4 pt-6">
         <TasksOverview />
       </div>

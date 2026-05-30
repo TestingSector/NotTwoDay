@@ -1,14 +1,21 @@
 import { Search } from "lucide-react";
-
 import { TestCard } from "../widgets/TestCard";
-
-import { tasks } from "../shared/mocks/tasks";
-
 import { currentUser } from "../shared/mocks/currentUser";
-
 import { getMyTasks } from "../shared/lib/tasks";
-
+import { useState, useEffect } from "react";
+import { getTasks } from "../shared/api/tasks";
 export const MyTasksPage = () => {
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    getTasks()
+      .then((data) => {
+        setTasks(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[var(--color-surface)]">
       <header className="px-4 pt-8">
@@ -53,13 +60,8 @@ export const MyTasksPage = () => {
 
       <section className="flex-1 overflow-y-auto px-4 pt-6 pb-28">
         {getMyTasks(tasks, currentUser).map((task, index) => (
-            <TestCard
-              key={task.id}
-              task={task}
-              isFirst={index === 0}
-            />
-          ),
-        )}
+          <TestCard key={task.id} task={task} isFirst={index === 0} />
+        ))}
       </section>
     </div>
   );

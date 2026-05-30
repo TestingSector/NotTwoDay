@@ -82,6 +82,9 @@ export class TasksService {
     if (task.executor) {
       throw new BadRequestException('Task already taken');
     }
+    if (task.status === TaskStatus.COMPLETED) {
+      throw new BadRequestException('Completed task cannot be accepted');
+    }
 
     const executor = await this.userRepository.findOne({
       where: {
@@ -150,5 +153,15 @@ export class TasksService {
     task.status = TaskStatus.PENDING;
 
     return this.taskRepository.save(task);
+  }
+
+  async remove(id: string) {
+    const task = await this.findOne(id);
+
+    await this.taskRepository.remove(task);
+
+    return {
+      message: 'Task deleted',
+    };
   }
 }

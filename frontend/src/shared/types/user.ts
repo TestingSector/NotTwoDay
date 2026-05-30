@@ -20,7 +20,7 @@ export type User = {
 
   email?: string;
 
-  createdAt: number;
+  createdAt: string;
 
   isApproved: boolean;
 };

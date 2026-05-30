@@ -11,6 +11,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApproveUserDto } from './dto/approve-user.dto';
+import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -63,5 +64,15 @@ export class UsersController {
     id: string,
   ) {
     return this.usersService.remove(id);
+  }
+
+  @Patch(':id/role')
+  updateRole(
+    @Param('id')
+    id: string,
+    @Body()
+    updateUserRoleDto: UpdateUserRoleDto,
+  ) {
+    return this.usersService.updateRole(id, updateUserRoleDto);
   }
 }

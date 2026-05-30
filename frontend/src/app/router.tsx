@@ -5,6 +5,7 @@ import { Layout } from "./layout";
 import { DashboardPage } from "../pages/DashboardPage";
 import { MyTasksPage } from "../pages/MyTasksPage";
 import { ProfilePage } from "../pages/ProfilePage";
+import { CreateTaskPage } from "../pages/CreateTaskPage";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -21,6 +22,10 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <ProfilePage />,
+      },
+      {
+        path: "/create",
+        element: <CreateTaskPage />,
       },
     ],
   },

@@ -10,6 +10,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './user.entity';
 import { UserRole } from './user.entity';
 import { ApproveUserDto } from './dto/approve-user.dto';
+import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -82,5 +83,13 @@ export class UsersService {
     return {
       message: 'User deleted',
     };
+  }
+
+  async updateRole(id: string, updateUserRoleDto: UpdateUserRoleDto) {
+    const user = await this.findOne(id);
+
+    user.role = updateUserRoleDto.role;
+
+    return this.userRepository.save(user);
   }
 }

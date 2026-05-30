@@ -4,26 +4,52 @@ import { FormInput } from "../widgets/FormInput";
 import { SelectRow } from "../widgets/SelectRow";
 import { FormSwitch } from "../widgets/FormSwitch";
 import { FormTextarea } from "../widgets/FormTextarea";
+import { TemperatureSection } from "../features/application/TemperatureSection";
+import { TemperatureBottomSheet } from "../features/application/TemperatureBottomSheet";
 export const CreateApplicationPage = () => {
   const [documentType, setDocumentType] = useState<"NTZ" | "KPO">("NTZ");
-  const [temperatures] = useState([
+  const [temperatures, setTemperatures] = useState<
     {
-      id: 1,
-      temperature: 20,
-      samples: 6,
-    },
-    {
-      id: 2,
-      temperature: 120,
-      samples: 6,
-    },
-  ]);
+      id: number;
+      temperature: number;
+      samples: number;
+    }[]
+  >([]);
   const [kpoNumber, setKpoNumber] = useState("");
   const [topic, setTopic] = useState("");
   const [isUrgent, setIsUrgent] = useState(false);
   const [urgentReason, setUrgentReason] = useState("");
   const [comment, setComment] = useState("");
+  const [isTemperatureSheetOpen, setIsTemperatureSheetOpen] = useState(false);
+  const handleDeleteTemperature = (id: number) => {
+    setTemperatures((prev) => prev.filter((item) => item.id !== id));
+  };
+  const handleAddTemperature = () => {
+    setIsTemperatureSheetOpen(true);
+  };
+  const [newTemperature, setNewTemperature] = useState("");
+  const [newSamples, setNewSamples] = useState("");
+  const handleSaveTemperature = () => {
+    if (!newTemperature.trim() || !newSamples.trim()) {
+      return;
+    }
 
+    setTemperatures((prev) =>
+      [
+        ...prev,
+        {
+          id: Date.now(),
+          temperature: Number(newTemperature),
+          samples: Number(newSamples),
+        },
+      ].sort((a, b) => a.temperature - b.temperature),
+    );
+
+    setNewTemperature("");
+    setNewSamples("");
+
+    setIsTemperatureSheetOpen(false);
+  };
   return (
     <div className="flex h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
       <header className="px-6 pt-14 pb-8">
@@ -109,57 +135,11 @@ export const CreateApplicationPage = () => {
             </div>
           </ApplicationCard>
           <ApplicationCard title="Температуры">
-            <div className="flex flex-col gap-3">
-              {temperatures.map((item) => (
-                <div
-                  key={item.id}
-                  className="
-          rounded-[18px]
-          border
-          border-[var(--color-border)]
-          bg-[var(--color-surface-secondary)]
-          p-4
-        "
-                >
-                  <div className="flex items-center justify-between">
-                    <p className="text-lg font-semibold">
-                      {item.temperature}°C
-                    </p>
-
-                    <button
-                      type="button"
-                      className="
-              text-sm
-              text-[var(--color-text-secondary)]
-            "
-                    >
-                      Удалить
-                    </button>
-                  </div>
-
-                  <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-                    {item.samples} образцов
-                  </p>
-                </div>
-              ))}
-
-              <button
-                type="button"
-                className="
-        rounded-[18px]
-        border-2
-        border-dashed
-        border-[var(--color-border)]
-        py-4
-        text-sm
-        font-medium
-        text-[var(--color-text-secondary)]
-        transition
-      "
-              >
-                + Добавить температуру
-              </button>
-            </div>
+            <TemperatureSection
+              temperatures={temperatures}
+              onAddTemperature={handleAddTemperature}
+              onDeleteTemperature={handleDeleteTemperature}
+            />
           </ApplicationCard>
           <ApplicationCard title="Приоритет">
             <div className="flex items-center justify-between">
@@ -224,6 +204,15 @@ export const CreateApplicationPage = () => {
           </button>
         </div>
       </main>
+      <TemperatureBottomSheet
+        isOpen={isTemperatureSheetOpen}
+        onClose={() => setIsTemperatureSheetOpen(false)}
+        temperature={newTemperature}
+        samples={newSamples}
+        onTemperatureChange={setNewTemperature}
+        onSamplesChange={setNewSamples}
+        onSave={handleSaveTemperature}
+      />
     </div>
   );
 };

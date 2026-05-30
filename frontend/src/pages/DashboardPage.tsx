@@ -25,10 +25,10 @@ export const DashboardPage = () => {
         <TasksOverview />
       </div>
       <Link
-        to="/create"
+        to="/create-application"
         className="mx-4 mt-4 block rounded bg-black px-4 py-3 text-center text-white"
       >
-        Создать задачу
+        Создать заявку
       </Link>
       <section className="mx-4 mt-4 flex min-h-0 flex-1 flex-col rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pt-6 shadow-sm">
         <div className="flex-1 overflow-y-auto pb-28">

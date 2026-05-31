@@ -1,4 +1,6 @@
-export const TEST_METHODS = [
+import type { TestMethod } from "../../features/application/model/types";
+
+export const TEST_METHODS: TestMethod[] = [
   {
     id: "1",
 

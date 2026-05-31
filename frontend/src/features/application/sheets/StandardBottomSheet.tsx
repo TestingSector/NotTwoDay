@@ -1,34 +1,34 @@
-import { BottomSheet } from "../../widgets/BottomSheet";
+import { BottomSheet } from "../../../widgets/BottomSheet";
 
-type TestMethodBottomSheetProps = {
+type StandardBottomSheetProps = {
   isOpen: boolean;
   onClose: () => void;
 
-  methods: string[];
+  standards: string[];
 
   onSelect: (value: string) => void;
 };
 
-export const TestMethodBottomSheet = ({
+export const StandardBottomSheet = ({
   isOpen,
   onClose,
-  methods,
+  standards,
   onSelect,
-}: TestMethodBottomSheetProps) => {
+}: StandardBottomSheetProps) => {
   return (
     <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
-      title="Вид испытания"
-      subtitle="Выберите тип испытания"
+      title="Стандарт"
+      subtitle="Выберите стандарт испытания"
     >
       <div className="flex flex-col gap-2">
-        {methods.map((method) => (
+        {standards.map((standard) => (
           <button
-            key={method}
+            key={standard}
             type="button"
             onClick={() => {
-              onSelect(method);
+              onSelect(standard);
               onClose();
             }}
             className="
@@ -45,7 +45,7 @@ export const TestMethodBottomSheet = ({
               active:brightness-95
             "
           >
-            {method}
+            {standard}
           </button>
         ))}
       </div>

@@ -6,6 +6,10 @@ import { FormSwitch } from "../widgets/FormSwitch";
 import { FormTextarea } from "../widgets/FormTextarea";
 import { TemperatureSection } from "../features/application/TemperatureSection";
 import { TemperatureBottomSheet } from "../features/application/TemperatureBottomSheet";
+import { TestMethodBottomSheet } from "../features/application/TestMethodBottomSheet";
+import { TEST_METHODS } from "../shared/mocks/testMethods";
+import { StandardBottomSheet } from "../features/application/StandardBottomSheet";
+
 export const CreateApplicationPage = () => {
   const [documentType, setDocumentType] = useState<"NTZ" | "KPO">("NTZ");
   const [temperatures, setTemperatures] = useState<
@@ -13,8 +17,13 @@ export const CreateApplicationPage = () => {
       id: number;
       temperature: number;
       samples: number;
+      modulus: boolean;
     }[]
   >([]);
+  const [selectedTestMethod, setSelectedTestMethod] = useState("");
+  const [isTestMethodSheetOpen, setIsTestMethodSheetOpen] = useState(false);
+  const [selectedStandard, setSelectedStandard] = useState("");
+  const [isStandardSheetOpen, setIsStandardSheetOpen] = useState(false);
   const [kpoNumber, setKpoNumber] = useState("");
   const [topic, setTopic] = useState("");
   const [isUrgent, setIsUrgent] = useState(false);
@@ -29,8 +38,39 @@ export const CreateApplicationPage = () => {
   };
   const [newTemperature, setNewTemperature] = useState("");
   const [newSamples, setNewSamples] = useState("");
+  const testNames = [...new Set(TEST_METHODS.map((item) => item.name))];
+  const availableStandards = TEST_METHODS.filter(
+    (item) => item.name === selectedTestMethod,
+  ).map((item) => item.standard);
+  const selectedMethod = TEST_METHODS.find(
+    (item) =>
+      item.name === selectedTestMethod && item.standard === selectedStandard,
+  );
+  const handleToggleModulus = (id: number, value: boolean) => {
+    setTemperatures((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, modulus: value } : item)),
+    );
+  };
   const handleSaveTemperature = () => {
     if (!newTemperature.trim() || !newSamples.trim()) {
+      return;
+    }
+
+    const temperature = Number(newTemperature);
+    if (temperatures.some((item) => item.temperature === temperature)) {
+      alert("Такая температура уже добавлена");
+      setIsTemperatureSheetOpen(false);
+      return;
+    }
+    if (
+      selectedMethod &&
+      (temperature < selectedMethod.testTemperatureMin ||
+        temperature > selectedMethod.testTemperatureMax)
+    ) {
+      alert(
+        `Допустимый диапазон температур: ${selectedMethod.testTemperatureMin}°C ... ${selectedMethod.testTemperatureMax}°C`,
+      );
+      setIsTemperatureSheetOpen(false);
       return;
     }
 
@@ -39,8 +79,9 @@ export const CreateApplicationPage = () => {
         ...prev,
         {
           id: Date.now(),
-          temperature: Number(newTemperature),
+          temperature,
           samples: Number(newSamples),
+          modulus: false,
         },
       ].sort((a, b) => a.temperature - b.temperature),
     );
@@ -50,6 +91,7 @@ export const CreateApplicationPage = () => {
 
     setIsTemperatureSheetOpen(false);
   };
+
   return (
     <div className="flex h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
       <header className="px-6 pt-14 pb-8">
@@ -65,7 +107,10 @@ export const CreateApplicationPage = () => {
           <ApplicationCard title="Документ">
             <div className="flex gap-2">
               <button
-                onClick={() => setDocumentType("NTZ")}
+                onClick={() => {
+                  setDocumentType("NTZ");
+                  setKpoNumber("");
+                }}
                 className={`flex-1 rounded-[18px] px-4 py-3 text-sm font-medium transition ${
                   documentType === "NTZ"
                     ? "bg-[var(--color-accent)] text-white"
@@ -76,7 +121,9 @@ export const CreateApplicationPage = () => {
               </button>
 
               <button
-                onClick={() => setDocumentType("KPO")}
+                onClick={() => {
+                  setDocumentType("KPO");
+                }}
                 className={`flex-1 rounded-[18px] px-4 py-3 text-sm font-medium transition ${
                   documentType === "KPO"
                     ? "bg-[var(--color-accent)] text-white"
@@ -119,7 +166,14 @@ export const CreateApplicationPage = () => {
           <ApplicationCard title="Тематика / договор">
             <FormInput
               value={topic}
-              onChange={setTopic}
+              onChange={(value) => {
+                setTopic(value);
+
+                if (!value.trim()) {
+                  setIsUrgent(false);
+                  setUrgentReason("");
+                }
+              }}
               placeholder="Введите номер договора или тематику"
             />
 
@@ -129,16 +183,30 @@ export const CreateApplicationPage = () => {
           </ApplicationCard>
           <ApplicationCard title="Испытание">
             <div className="divide-y divide-[var(--color-border)]">
-              <SelectRow label="Вид испытания" value="Не выбрано" />
+              <SelectRow
+                label="Вид испытания"
+                value={selectedTestMethod || "Не выбрано"}
+                onClick={() => setIsTestMethodSheetOpen(true)}
+              />
 
-              <SelectRow label="Стандарт" value="Не выбрано" />
+              <SelectRow
+                label="Стандарт"
+                value={selectedStandard || "Не выбрано"}
+                onClick={() => {
+                  if (!selectedTestMethod) return;
+
+                  setIsStandardSheetOpen(true);
+                }}
+              />
             </div>
           </ApplicationCard>
           <ApplicationCard title="Температуры">
             <TemperatureSection
               temperatures={temperatures}
+              selectedMethod={selectedMethod}
               onAddTemperature={handleAddTemperature}
               onDeleteTemperature={handleDeleteTemperature}
+              onToggleModulus={handleToggleModulus}
             />
           </ApplicationCard>
           <ApplicationCard title="Приоритет">
@@ -212,6 +280,26 @@ export const CreateApplicationPage = () => {
         onTemperatureChange={setNewTemperature}
         onSamplesChange={setNewSamples}
         onSave={handleSaveTemperature}
+      />
+      <TestMethodBottomSheet
+        isOpen={isTestMethodSheetOpen}
+        onClose={() => setIsTestMethodSheetOpen(false)}
+        methods={testNames}
+        onSelect={(value) => {
+          setSelectedTestMethod(value);
+
+          setSelectedStandard("");
+          setTemperatures([]);
+        }}
+      />
+      <StandardBottomSheet
+        isOpen={isStandardSheetOpen}
+        onClose={() => setIsStandardSheetOpen(false)}
+        standards={availableStandards}
+        onSelect={(value) => {
+          setSelectedStandard(value);
+          setTemperatures([]);
+        }}
       />
     </div>
   );

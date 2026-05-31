@@ -1,3 +1,4 @@
+import { BottomSheet } from "../../widgets/BottomSheet";
 import { FormInput } from "../../widgets/FormInput";
 
 type TemperatureBottomSheetProps = {
@@ -16,72 +17,51 @@ type TemperatureBottomSheetProps = {
 export const TemperatureBottomSheet = ({
   isOpen,
   onClose,
+
   temperature,
   samples,
+
   onTemperatureChange,
   onSamplesChange,
+
   onSave,
 }: TemperatureBottomSheetProps) => {
   return (
-    <div
-      className={`
-        fixed inset-0 z-50 transition-all duration-300
-        ${
-          isOpen
-            ? "pointer-events-auto bg-black/40"
-            : "pointer-events-none bg-black/0"
-        }
-      `}
-      onClick={onClose}
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Температура"
+      subtitle="Добавление условий испытаний"
     >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className={`
-          absolute bottom-0 left-0 right-0
-          rounded-t-[32px]
-          bg-[var(--color-surface)]
-          px-6 pb-8 pt-4
-          transition-transform duration-300
-          ${isOpen ? "translate-y-0" : "translate-y-full"}
-        `}
-      >
-        <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-[var(--color-border)]" />
+      <div className="flex flex-col gap-4">
+        <div>
+          <p className="mb-2 text-sm text-[var(--color-text-secondary)]">
+            Температура
+          </p>
 
-        <h2 className="text-2xl font-semibold">Температура</h2>
+          <FormInput
+            value={temperature}
+            onChange={onTemperatureChange}
+            placeholder="Например: 120"
+          />
+        </div>
 
-        <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-          Добавление условий испытаний
-        </p>
+        <div>
+          <p className="mb-2 text-sm text-[var(--color-text-secondary)]">
+            Количество образцов
+          </p>
 
-        <div className="mt-4 flex flex-col gap-4">
-          <div>
-            <p className="mb-2 text-sm text-[var(--color-text-secondary)]">
-              Температура
-            </p>
+          <FormInput
+            value={samples}
+            onChange={onSamplesChange}
+            placeholder="Например: 6"
+          />
+        </div>
 
-            <FormInput
-              value={temperature}
-              onChange={onTemperatureChange}
-              placeholder="Например: 120"
-            />
-          </div>
-
-          <div>
-            <p className="mb-2 text-sm text-[var(--color-text-secondary)]">
-              Количество образцов
-            </p>
-
-            <FormInput
-              value={samples}
-              onChange={onSamplesChange}
-              placeholder="Например: 6"
-            />
-          </div>
-
-          <button
-            type="button"
-            onClick={onSave}
-            className="
+        <button
+          type="button"
+          onClick={onSave}
+          className="
             mt-2
             w-full
             rounded-[20px]
@@ -93,12 +73,11 @@ export const TemperatureBottomSheet = ({
             text-white
             transition-all
             active:brightness-90
-  "
-          >
-            Сохранить
-          </button>
-        </div>
+          "
+        >
+          Сохранить
+        </button>
       </div>
-    </div>
+    </BottomSheet>
   );
 };

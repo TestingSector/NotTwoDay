@@ -1,3 +1,5 @@
+import { ChevronDown } from "lucide-react";
+
 type SelectRowProps = {
   label: string;
   value: string;
@@ -24,7 +26,7 @@ export const SelectRow = ({ label, value, onClick }: SelectRowProps) => {
         <p className="mt-1 font-medium">{value}</p>
       </div>
 
-      <span className="text-xl text-[var(--color-text-secondary)]">›</span>
+      <ChevronDown size={18} className="text-[var(--color-text-secondary)]" />
     </button>
   );
 };

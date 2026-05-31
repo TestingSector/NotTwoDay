@@ -140,17 +140,59 @@ export const CreateApplicationPage = () => {
     setIsTemperatureSheetOpen(false);
   };
 
+  // FORM SUBMISSION
+  const resetForm = () => {
+    setDocumentType("NTZ");
+    setKpoNumber("");
+    setTopic("");
+    setSelectedTestMethod("");
+    setSelectedStandard("");
+    setTemperatures([]);
+    setIsUrgent(false);
+    setUrgentReason("");
+    setComment("");
+  };
+
+  const handleCreateTask = () => {
+    alert("Нажали кнопку");
+    if (!selectedTestMethod || !selectedStandard || temperatures.length === 0) {
+      alert(
+        "Заполните испытание, стандарт и добавьте хотя бы одну температуру",
+      );
+      return;
+    }
+    const task = {
+      type: documentType,
+      number: documentType === "KPO" ? kpoNumber : "",
+      topic: topic.trim() || undefined,
+      testMethod: selectedTestMethod,
+      standard: selectedStandard,
+      temperatureConditions: temperatures.map((item) => ({
+        temperature: item.temperature,
+        quantity: item.samples,
+        modulus: item.modulus,
+      })),
+      isUrgent,
+      urgentReason: isUrgent ? urgentReason.trim() || undefined : undefined,
+      comment: comment.trim() || undefined,
+      status: "pending",
+    };
+
+    console.log("Создана заявка:");
+    console.log(task);
+
+    resetForm();
+  };
+
   return (
     <div className="flex h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
       <header className="px-6 pt-14 pb-8">
         <h1 className="text-[32px] font-semibold tracking-[-0.03em] text-white">
           Создание заявки
         </h1>
-
         <p className="mt-3 text-sm text-white/70">Заявка на испытание</p>
       </header>
-
-      <main className="flex-1 overflow-y-auto rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pt-6 pb-12">
+      <main className="flex-1 overflow-y-auto rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pt-6 pb-24">
         <div className="flex flex-col gap-4">
           <DocumentSection
             documentType={documentType}
@@ -182,6 +224,7 @@ export const CreateApplicationPage = () => {
           <CommentSection comment={comment} onCommentChange={setComment} />
           <button
             type="button"
+            onClick={handleCreateTask}
             className="
               mt-4
               w-full
@@ -194,6 +237,7 @@ export const CreateApplicationPage = () => {
               text-white
               transition
               active:brightness-90
+             
             "
             style={{
               boxShadow: "0 8px 20px rgba(176, 16, 43, 0.25)",

@@ -8,21 +8,28 @@ import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Task, TaskStatus } from './task.entity';
 import { User } from '../users/user.entity';
+import { SystemSettingsService } from '../system-settings/system-settings.service';
 
 @Injectable()
 export class TasksService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
+
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+
+    private readonly systemSettingsService: SystemSettingsService,
+  ) { }
 
   findAll() {
     return this.taskRepository.find({
       relations: {
         creator: true,
         executor: true,
+      },
+      order: {
+        createdAt: 'DESC',
       },
     });
   }
@@ -54,12 +61,57 @@ export class TasksService {
       throw new NotFoundException('Creator not found');
     }
 
+    let number = createTaskDto.number;
+    if (
+      createTaskDto.type === 'KPO' &&
+      !createTaskDto.number
+    ) {
+      throw new BadRequestException(
+        'KPO number is required',
+      );
+    }
+    if (!createTaskDto.materialName?.trim()) {
+      throw new BadRequestException(
+        'Material name is required',
+      );
+    }
+    if (createTaskDto.type === 'NTZ') {
+      number = String(
+        await this.systemSettingsService.incrementNtzCounter(),
+      );
+    }
+    if (!createTaskDto.materialName?.trim()) {
+      throw new BadRequestException(
+        'Material name is required',
+      );
+    }
     const task = this.taskRepository.create({
-      title: createTaskDto.title,
-      gost: createTaskDto.gost,
       creator,
-      estimatedTime: createTaskDto.estimatedTime,
+
+      type: createTaskDto.type,
+
+      number: number ?? '',
+
+      materialName: createTaskDto.materialName,
+
+      topic: createTaskDto.topic,
+
+      testMethod: createTaskDto.testMethod,
+
+      standard: createTaskDto.standard,
+
+      temperatureConditions:
+        createTaskDto.temperatureConditions,
+
       isUrgent: createTaskDto.isUrgent ?? false,
+
+      urgentReason:
+        createTaskDto.isUrgent
+          ? createTaskDto.urgentReason
+          : undefined,
+
+      comment:
+        createTaskDto.comment,
     });
 
     return this.taskRepository.save(task);
@@ -97,7 +149,7 @@ export class TasksService {
     }
 
     task.executor = executor;
-
+    task.acceptedAt = new Date();
     task.status = TaskStatus.ACTIVE;
 
     return this.taskRepository.save(task);
@@ -120,7 +172,11 @@ export class TasksService {
     if (task.status !== TaskStatus.ACTIVE) {
       throw new BadRequestException('Only active tasks can be completed');
     }
-
+    if (!task.executor) {
+      throw new BadRequestException(
+        'Task has no executor',
+      );
+    }
     task.status = TaskStatus.COMPLETED;
     task.completedAt = new Date();
 
@@ -149,7 +205,7 @@ export class TasksService {
     }
 
     task.executor = null;
-
+    task.acceptedAt = undefined;
     task.status = TaskStatus.PENDING;
 
     return this.taskRepository.save(task);

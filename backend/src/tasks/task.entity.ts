@@ -22,10 +22,48 @@ export class Task {
   id!: string;
 
   @Column()
-  title!: string;
+  type!: string;
 
   @Column()
-  gost!: string;
+  number!: string;
+
+  @Column()
+  materialName!: string;
+
+  @Column({
+    nullable: true,
+  })
+  topic?: string;
+
+  @Column()
+  testMethod!: string;
+
+  @Column()
+  standard!: string;
+
+  @Column({
+    type: 'jsonb',
+  })
+  temperatureConditions!: {
+    temperature: number;
+    quantity: number;
+    modulus: boolean;
+  }[];
+
+  @Column({
+    default: false,
+  })
+  isUrgent!: boolean;
+
+  @Column({
+    nullable: true,
+  })
+  urgentReason?: string;
+
+  @Column({
+    nullable: true,
+  })
+  comment?: string;
 
   @ManyToOne(() => User)
   creator!: User;
@@ -37,23 +75,19 @@ export class Task {
 
   @Column({
     type: 'enum',
-
     enum: TaskStatus,
-
     default: TaskStatus.PENDING,
   })
   status!: TaskStatus;
 
-  @Column({
-    default: false,
-  })
-  isUrgent!: boolean;
-
-  @Column()
-  estimatedTime!: string;
-
   @CreateDateColumn()
   createdAt!: Date;
+
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  acceptedAt?: Date;
 
   @Column({
     type: 'timestamp',

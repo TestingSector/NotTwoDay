@@ -34,11 +34,11 @@ export const TestCard = ({ task, isFirst }: TestCardProps) => {
         <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
           <div className="min-w-0">
             <h2 className="truncate text-[14px] font-semibold tracking-[-0.01em] text-[var(--color-text)]">
-              {task.title}
+              Испытание на {task.testMethod.toLowerCase()}
             </h2>
 
             <p className="mt-1 text-[13px] leading-tight text-[var(--color-text-secondary)]">
-              {task.gost}
+              {task.standard}
             </p>
 
             <p className="mt-1 text-[12px] text-[var(--color-text-secondary)]">
@@ -69,7 +69,7 @@ export const TestCard = ({ task, isFirst }: TestCardProps) => {
               )}
 
               <div className="rounded-[14px] border border-[var(--color-border)] bg-[var(--color-surface-secondary)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-text)]">
-                {task.estimatedTime}
+                2 часа
               </div>
             </div>
 

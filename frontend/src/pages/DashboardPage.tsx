@@ -10,14 +10,16 @@ export const DashboardPage = () => {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    getTasks()
-      .then((data) => {
-        setTasks(data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+  getTasks()
+    .then((data) => {
+      console.log("TASKS FROM API", data);
+
+      setTasks(data);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}, []);
 
   return (
     <div className="flex min-h-[100dvh] w-full flex-col bg-[var(--color-shell)]">

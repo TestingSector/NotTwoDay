@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { createTask } from "../shared/api/tasks"
+import { currentUser } from "../shared/mocks/currentUser";
 import {
   DocumentSection,
   TopicSection,
@@ -35,6 +37,7 @@ export const CreateApplicationPage = () => {
   const [selectedStandard, setSelectedStandard] = useState("");
   const [kpoNumber, setKpoNumber] = useState("");
   const [topic, setTopic] = useState("");
+  const [materialName, setMaterialName]=useState("")
   const [isUrgent, setIsUrgent] = useState(false);
   const [urgentReason, setUrgentReason] = useState("");
   const [comment, setComment] = useState("");
@@ -144,6 +147,7 @@ export const CreateApplicationPage = () => {
   const resetForm = () => {
     setDocumentType("NTZ");
     setKpoNumber("");
+    setMaterialName("");
     setTopic("");
     setSelectedTestMethod("");
     setSelectedStandard("");
@@ -151,10 +155,10 @@ export const CreateApplicationPage = () => {
     setIsUrgent(false);
     setUrgentReason("");
     setComment("");
+    
   };
 
-  const handleCreateTask = () => {
-    alert("Нажали кнопку");
+  const handleCreateTask = async () => {
     if (!selectedTestMethod || !selectedStandard || temperatures.length === 0) {
       alert(
         "Заполните испытание, стандарт и добавьте хотя бы одну температуру",
@@ -162,8 +166,10 @@ export const CreateApplicationPage = () => {
       return;
     }
     const task = {
+      creatorId: currentUser.id,
       type: documentType,
-      number: documentType === "KPO" ? kpoNumber : "",
+      number: documentType === "KPO" ? kpoNumber : undefined,
+      materialName: materialName.trim(),
       topic: topic.trim() || undefined,
       testMethod: selectedTestMethod,
       standard: selectedStandard,
@@ -173,15 +179,18 @@ export const CreateApplicationPage = () => {
         modulus: item.modulus,
       })),
       isUrgent,
-      urgentReason: isUrgent ? urgentReason.trim() || undefined : undefined,
+      urgentReason: isUrgent
+        ? urgentReason.trim() || undefined
+        : undefined,
       comment: comment.trim() || undefined,
-      status: "pending",
     };
 
-    console.log("Создана заявка:");
-    console.log(task);
-
-    resetForm();
+    try {
+      await createTask(task);
+      resetForm();
+    } catch (error) {
+      alert("Не удалось создать заявку");
+    }
   };
 
   return (
@@ -200,7 +209,7 @@ export const CreateApplicationPage = () => {
             onDocumentTypeChange={handleDocumentTypeChange}
             onKpoNumberChange={setKpoNumber}
           />
-          <TopicSection topic={topic} onTopicChange={handleTopicChange} />
+          <TopicSection topic={topic} onTopicChange={handleTopicChange} materialName={materialName} onMaterialNameChange={setMaterialName} />
           <TestMethodSection
             selectedTestMethod={selectedTestMethod}
             selectedStandard={selectedStandard}

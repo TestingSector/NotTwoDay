@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createTask } from "../shared/api/tasks"
+import { createTask } from "../shared/api/tasks";
 import { currentUser } from "../shared/mocks/currentUser";
 import {
   DocumentSection,
@@ -37,7 +37,7 @@ export const CreateApplicationPage = () => {
   const [selectedStandard, setSelectedStandard] = useState("");
   const [kpoNumber, setKpoNumber] = useState("");
   const [topic, setTopic] = useState("");
-  const [materialName, setMaterialName]=useState("")
+  const [materialName, setMaterialName] = useState("");
   const [isUrgent, setIsUrgent] = useState(false);
   const [urgentReason, setUrgentReason] = useState("");
   const [comment, setComment] = useState("");
@@ -155,7 +155,6 @@ export const CreateApplicationPage = () => {
     setIsUrgent(false);
     setUrgentReason("");
     setComment("");
-    
   };
 
   const handleCreateTask = async () => {
@@ -179,9 +178,7 @@ export const CreateApplicationPage = () => {
         modulus: item.modulus,
       })),
       isUrgent,
-      urgentReason: isUrgent
-        ? urgentReason.trim() || undefined
-        : undefined,
+      urgentReason: isUrgent ? urgentReason.trim() || undefined : undefined,
       comment: comment.trim() || undefined,
     };
 
@@ -209,7 +206,12 @@ export const CreateApplicationPage = () => {
             onDocumentTypeChange={handleDocumentTypeChange}
             onKpoNumberChange={setKpoNumber}
           />
-          <TopicSection topic={topic} onTopicChange={handleTopicChange} materialName={materialName} onMaterialNameChange={setMaterialName} />
+          <TopicSection
+            topic={topic}
+            onTopicChange={handleTopicChange}
+            materialName={materialName}
+            onMaterialNameChange={setMaterialName}
+          />
           <TestMethodSection
             selectedTestMethod={selectedTestMethod}
             selectedStandard={selectedStandard}

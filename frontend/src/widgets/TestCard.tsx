@@ -1,6 +1,13 @@
 import type { Task } from "../shared/types/task";
 import { formatTaskDate } from "../shared/lib/date";
 import { getShortName } from "../shared/lib/user";
+import {
+  FileText,
+  LucideWrench,
+  Package,
+  User,
+  CheckCheck,
+} from "lucide-react";
 
 type TestCardProps = {
   task: Task;
@@ -9,17 +16,18 @@ type TestCardProps = {
 
 export const TestCard = ({ task, isFirst }: TestCardProps) => {
   const isActive = task.status === "active";
-
   const isCompleted = task.status === "completed";
 
   const creator = task.creator;
   const executor = task.executor;
+  const completionDate =
+    isCompleted && task.completedAt ? formatTaskDate(task.completedAt) : null;
 
   return (
     <article
-      className={`border-b border-[var(--color-border)] pb-6 transition-colors active:bg-black/[0.02] ${
-        isFirst ? "" : "pt-6"
-      } `}
+      className={`border-b border-[var(--color-border)] pb-2 transition-colors active:bg-black/[0.02] ${
+        isFirst ? "" : "pt-2"
+      }`}
     >
       <div className="flex items-stretch gap-3">
         <div
@@ -31,61 +39,121 @@ export const TestCard = ({ task, isFirst }: TestCardProps) => {
                 : "bg-[var(--color-accent)]"
           }`}
         />
-        <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="truncate text-[14px] font-semibold tracking-[-0.01em] text-[var(--color-text)]">
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          <div className="grid grid-cols-[1fr_auto] gap-x-4">
+            <h2
+              className="line-clamp-2
+                text-[15px]
+                font-semibold
+                leading-[1.2]
+                tracking-[-0.01em]
+                text-[var(--color-text)]"
+            >
               Испытание на {task.testMethod.toLowerCase()}
             </h2>
 
-            <p className="mt-1 text-[13px] leading-tight text-[var(--color-text-secondary)]">
-              {task.standard}
-            </p>
-
-            <p className="mt-1 text-[12px] text-[var(--color-text-secondary)]">
-              {getShortName(creator)}
-            </p>
-
-            {executor && (
-              <div className="mt-3 flex items-center gap-2">
-                {isActive && (
-                  <div className="rounded-[14px] bg-[var(--color-success-soft)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-success)]">
-                    В работе
-                  </div>
-                )}
-
-                <div className="rounded-[14px] border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-text-secondary)]">
-                  {getShortName(executor)}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="flex h-full flex-col items-end justify-between gap-2">
-            <div className="flex items-center gap-2">
+            <div className="w-[76px] justify-self-center">
               {task.isUrgent && !isCompleted && (
-                <div className="rounded-[14px] bg-[var(--color-accent)] px-2.5 py-1 text-[11px] font-medium text-white">
+                <div className="justify-self-center text-center rounded-[12px] border border-[var(--color-accent)] px-3 py-1 text-[11px] font-medium text-[var(--color-accent)]">
                   Срочно
                 </div>
               )}
-
-              <div className="rounded-[14px] border border-[var(--color-border)] bg-[var(--color-surface-secondary)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-text)]">
-                2 часа
-              </div>
             </div>
 
-            <div className="flex flex-col items-end">
-              {isCompleted && task.completedAt && (
-                <span className="text-[10px] text-[var(--color-text-secondary)]">
-                  Завершена
-                </span>
-              )}
+            <p className="mt-1 flex items-center gap-2 text-[12px] leading-[1.25] text-[var(--color-text-secondary)]">
+              <FileText size={12} />
 
-              <span className="text-[11px] text-[var(--color-text-secondary)]">
-                {isCompleted && task.completedAt
-                  ? formatTaskDate(task.completedAt)
-                  : formatTaskDate(task.createdAt)}
+              <span>
+                {task.standard}
+
+                {task.temperatureConditions.some((item) => item.modulus) && (
+                  <>
+                    <span className="mx-2">•</span>
+                    <span>Модуль</span>
+                  </>
+                )}
+              </span>
+            </p>
+
+            <div className="mt-1  justify-self-center text-center">
+              <p className="text-[12px] font-medium text-[var(--color-text)]">
+                {task.temperatureConditions.reduce(
+                  (sum, item) => sum + item.quantity,
+                  0,
+                )}{" "}
+                обр.
+              </p>
+            </div>
+
+            <p className="mt-1 flex items-center gap-2 text-[12px] leading-[1.25] text-[var(--color-text-secondary)]">
+              <Package size={12} />
+
+              <span>{task.materialName}</span>
+            </p>
+
+            <div className="justify-self-center text-center">
+              <p className="text-[12px] font-medium text-[var(--color-text)]">
+                8 ч.
+              </p>
+            </div>
+
+            {/* пустая строка */}
+
+            <div className="col-span-2 h-4" />
+
+            <div className="flex items-center justify-between pb-1">
+              <span className="flex items-center gap-2 text-[12px] text-[var(--color-text-muted)]">
+                <User size={12} />
+                {getShortName(creator)}
+              </span>
+
+              <span className="text-[11px] text-[var(--color-text-muted)]">
+                Создана:
               </span>
             </div>
+
+            <span className="justify-self-center text-[12px] text-[var(--color-text-muted)]">
+              {formatTaskDate(task.createdAt)}
+            </span>
+
+            {isActive && executor && (
+              <>
+                <div className="flex items-center justify-between border-t border-[var(--color-border)] pt-1">
+                  <span className="flex items-center gap-2 text-[12px] text-[var(--color-success)]">
+                    <LucideWrench size={12} />
+                    {getShortName(executor)}
+                  </span>
+
+                  <span className="text-[11px] text-[var(--color-success)]">
+                    Статус:
+                  </span>
+                </div>
+
+                <span className="pt-1 justify-self-center text-[12px] text-[var(--color-success)]">
+                  В работе
+                </span>
+              </>
+            )}
+
+            {isCompleted && executor && (
+              <>
+                <div className="flex items-center justify-between border-t border-[var(--color-border)] pt-1">
+                  <span className="flex items-center gap-2 text-[12px] text-[var(--color-text-muted)]">
+                    <CheckCheck size={12} />
+                    {getShortName(executor)}
+                  </span>
+
+                  <span className="text-[11px] text-[var(--color-text-muted)]">
+                    Завершена:
+                  </span>
+                </div>
+
+                <span className="pt-1 justify-self-center text-[12px] text-[var(--color-text-muted)]">
+                  {completionDate}
+                </span>
+              </>
+            )}
           </div>
         </div>
       </div>

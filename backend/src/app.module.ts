@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { TasksModule } from './tasks/tasks.module';
 import { SystemSettingsModule } from './system-settings/system-settings.module';
+import { TestMethodsModule } from './test-methods/test-methods.module'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { SystemSettingsModule } from './system-settings/system-settings.module';
     UsersModule,
     TasksModule,
     SystemSettingsModule,
+    TestMethodsModule
   ],
 })
-export class AppModule {}
+export class AppModule { }

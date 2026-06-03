@@ -22,12 +22,13 @@ export const isTemperatureAllowed = (
 export const createTemperatureCondition = (
   temperature: number,
   samples: number,
+  defaultModulus = false,
 ): TemperatureCondition => {
   return {
     id: Date.now(),
     temperature,
     samples,
-    modulus: false,
+    modulus: defaultModulus,
   };
 };
 

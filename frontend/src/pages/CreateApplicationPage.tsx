@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createTask } from "../shared/api/tasks";
+import { getTestMethods } from "../shared/api/testMethods";
 import { currentUser } from "../shared/mocks/currentUser";
 import {
   DocumentSection,
@@ -17,6 +18,7 @@ import {
 import type {
   DocumentType,
   TemperatureCondition,
+  TestMethod,
 } from "../features/application/model/types";
 import {
   isTemperatureUnique,
@@ -31,6 +33,10 @@ import {
 
 export const CreateApplicationPage = () => {
   // FORM STATE
+  const [testMethods, setTestMethods] = useState<TestMethod[]>([]);
+  useEffect(() => {
+    getTestMethods().then(setTestMethods);
+  }, []);
   const [documentType, setDocumentType] = useState<DocumentType>("NTZ");
   const [temperatures, setTemperatures] = useState<TemperatureCondition[]>([]);
   const [selectedTestMethod, setSelectedTestMethod] = useState("");
@@ -52,12 +58,16 @@ export const CreateApplicationPage = () => {
   const [isStandardSheetOpen, setIsStandardSheetOpen] = useState(false);
 
   // SELECTORS
-  const testNames = getTestNames();
+  const testNames = getTestNames(testMethods);
   const selectedMethod = getSelectedMethod(
+    testMethods,
     selectedTestMethod,
     selectedStandard,
   );
-  const availableStandards = getAvailableStandards(selectedTestMethod);
+  const availableStandards = getAvailableStandards(
+    testMethods,
+    selectedTestMethod,
+  );
 
   //Document
   const handleDocumentTypeChange = (value: DocumentType) => {
@@ -121,11 +131,11 @@ export const CreateApplicationPage = () => {
       setIsTemperatureSheetOpen(false);
       return;
     }
-    if (!selectedMethod) {
+    if (!selectedTestMethod || !selectedStandard) {
       alert("Сначала выберите испытание и стандарт");
       return;
     }
-    if (!isTemperatureAllowed(temperature, selectedMethod)) {
+    if (selectedMethod && !isTemperatureAllowed(temperature, selectedMethod)) {
       alert(
         `Допустимый диапазон температур: ${selectedMethod.testTemperatureMin}°C ... ${selectedMethod.testTemperatureMax}°C`,
       );
@@ -135,7 +145,11 @@ export const CreateApplicationPage = () => {
     setTemperatures((prev) =>
       [
         ...prev,
-        createTemperatureCondition(temperature, Number(newSamples)),
+        createTemperatureCondition(
+          temperature,
+          Number(newSamples),
+          selectedMethod?.defaultModulus,
+        ),
       ].sort((a, b) => a.temperature - b.temperature),
     );
     setNewTemperature("");
@@ -278,6 +292,7 @@ export const CreateApplicationPage = () => {
         onClose={() => setIsStandardSheetOpen(false)}
         standards={availableStandards}
         onSelect={handleStandardSelect}
+        selectedMethod={selectedTestMethod}
       />
     </div>
   );

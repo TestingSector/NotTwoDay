@@ -14,10 +14,12 @@ export interface TestMethod {
   standard: string;
 
   supportsModulus: boolean;
+  defaultModulus: boolean;
 
   testTemperatureMin: number;
   testTemperatureMax: number;
 
-  modulusTemperatureMin?: number;
-  modulusTemperatureMax?: number;
+  modulusTemperatureMax: number;
+
+  calculationType: string;
 }

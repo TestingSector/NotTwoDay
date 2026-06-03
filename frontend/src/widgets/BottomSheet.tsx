@@ -31,9 +31,11 @@ export const BottomSheet = ({
         onClick={(e) => e.stopPropagation()}
         className={`
           absolute bottom-0 left-0 right-0
+          max-h-[65vh]
           rounded-t-[32px]
           bg-[var(--color-surface)]
           px-6 pb-8 pt-4
+          flex flex-col
           transition-transform duration-300
           ${isOpen ? "translate-y-0" : "translate-y-full"}
         `}
@@ -48,7 +50,7 @@ export const BottomSheet = ({
           </p>
         )}
 
-        <div className="mt-4">{children}</div>
+        <div className="mt-4 flex-1 overflow-y-auto pb-8">{children}</div>
       </div>
     </div>
   );

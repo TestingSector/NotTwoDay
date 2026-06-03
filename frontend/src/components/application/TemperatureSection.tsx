@@ -1,9 +1,12 @@
 import { ApplicationCard, FormSwitch } from "../../ui";
-import { isModulusAvailable } from "../../features/application/model/helpers";
-import type { TemperatureCondition, TestMethod } from "../../types/application";
+import { isModulusAvailable } from "../../helpers/application";
+import type {
+  ApplicationTemperatureCondition,
+  TestMethod,
+} from "../../types/application";
 
 type TemperatureSectionProps = {
-  temperatures: TemperatureCondition[];
+  temperatures: ApplicationTemperatureCondition[];
   selectedMethod?: TestMethod;
   onAddTemperature: () => void;
   onDeleteTemperature: (id: number) => void;

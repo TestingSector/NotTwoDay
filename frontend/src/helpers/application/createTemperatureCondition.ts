@@ -1,9 +1,9 @@
-import type { TemperatureCondition } from "../../shared/types/task";
+import type { ApplicationTemperatureCondition } from "../../types/application";
 export const createTemperatureCondition = (
   temperature: number,
   samples: number,
   defaultModulus = false,
-): TemperatureCondition => {
+): ApplicationTemperatureCondition => {
   return {
     id: Date.now(),
     temperature,

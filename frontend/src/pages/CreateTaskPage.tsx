@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { currentUser } from "../shared/mocks/currentUser";
-import { createTask } from "../shared/api/tasks";
+import { currentUser } from "../data/user/currentUser";
+import { createTask } from "../api";
 
 export const CreateTaskPage = () => {
   const navigate = useNavigate();

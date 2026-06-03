@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { createTask } from "../shared/api/tasks";
-import { getTestMethods } from "../shared/api/testMethods";
-import { currentUser } from "../shared/mocks/currentUser";
+import { createTask, getTestMethods } from "../api";
+
+import { currentUser } from "../data/user/currentUser";
 import {
   DocumentSection,
   TopicSection,
@@ -16,19 +16,17 @@ import {
 
 import type {
   DocumentType,
-  TemperatureCondition,
+  ApplicationTemperatureCondition,
   TestMethod,
 } from "../types/application";
 import {
   isTemperatureUnique,
   isTemperatureAllowed,
   createTemperatureCondition,
-} from "../features/application/model/helpers";
-import {
   getTestNames,
   getAvailableStandards,
   getSelectedMethod,
-} from "../features/application/model/selectors";
+} from "../helpers/application";
 
 export const CreateApplicationPage = () => {
   // FORM STATE
@@ -37,7 +35,9 @@ export const CreateApplicationPage = () => {
     getTestMethods().then(setTestMethods);
   }, []);
   const [documentType, setDocumentType] = useState<DocumentType>("NTZ");
-  const [temperatures, setTemperatures] = useState<TemperatureCondition[]>([]);
+  const [temperatures, setTemperatures] = useState<
+    ApplicationTemperatureCondition[]
+  >([]);
   const [selectedTestMethod, setSelectedTestMethod] = useState("");
   const [selectedStandard, setSelectedStandard] = useState("");
   const [kpoNumber, setKpoNumber] = useState("");

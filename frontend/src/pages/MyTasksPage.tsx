@@ -1,9 +1,9 @@
 import { Search } from "lucide-react";
 import { TestCard } from "../components/shared/TestCard";
-import { currentUser } from "../shared/mocks/currentUser";
-import { getMyTasks } from "../shared/lib/tasks";
+import { currentUser } from "../data/user/currentUser";
+import { getMyTasks } from "../helpers/task";
 import { useState, useEffect } from "react";
-import { getTasks } from "../shared/api/tasks";
+import { getTasks } from "../api";
 export const MyTasksPage = () => {
   const [tasks, setTasks] = useState([]);
 

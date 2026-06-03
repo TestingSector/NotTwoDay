@@ -1,9 +1,9 @@
 import { TasksOverview } from "../components/dashboard/TasksOverview";
 import { TestCard } from "../components/shared/TestCard";
 import { useState, useEffect } from "react";
-import { currentUser } from "../shared/mocks/currentUser";
-import { getTasks } from "../shared/api/tasks";
-import { getDashboardTasks } from "../shared/lib/tasks";
+import { currentUser } from "../data/user/currentUser";
+import { getDashboardTasks } from "../helpers/task";
+import { getTasks } from "../api";
 import { Link } from "react-router-dom";
 
 export const DashboardPage = () => {

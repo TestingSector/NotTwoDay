@@ -2,12 +2,6 @@ import type { User } from "./user";
 
 export type TaskStatus = "pending" | "active" | "completed";
 
-export type TemperatureCondition = {
-  temperature: number;
-  quantity: number;
-  modulus: boolean;
-};
-
 export type Task = {
   id: string;
 
@@ -20,7 +14,11 @@ export type Task = {
   testMethod: string;
   standard: string;
 
-  temperatureConditions: TemperatureCondition[];
+  temperatureConditions: {
+    temperature: number;
+    quantity: number;
+    modulus: boolean;
+  }[];
 
   isUrgent: boolean;
   urgentReason?: string;

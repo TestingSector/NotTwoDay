@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { BottomNav } from "../widgets/BottomNav";
+import { BottomNav } from "../components/shared/BottomNav";
 
 export const Layout = () => {
   return (

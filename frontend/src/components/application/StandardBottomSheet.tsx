@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { BottomSheet } from "../../../widgets/BottomSheet";
-import { FormInput } from "../../../widgets/FormInput";
+import { BottomSheet, FormInput } from "../../ui";
 
 type StandardBottomSheetProps = {
   isOpen: boolean;
@@ -45,6 +44,7 @@ export const StandardBottomSheet = ({
   const [customStandard, setCustomStandard] = useState("");
   useEffect(() => {
     if (!isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsCustomMode(false);
       setCustomStandard("");
     }

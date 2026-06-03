@@ -1,6 +1,6 @@
-import type { Task } from "../shared/types/task";
-import { formatTaskDate } from "../shared/lib/date";
-import { getShortName } from "../shared/lib/user";
+import type { Task } from "../../shared/types/task";
+import { formatTaskDate } from "../../shared/lib/date";
+import { getShortName } from "../../shared/lib/user";
 import {
   FileText,
   LucideWrench,

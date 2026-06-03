@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { BottomSheet } from "../../../widgets/BottomSheet";
-import { FormInput } from "../../../widgets/FormInput";
+import { BottomSheet, FormInput } from "../../ui";
+
 const METHOD_ORDER = [
   "Растяжение",
   "Сжатие",
@@ -36,6 +36,7 @@ export const TestMethodBottomSheet = ({
   const [customMethod, setCustomMethod] = useState("");
   useEffect(() => {
     if (!isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsCustomMode(false);
       setCustomMethod("");
     }

@@ -1,4 +1,4 @@
-import type { TestMethod } from "./types";
+import type { TestMethod } from "../../../types/application/DocumentType";
 
 export const getTestNames = (methods: TestMethod[]) => {
   return [...new Set(methods.map((item) => item.name))];

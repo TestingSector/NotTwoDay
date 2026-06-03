@@ -1,5 +1,5 @@
-import type { TemperatureCondition } from "./types";
-import type { TestMethod } from "./types";
+import type { TemperatureCondition } from "../../../types/application/DocumentType";
+import type { TestMethod } from "../../../types/application/DocumentType";
 
 export const isTemperatureUnique = (
   temperatures: TemperatureCondition[],
@@ -18,18 +18,6 @@ export const isTemperatureAllowed = (
     temperature >= method.testTemperatureMin &&
     temperature <= method.testTemperatureMax
   );
-};
-export const createTemperatureCondition = (
-  temperature: number,
-  samples: number,
-  defaultModulus = false,
-): TemperatureCondition => {
-  return {
-    id: Date.now(),
-    temperature,
-    samples,
-    modulus: defaultModulus,
-  };
 };
 
 export const isModulusAvailable = (

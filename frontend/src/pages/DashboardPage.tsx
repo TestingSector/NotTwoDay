@@ -1,5 +1,5 @@
-import { TasksOverview } from "../widgets/TasksOverview";
-import { TestCard } from "../widgets/TestCard";
+import { TasksOverview } from "../components/dashboard/TasksOverview";
+import { TestCard } from "../components/shared/TestCard";
 import { useState, useEffect } from "react";
 import { currentUser } from "../shared/mocks/currentUser";
 import { getTasks } from "../shared/api/tasks";

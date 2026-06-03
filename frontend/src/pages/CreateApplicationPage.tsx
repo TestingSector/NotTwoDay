@@ -9,17 +9,16 @@ import {
   PrioritySection,
   CommentSection,
   TemperatureSection,
-} from "../features/application/ui";
-import {
   StandardBottomSheet,
   TemperatureBottomSheet,
   TestMethodBottomSheet,
-} from "../features/application/sheets";
+} from "../components/application";
+
 import type {
   DocumentType,
   TemperatureCondition,
   TestMethod,
-} from "../features/application/model/types";
+} from "../types/application";
 import {
   isTemperatureUnique,
   isTemperatureAllowed,
@@ -201,6 +200,7 @@ export const CreateApplicationPage = () => {
       resetForm();
     } catch (error) {
       alert("Не удалось создать заявку");
+      console.log(error);
     }
   };
 

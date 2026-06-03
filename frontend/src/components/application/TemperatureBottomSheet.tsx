@@ -1,5 +1,4 @@
-import { BottomSheet } from "../../../widgets/BottomSheet";
-import { FormInput } from "../../../widgets/FormInput";
+import { BottomSheet, FormInput } from "../../ui";
 
 type TemperatureBottomSheetProps = {
   isOpen: boolean;

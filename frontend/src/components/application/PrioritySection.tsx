@@ -1,6 +1,4 @@
-import { ApplicationCard } from "../../../widgets/ApplicationCard";
-import { FormInput } from "../../../widgets/FormInput";
-import { FormSwitch } from "../../../widgets/FormSwitch";
+import { ApplicationCard, FormInput, FormSwitch } from "../../ui";
 
 interface Props {
   isUrgent: boolean;

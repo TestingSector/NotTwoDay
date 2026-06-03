@@ -1,7 +1,6 @@
-import { FormSwitch } from "../../../widgets/FormSwitch";
-import { ApplicationCard } from "../../../widgets/ApplicationCard";
-import { isModulusAvailable } from "../model/helpers";
-import type { TemperatureCondition, TestMethod } from "../model/types";
+import { ApplicationCard, FormSwitch } from "../../ui";
+import { isModulusAvailable } from "../../features/application/model/helpers";
+import type { TemperatureCondition, TestMethod } from "../../types/application";
 
 type TemperatureSectionProps = {
   temperatures: TemperatureCondition[];

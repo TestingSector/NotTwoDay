@@ -1,5 +1,4 @@
-import { ApplicationCard } from "../../../widgets/ApplicationCard";
-import { SelectRow } from "../../../widgets/SelectRow";
+import { ApplicationCard, SelectRow } from "../../ui";
 
 interface Props {
   selectedTestMethod: string;

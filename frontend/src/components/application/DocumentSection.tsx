@@ -1,5 +1,5 @@
-import { ApplicationCard } from "../../../widgets/ApplicationCard";
-import type { DocumentType } from "../model/types";
+import { ApplicationCard } from "../../ui";
+import type { DocumentType } from "../../types/application";
 
 interface Props {
   documentType: DocumentType;

@@ -1,12 +1,3 @@
-export type DocumentType = "NTZ" | "KPO";
-
-export interface TemperatureCondition {
-  id: number;
-  temperature: number;
-  samples: number;
-  modulus: boolean;
-}
-
 export interface TestMethod {
   id: string;
 

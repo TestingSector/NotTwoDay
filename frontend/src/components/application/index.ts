@@ -4,3 +4,6 @@ export { TestMethodSection } from "./TestMethodSection";
 export { PrioritySection } from "./PrioritySection";
 export { CommentSection } from "./CommentSection";
 export { TemperatureSection } from "./TemperatureSection";
+export { StandardBottomSheet } from "./StandardBottomSheet";
+export { TemperatureBottomSheet } from "./TemperatureBottomSheet";
+export { TestMethodBottomSheet } from "./TestMethodBottomSheet";

@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import { TestCard } from "../widgets/TestCard";
+import { TestCard } from "../components/shared/TestCard";
 import { currentUser } from "../shared/mocks/currentUser";
 import { getMyTasks } from "../shared/lib/tasks";
 import { useState, useEffect } from "react";

@@ -1,8 +1,5 @@
 import { NavLink } from "react-router-dom";
-import {
-  LayoutList,
-  BriefcaseBusiness,
-} from "lucide-react";
+import { LayoutList, BriefcaseBusiness } from "lucide-react";
 
 const navItems = [
   {
@@ -40,14 +37,9 @@ export const BottomNav = () => {
                 }`
               }
             >
-              <Icon
-                size={17}
-                strokeWidth={2}
-              />
+              <Icon size={17} strokeWidth={2} />
 
-              <span className="text-[10px] font-medium">
-                {item.label}
-              </span>
+              <span className="text-[10px] font-medium">{item.label}</span>
             </NavLink>
           );
         })}

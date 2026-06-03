@@ -1,5 +1,4 @@
-import { ApplicationCard } from "../../../widgets/ApplicationCard";
-import { FormTextarea } from "../../../widgets/FormTextarea";
+import { ApplicationCard, FormTextarea } from "../../ui";
 
 interface Props {
   comment: string;

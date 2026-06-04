@@ -1,9 +1,9 @@
 import { Search } from "lucide-react";
-import { TestCard } from "../components/shared/TestCard";
 import { currentUser } from "../data/user/currentUser";
 import { getMyTasks } from "../helpers/task";
 import { useState, useEffect } from "react";
 import { getTasks } from "../api";
+import { TaskList } from "../components/shared/TaskList";
 export const MyTasksPage = () => {
   const [tasks, setTasks] = useState([]);
 
@@ -18,7 +18,7 @@ export const MyTasksPage = () => {
   }, []);
   return (
     <div className="flex h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
-      <header className="px-6 pt-14 pb-8">
+      <header className="px-6 pb-8 pt-14">
         <h1 className="text-[32px] font-semibold tracking-[-0.03em] text-white">
           Мои задачи
         </h1>
@@ -59,10 +59,8 @@ export const MyTasksPage = () => {
           </div>
         </section>
 
-        <section className="flex-1 overflow-y-auto px-4 pt-6 pb-28">
-          {getMyTasks(tasks, currentUser).map((task, index) => (
-            <TestCard key={task.id} task={task} isFirst={index === 0} />
-          ))}
+        <section className="flex-1 overflow-y-auto px-4 pb-28 pt-6">
+          <TaskList tasks={getMyTasks(tasks, currentUser)} />
         </section>
       </main>
     </div>

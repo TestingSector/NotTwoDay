@@ -31,7 +31,7 @@ export const BottomSheet = ({
         onClick={(e) => e.stopPropagation()}
         className={`
           absolute bottom-0 left-0 right-0
-          max-h-[65vh]
+          max-h-[65dvh]
           rounded-t-[32px]
           bg-[var(--color-surface)]
           px-6 pb-8 pt-4

@@ -1,5 +1,5 @@
 import { TasksOverview } from "../components/dashboard/TasksOverview";
-import { TestCard } from "../components/shared/TestCard";
+import { TaskList } from "../components/shared/TaskList";
 import { useState, useEffect } from "react";
 import { currentUser } from "../data/user/currentUser";
 import { getDashboardTasks } from "../helpers/task";
@@ -34,9 +34,7 @@ export const DashboardPage = () => {
       </Link>
       <section className="mx-4 mt-4 flex min-h-0 flex-1 flex-col rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pt-6 shadow-sm">
         <div className="flex-1 overflow-y-auto pb-28">
-          {getDashboardTasks(tasks, currentUser).map((task, index) => (
-            <TestCard key={task.id} task={task} isFirst={index === 0} />
-          ))}
+          <TaskList tasks={getDashboardTasks(tasks, currentUser)} />
         </div>
       </section>
     </div>

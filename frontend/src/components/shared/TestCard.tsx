@@ -12,9 +12,10 @@ import {
 type TestCardProps = {
   task: Task;
   isFirst?: boolean;
+  onClick?: () => void;
 };
 
-export const TestCard = ({ task, isFirst }: TestCardProps) => {
+export const TestCard = ({ task, isFirst, onClick }: TestCardProps) => {
   const isActive = task.status === "active";
   const isCompleted = task.status === "completed";
 
@@ -29,7 +30,7 @@ export const TestCard = ({ task, isFirst }: TestCardProps) => {
         isFirst ? "" : "pt-2"
       }`}
     >
-      <div className="flex items-stretch gap-3">
+      <div className="flex items-stretch gap-3" onClick={onClick}>
         <div
           className={`my-1 w-[3px] rounded-full ${
             isCompleted

@@ -9,7 +9,7 @@ const navItems = [
   },
   {
     label: "Мои",
-    path: "/tasks",
+    path: "my-tasks",
     icon: BriefcaseBusiness,
   },
 ];

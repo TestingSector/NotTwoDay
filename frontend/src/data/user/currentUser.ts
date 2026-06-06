@@ -1,13 +1,13 @@
 import type { User } from "../../types/user";
 
 export const currentUser: User = {
-  id: "b308ed39-aeba-4452-b20d-39b20ff0f02b",
-  firstName: "Дмитрий",
-  lastName: "Иванов",
-  middleName: "Денисович",
+  id: "b944f596-a1a0-41e6-82e8-9d610a84047f",
+  firstName: "Антон",
+  lastName: "Губин",
+  middleName: "Михайлович",
   laboratory: "611",
-  phoneNumber: "+79991234567",
-  role: "customer",
+  phoneNumber: "+79936103767",
+  role: "engineer",
   isApproved: true,
-  createdAt: "2026-06-01T12:54:28.708Z",
+  createdAt: "2026-06-02T12:54:28.708Z",
 };

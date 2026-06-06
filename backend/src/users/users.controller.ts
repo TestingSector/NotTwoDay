@@ -75,4 +75,8 @@ export class UsersController {
   ) {
     return this.usersService.updateRole(id, updateUserRoleDto);
   }
+  @Post('seed')
+  seed() {
+    return this.usersService.seed();
+  }
 }

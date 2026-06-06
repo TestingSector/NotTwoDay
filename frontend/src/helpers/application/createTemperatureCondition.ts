@@ -1,13 +1,12 @@
 import type { ApplicationTemperatureCondition } from "../../types/application";
 export const createTemperatureCondition = (
   temperature: number,
-  samples: number,
+  quantity: number,
   defaultModulus = false,
 ): ApplicationTemperatureCondition => {
   return {
-    id: Date.now(),
     temperature,
-    samples,
+    quantity,
     modulus: defaultModulus,
   };
 };

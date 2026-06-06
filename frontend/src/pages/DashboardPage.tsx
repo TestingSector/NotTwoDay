@@ -42,7 +42,7 @@ export const DashboardPage = () => {
     setIsFilterOpen(true);
   };
   return (
-    <div className="flex min-h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
+    <div className="flex h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
       <div className="shrink-0 px-4 pt-4">
         <TasksOverview
           user={currentUser}

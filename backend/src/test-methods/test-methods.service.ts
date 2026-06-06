@@ -7,23 +7,23 @@ import { TEST_METHODS } from './test-methods.data';
 
 @Injectable()
 export class TestMethodsService {
-    constructor(
-        @InjectRepository(TestMethod)
-        private readonly repository: Repository<TestMethod>,
-    ) { }
+  constructor(
+    @InjectRepository(TestMethod)
+    private readonly repository: Repository<TestMethod>,
+  ) {}
 
-    findAll() {
-        return this.repository.find({
-            order: {
-                name: 'ASC',
-                standard: 'ASC',
-            },
-        });
-    }
+  findAll() {
+    return this.repository.find({
+      order: {
+        name: 'ASC',
+        standard: 'ASC',
+      },
+    });
+  }
 
-    async seed() {
-        await this.repository.clear();
+  async seed() {
+    await this.repository.clear();
 
-        return this.repository.save(TEST_METHODS);
-    }
+    return this.repository.save(TEST_METHODS);
+  }
 }

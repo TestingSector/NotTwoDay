@@ -5,10 +5,10 @@ type TemperatureBottomSheetProps = {
   onClose: () => void;
 
   temperature: string;
-  samples: string;
+  quantity: string;
 
   onTemperatureChange: (value: string) => void;
-  onSamplesChange: (value: string) => void;
+  onQuantityChange: (value: string) => void;
 
   onSave: () => void;
 };
@@ -18,10 +18,10 @@ export const TemperatureBottomSheet = ({
   onClose,
 
   temperature,
-  samples,
+  quantity,
 
   onTemperatureChange,
-  onSamplesChange,
+  onQuantityChange,
 
   onSave,
 }: TemperatureBottomSheetProps) => {
@@ -51,8 +51,8 @@ export const TemperatureBottomSheet = ({
           </p>
 
           <FormInput
-            value={samples}
-            onChange={onSamplesChange}
+            value={quantity}
+            onChange={onQuantityChange}
             placeholder="Например: 6"
           />
         </div>
@@ -60,19 +60,7 @@ export const TemperatureBottomSheet = ({
         <button
           type="button"
           onClick={onSave}
-          className="
-            mt-2
-            w-full
-            rounded-[20px]
-            bg-[var(--color-accent)]
-            px-6
-            py-4
-            text-base
-            font-semibold
-            text-white
-            transition-all
-            active:brightness-90
-          "
+          className="mt-2 w-full rounded-[20px] bg-[var(--color-accent)] px-6 py-4 text-base font-semibold text-white transition-all active:brightness-90"
         >
           Сохранить
         </button>

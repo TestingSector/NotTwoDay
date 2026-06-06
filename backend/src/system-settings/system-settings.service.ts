@@ -8,7 +8,7 @@ export class SystemSettingsService {
   constructor(
     @InjectRepository(SystemSetting)
     private readonly settingsRepository: Repository<SystemSetting>,
-  ) { }
+  ) {}
 
   async getNtzCounter(): Promise<number> {
     const setting = await this.settingsRepository.findOneBy({

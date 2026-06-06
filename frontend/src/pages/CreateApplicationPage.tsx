@@ -26,6 +26,7 @@ import {
   getTestNames,
   getAvailableStandards,
   getSelectedMethod,
+  isModulusAvailable,
 } from "../helpers/application";
 
 export const CreateApplicationPage = () => {
@@ -49,7 +50,7 @@ export const CreateApplicationPage = () => {
 
   // TEMPERATURE FORM
   const [newTemperature, setNewTemperature] = useState("");
-  const [newSamples, setNewSamples] = useState("");
+  const [newQuantity, setNewQuantity] = useState("");
 
   // SHEETS
   const [isTestMethodSheetOpen, setIsTestMethodSheetOpen] = useState(false);
@@ -115,13 +116,16 @@ export const CreateApplicationPage = () => {
   const handleDeleteTemperature = (id: number) => {
     setTemperatures((prev) => prev.filter((item) => item.id !== id));
   };
-  const handleToggleModulus = (id: number, value: boolean) => {
+  const handleToggleModulus = (temperature: number, value: boolean) => {
     setTemperatures((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, modulus: value } : item)),
+      prev.map((item) =>
+        item.temperature === temperature ? { ...item, modulus: value } : item,
+      ),
     );
   };
+
   const handleSaveTemperature = () => {
-    if (!newTemperature.trim() || !newSamples.trim()) {
+    if (!newTemperature.trim() || !newQuantity.trim()) {
       return;
     }
     const temperature = Number(newTemperature);
@@ -141,18 +145,19 @@ export const CreateApplicationPage = () => {
       setIsTemperatureSheetOpen(false);
       return;
     }
+
     setTemperatures((prev) =>
       [
         ...prev,
         createTemperatureCondition(
           temperature,
-          Number(newSamples),
+          Number(newQuantity),
           selectedMethod?.defaultModulus,
         ),
       ].sort((a, b) => a.temperature - b.temperature),
     );
     setNewTemperature("");
-    setNewSamples("");
+    setNewQuantity("");
     setIsTemperatureSheetOpen(false);
   };
 
@@ -187,8 +192,15 @@ export const CreateApplicationPage = () => {
       standard: selectedStandard,
       temperatureConditions: temperatures.map((item) => ({
         temperature: item.temperature,
-        quantity: item.samples,
-        modulus: item.modulus,
+        quantity: item.quantity,
+        modulus:
+          selectedMethod &&
+          isModulusAvailable(
+            item.temperature,
+            selectedMethod.modulusTemperatureMax,
+          )
+            ? item.modulus
+            : false,
       })),
       isUrgent,
       urgentReason: isUrgent ? urgentReason.trim() || undefined : undefined,
@@ -206,13 +218,13 @@ export const CreateApplicationPage = () => {
 
   return (
     <div className="flex h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
-      <header className="px-6 pt-14 pb-8">
+      <header className="px-6 pb-8 pt-14">
         <h1 className="text-[32px] font-semibold tracking-[-0.03em] text-white">
           Создание заявки
         </h1>
         <p className="mt-3 text-sm text-white/70">Заявка на испытание</p>
       </header>
-      <main className="flex-1 overflow-y-auto rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pt-6 pb-24">
+      <main className="flex-1 overflow-y-auto rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pb-24 pt-6">
         <div className="flex flex-col gap-4">
           <DocumentSection
             documentType={documentType}
@@ -250,20 +262,7 @@ export const CreateApplicationPage = () => {
           <button
             type="button"
             onClick={handleCreateTask}
-            className="
-              mt-4
-              w-full
-              rounded-[20px]
-              bg-[var(--color-accent)]
-              px-6
-              py-4
-              text-base
-              font-semibold
-              text-white
-              transition
-              active:brightness-90
-             
-            "
+            className="mt-4 w-full rounded-[20px] bg-[var(--color-accent)] px-6 py-4 text-base font-semibold text-white transition active:brightness-90"
             style={{
               boxShadow: "0 8px 20px rgba(176, 16, 43, 0.25)",
             }}
@@ -276,9 +275,9 @@ export const CreateApplicationPage = () => {
         isOpen={isTemperatureSheetOpen}
         onClose={() => setIsTemperatureSheetOpen(false)}
         temperature={newTemperature}
-        samples={newSamples}
+        quantity={newQuantity}
         onTemperatureChange={setNewTemperature}
-        onSamplesChange={setNewSamples}
+        onQuantityChange={setNewQuantity}
         onSave={handleSaveTemperature}
       />
       <TestMethodBottomSheet

@@ -11,6 +11,7 @@ import { User } from './user.entity';
 import { UserRole } from './user.entity';
 import { ApproveUserDto } from './dto/approve-user.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
+import { MOCK_USERS } from './users.data';
 @Injectable()
 export class UsersService {
   constructor(
@@ -91,5 +92,21 @@ export class UsersService {
     user.role = updateUserRoleDto.role;
 
     return this.userRepository.save(user);
+  }
+
+  async seed() {
+    for (const userData of MOCK_USERS) {
+      const exists = await this.userRepository.findOne({
+        where: {
+          phoneNumber: userData.phoneNumber,
+        },
+      });
+
+      if (!exists) {
+        await this.userRepository.save(userData);
+      }
+    }
+
+    return this.userRepository.find();
   }
 }

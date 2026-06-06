@@ -1,6 +1,5 @@
 export interface ApplicationTemperatureCondition {
-  id: number;
   temperature: number;
-  samples: number;
+  quantity: number;
   modulus: boolean;
 }

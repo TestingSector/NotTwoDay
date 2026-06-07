@@ -1,13 +1,22 @@
+import type { DragControls } from "framer-motion";
+import { motion } from "framer-motion";
 import { getTaskTypeLabel } from "../../helpers/shared";
 import type { Task } from "../../types/task";
 
 type TaskHeaderProps = {
   task: Task;
+  dragControls: DragControls;
 };
 
-export const TaskHeader = ({ task }: TaskHeaderProps) => {
+export const TaskHeader = ({ task, dragControls }: TaskHeaderProps) => {
   return (
-    <header className="px-5 pb-5">
+    <motion.header
+      className="px-5 pb-5 pt-4"
+      style={{
+        touchAction: "none",
+      }}
+      onPointerDown={(e) => dragControls.start(e)}
+    >
       <div className="mb-4 flex justify-center">
         <div className="h-1.5 w-16 rounded-full bg-[var(--color-border)]" />
       </div>
@@ -21,6 +30,6 @@ export const TaskHeader = ({ task }: TaskHeaderProps) => {
           Испытание на {task.testMethod.toLowerCase()}
         </p>
       </div>
-    </header>
+    </motion.header>
   );
 };

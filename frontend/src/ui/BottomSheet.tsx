@@ -1,3 +1,5 @@
+import { motion, useMotionValue } from "framer-motion";
+
 type BottomSheetProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -15,30 +17,49 @@ export const BottomSheet = ({
   subtitle,
   children,
 }: BottomSheetProps) => {
+  const y = useMotionValue(0);
   return (
-    <div
-      className={`
-        fixed inset-0 z-50 transition-all duration-300
-        ${
-          isOpen
-            ? "pointer-events-auto bg-black/40"
-            : "pointer-events-none bg-black/0"
-        }
-      `}
+    <motion.div
+      className="fixed inset-0 z-50"
+      animate={{
+        backgroundColor: isOpen ? "rgba(0,0,0,0.4)" : "rgba(0,0,0,0)",
+      }}
+      transition={{ duration: 0.2 }}
+      style={{
+        pointerEvents: isOpen ? "auto" : "none",
+      }}
       onClick={onClose}
     >
-      <div
+      <motion.div
         onClick={(e) => e.stopPropagation()}
-        className={`
-          absolute bottom-0 left-0 right-0
-          max-h-[65dvh]
-          rounded-t-[32px]
-          bg-[var(--color-surface)]
-          px-6 pb-8 pt-4
-          flex flex-col
-          transition-transform duration-300
-          ${isOpen ? "translate-y-0" : "translate-y-full"}
-        `}
+        style={{ y }}
+        drag="y"
+        dragConstraints={{
+          top: 0,
+          bottom: 9999,
+        }}
+        dragDirectionLock
+        onDrag={(_, info) => {
+          if (info.offset.y < 0) {
+            y.set(0);
+          }
+        }}
+        dragElastic={0.1}
+        dragSnapToOrigin
+        initial={false}
+        animate={{
+          y: isOpen ? 0 : "100%",
+        }}
+        transition={{
+          duration: 0.3,
+          ease: "easeOut",
+        }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 120 || info.velocity.y > 700) {
+            onClose();
+          }
+        }}
+        className="absolute bottom-0 left-0 right-0 flex max-h-[65dvh] flex-col rounded-t-[32px] bg-[var(--color-surface)] px-6 pb-8 pt-4"
       >
         <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-[var(--color-border)]" />
 
@@ -51,7 +72,7 @@ export const BottomSheet = ({
         )}
 
         <div className="mt-4 flex-1 overflow-y-auto pb-8">{children}</div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

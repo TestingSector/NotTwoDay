@@ -61,14 +61,12 @@ export const DashboardPage = () => {
         <div className="flex-1 overflow-y-auto pb-28">
           <TaskList tasks={filteredTasks} />
         </div>
-        {isFilterOpen && (
-          <FilterSheet
-            isFilterOpen={isFilterOpen}
-            setIsFilterOpen={setIsFilterOpen}
-            statusFilter={statusFilter}
-            onStatusFilterChange={setStatusFilter}
-          />
-        )}
+        <FilterSheet
+          isFilterOpen={isFilterOpen}
+          setIsFilterOpen={setIsFilterOpen}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+        />
       </section>
     </div>
   );

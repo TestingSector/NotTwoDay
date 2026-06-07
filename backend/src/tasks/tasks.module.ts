@@ -10,10 +10,7 @@ import { User } from '../users/user.entity';
 import { SystemSettingsModule } from '../system-settings/system-settings.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Task, User]),
-    SystemSettingsModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Task, User]), SystemSettingsModule],
 
   controllers: [TasksController],
 

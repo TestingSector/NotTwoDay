@@ -9,6 +9,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { Task, TaskStatus } from './task.entity';
 import { User } from '../users/user.entity';
 import { SystemSettingsService } from '../system-settings/system-settings.service';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -20,7 +21,7 @@ export class TasksService {
     private readonly userRepository: Repository<User>,
 
     private readonly systemSettingsService: SystemSettingsService,
-  ) { }
+  ) {}
 
   findAll() {
     return this.taskRepository.find({
@@ -62,28 +63,17 @@ export class TasksService {
     }
 
     let number = createTaskDto.number;
-    if (
-      createTaskDto.type === 'KPO' &&
-      !createTaskDto.number
-    ) {
-      throw new BadRequestException(
-        'KPO number is required',
-      );
+    if (createTaskDto.type === 'KPO' && !createTaskDto.number) {
+      throw new BadRequestException('KPO number is required');
     }
     if (!createTaskDto.materialName?.trim()) {
-      throw new BadRequestException(
-        'Material name is required',
-      );
+      throw new BadRequestException('Material name is required');
     }
     if (createTaskDto.type === 'NTZ') {
-      number = String(
-        await this.systemSettingsService.incrementNtzCounter(),
-      );
+      number = String(await this.systemSettingsService.incrementNtzCounter());
     }
     if (!createTaskDto.materialName?.trim()) {
-      throw new BadRequestException(
-        'Material name is required',
-      );
+      throw new BadRequestException('Material name is required');
     }
     const task = this.taskRepository.create({
       creator,
@@ -100,23 +90,45 @@ export class TasksService {
 
       standard: createTaskDto.standard,
 
-      temperatureConditions:
-        createTaskDto.temperatureConditions,
+      temperatureConditions: createTaskDto.temperatureConditions,
 
       isUrgent: createTaskDto.isUrgent ?? false,
 
-      urgentReason:
-        createTaskDto.isUrgent
-          ? createTaskDto.urgentReason
-          : undefined,
+      urgentReason: createTaskDto.isUrgent
+        ? createTaskDto.urgentReason
+        : undefined,
 
-      comment:
-        createTaskDto.comment,
+      comment: createTaskDto.comment,
     });
 
     return this.taskRepository.save(task);
   }
+  async updateTask(taskId: string, updateTaskDto: UpdateTaskDto) {
+    const task = await this.findOne(taskId);
 
+    if (task.status !== TaskStatus.PENDING) {
+      throw new BadRequestException('Only pending tasks can be edited');
+    }
+
+    task.materialName = updateTaskDto.materialName ?? task.materialName;
+
+    task.topic = updateTaskDto.topic ?? task.topic;
+
+    task.testMethod = updateTaskDto.testMethod ?? task.testMethod;
+
+    task.standard = updateTaskDto.standard ?? task.standard;
+
+    task.temperatureConditions =
+      updateTaskDto.temperatureConditions ?? task.temperatureConditions;
+
+    task.isUrgent = updateTaskDto.isUrgent ?? task.isUrgent;
+
+    task.urgentReason = updateTaskDto.isUrgent
+      ? updateTaskDto.urgentReason
+      : undefined;
+
+    return this.taskRepository.save(task);
+  }
   async acceptTask(taskId: string, executorId: string) {
     const task = await this.taskRepository.findOne({
       where: {
@@ -173,9 +185,7 @@ export class TasksService {
       throw new BadRequestException('Only active tasks can be completed');
     }
     if (!task.executor) {
-      throw new BadRequestException(
-        'Task has no executor',
-      );
+      throw new BadRequestException('Task has no executor');
     }
     task.status = TaskStatus.COMPLETED;
     task.completedAt = new Date();

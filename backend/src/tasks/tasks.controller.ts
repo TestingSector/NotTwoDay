@@ -10,6 +10,7 @@ import {
 import { CreateTaskDto } from './dto/create-task.dto';
 import { TasksService } from './tasks.service';
 import { AcceptTaskDto } from './dto/accept-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
@@ -61,7 +62,16 @@ export class TasksController {
   ) {
     return this.tasksService.unassignTask(id);
   }
+  @Patch(':id')
+  updateTask(
+    @Param('id')
+    id: string,
 
+    @Body()
+    updateTaskDto: UpdateTaskDto,
+  ) {
+    return this.tasksService.updateTask(id, updateTaskDto);
+  }
   @Delete(':id')
   remove(
     @Param('id')

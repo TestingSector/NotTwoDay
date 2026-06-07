@@ -65,9 +65,9 @@ export class CreateTaskDto {
   isUrgent?: boolean;
 
   @ApiProperty({
-  required: false,
-})
-urgentReason?: string;
+    required: false,
+  })
+  urgentReason?: string;
 
   @ApiProperty({
     example: 'Дополнительный комментарий',

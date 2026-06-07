@@ -28,6 +28,7 @@ import {
   getSelectedMethod,
   isModulusAvailable,
 } from "../helpers/application";
+import { ActionButton } from "../ui";
 
 export const CreateApplicationPage = () => {
   // FORM STATE
@@ -113,8 +114,10 @@ export const CreateApplicationPage = () => {
   const handleAddTemperature = () => {
     setIsTemperatureSheetOpen(true);
   };
-  const handleDeleteTemperature = (id: number) => {
-    setTemperatures((prev) => prev.filter((item) => item.id !== id));
+  const handleDeleteTemperature = (temperature: number) => {
+    setTemperatures((prev) =>
+      prev.filter((item) => item.temperature !== temperature),
+    );
   };
   const handleToggleModulus = (temperature: number, value: boolean) => {
     setTemperatures((prev) =>
@@ -259,16 +262,7 @@ export const CreateApplicationPage = () => {
             onUrgentReasonChange={setUrgentReason}
           />
           <CommentSection comment={comment} onCommentChange={setComment} />
-          <button
-            type="button"
-            onClick={handleCreateTask}
-            className="mt-4 w-full rounded-[20px] bg-[var(--color-accent)] px-6 py-4 text-base font-semibold text-white transition active:brightness-90"
-            style={{
-              boxShadow: "0 8px 20px rgba(176, 16, 43, 0.25)",
-            }}
-          >
-            Создать заявку
-          </button>
+          <ActionButton onClick={handleCreateTask}>Создать заявку</ActionButton>
         </div>
       </main>
       <TemperatureBottomSheet

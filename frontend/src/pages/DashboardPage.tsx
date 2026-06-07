@@ -7,7 +7,7 @@ import {
   getTaskStats,
   matchesTaskFilter,
 } from "../helpers/task";
-import { getTasks } from "../api";
+import { acceptTask, completeTask, getTasks } from "../api";
 import { FilterSheet } from "../components/dashboard";
 import type { TaskStatusFilter } from "../types/taskStatusFilter";
 import type { Task } from "../types/task";
@@ -18,11 +18,15 @@ export const DashboardPage = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const [statusFilter, setStatusFilter] = useState<TaskStatusFilter>("all");
+  const loadTasks = async () => {
+    const data = await getTasks();
+
+    setTasks(data);
+  };
 
   useEffect(() => {
-    getTasks().then((data) => {
-      setTasks(data);
-    });
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadTasks();
   }, []);
 
   const dashboardTasks = getDashboardTasks(tasks, currentUser);
@@ -40,6 +44,23 @@ export const DashboardPage = () => {
 
   const handleOpenFilters = () => {
     setIsFilterOpen(true);
+  };
+  const handleAcceptTask = async (taskId: string, executorId: string) => {
+    try {
+      await acceptTask(taskId, executorId);
+      await loadTasks();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCompleteTask = async (taskId: string) => {
+    try {
+      await completeTask(taskId);
+      await loadTasks();
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <div className="flex h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
@@ -59,7 +80,11 @@ export const DashboardPage = () => {
 
       <section className="mx-4 flex min-h-0 flex-1 flex-col rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pt-5 shadow-sm">
         <div className="flex-1 overflow-y-auto pb-28">
-          <TaskList tasks={filteredTasks} />
+          <TaskList
+            tasks={filteredTasks}
+            onAcceptTask={handleAcceptTask}
+            onCompleteTask={handleCompleteTask}
+          />
         </div>
         <FilterSheet
           isFilterOpen={isFilterOpen}

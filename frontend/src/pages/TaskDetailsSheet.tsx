@@ -8,22 +8,31 @@ import {
   TaskInformation,
   TemperatureConditionsCard,
 } from "../components/taskDetails";
+import { ActionButton } from "../ui/ActionButton";
 import { useRef } from "react";
+import { getPrimaryTaskAction } from "../helpers/taskDetails/getPrimaryTaskAction";
+import { currentUser } from "../data/user/currentUser";
 
 type TaskDetailsSheetProps = {
   task: Task | null;
   isOpen: boolean;
   onClose: () => void;
+  onAcceptTask: (taskId: string, executorId: string) => Promise<void>;
+  onCompleteTask: (taskId: string) => Promise<void>;
 };
 
 export const TaskDetailsSheet = ({
   task,
   isOpen,
   onClose,
+  onAcceptTask,
+  onCompleteTask,
 }: TaskDetailsSheetProps) => {
   const sheetRef = useRef<HTMLDivElement>(null);
   const dragControls = useDragControls();
   const y = useMotionValue(0);
+
+  const primaryAction = task ? getPrimaryTaskAction(task) : null;
   if (!isOpen || !task) return null;
 
   return (
@@ -93,6 +102,29 @@ export const TaskDetailsSheet = ({
             standard={task.standard}
             conditions={task.temperatureConditions}
           />
+          {primaryAction === "accept" && (
+            <ActionButton
+              className="mt-6"
+              onClick={async () => {
+                await onAcceptTask(task.id, currentUser.id);
+                onClose();
+              }}
+            >
+              Взять в работу
+            </ActionButton>
+          )}
+
+          {primaryAction === "complete" && (
+            <ActionButton
+              className="mt-6"
+              onClick={async () => {
+                await onCompleteTask(task.id);
+                onClose();
+              }}
+            >
+              Завершить работу
+            </ActionButton>
+          )}
           {task.comment && <TaskComments task={task} />}
           <TaskHistory
             task={task}

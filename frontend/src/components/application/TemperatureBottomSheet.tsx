@@ -59,7 +59,10 @@ export const TemperatureBottomSheet = ({
 
         <button
           type="button"
-          onClick={onSave}
+          onClick={() => {
+            onSave();
+            onClose();
+          }}
           className="mt-2 w-full rounded-[20px] bg-[var(--color-accent)] px-6 py-4 text-base font-semibold text-white transition-all active:brightness-90"
         >
           Сохранить

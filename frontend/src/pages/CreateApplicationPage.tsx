@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { createTask, getTestMethods } from "../api";
+import { useState } from "react";
+import { createTask } from "../api";
 
 import { currentUser } from "../data/user/currentUser";
 import {
@@ -14,172 +14,40 @@ import {
   TestMethodBottomSheet,
 } from "../components/application";
 
-import type {
-  DocumentType,
-  ApplicationTemperatureCondition,
-  TestMethod,
-} from "../types/application";
-import {
-  isTemperatureUnique,
-  isTemperatureAllowed,
-  createTemperatureCondition,
-  getTestNames,
-  getAvailableStandards,
-  getSelectedMethod,
-  isModulusAvailable,
-} from "../helpers/application";
+import { isModulusAvailable } from "../helpers/application";
 import { ActionButton } from "../ui";
+import { useApplicationForm } from "../hooks/useApplicationForm";
 
 export const CreateApplicationPage = () => {
+  const form = useApplicationForm();
   // FORM STATE
-  const [testMethods, setTestMethods] = useState<TestMethod[]>([]);
-  useEffect(() => {
-    getTestMethods().then(setTestMethods);
-  }, []);
-  const [documentType, setDocumentType] = useState<DocumentType>("NTZ");
-  const [temperatures, setTemperatures] = useState<
-    ApplicationTemperatureCondition[]
-  >([]);
-  const [selectedTestMethod, setSelectedTestMethod] = useState("");
-  const [selectedStandard, setSelectedStandard] = useState("");
-  const [kpoNumber, setKpoNumber] = useState("");
-  const [topic, setTopic] = useState("");
-  const [materialName, setMaterialName] = useState("");
-  const [isUrgent, setIsUrgent] = useState(false);
-  const [urgentReason, setUrgentReason] = useState("");
-  const [comment, setComment] = useState("");
-
-  // TEMPERATURE FORM
-  const [newTemperature, setNewTemperature] = useState("");
-  const [newQuantity, setNewQuantity] = useState("");
 
   // SHEETS
   const [isTestMethodSheetOpen, setIsTestMethodSheetOpen] = useState(false);
   const [isTemperatureSheetOpen, setIsTemperatureSheetOpen] = useState(false);
   const [isStandardSheetOpen, setIsStandardSheetOpen] = useState(false);
 
-  // SELECTORS
-  const testNames = getTestNames(testMethods);
-  const selectedMethod = getSelectedMethod(
-    testMethods,
-    selectedTestMethod,
-    selectedStandard,
-  );
-  const availableStandards = getAvailableStandards(
-    testMethods,
-    selectedTestMethod,
-  );
-
-  //Document
-  const handleDocumentTypeChange = (value: DocumentType) => {
-    setDocumentType(value);
-
-    if (value === "NTZ") {
-      setKpoNumber("");
-    }
-  };
-
-  //Topic
-  const handleTopicChange = (value: string) => {
-    setTopic(value);
-
-    if (!value.trim()) {
-      setIsUrgent(false);
-      setUrgentReason("");
-    }
-  };
-
   // Test method & standard
   const handleOpenTestMethod = () => {
     setIsTestMethodSheetOpen(true);
   };
   const handleOpenStandard = () => {
-    if (!selectedTestMethod) return;
+    if (!form.selectedTestMethod) return;
 
     setIsStandardSheetOpen(true);
   };
-  const handleTestMethodSelect = (value: string) => {
-    setSelectedTestMethod(value);
 
-    setSelectedStandard("");
-    setTemperatures([]);
-  };
-  const handleStandardSelect = (value: string) => {
-    setSelectedStandard(value);
-
-    setTemperatures([]);
-  };
-
-  //Temperature
   const handleAddTemperature = () => {
     setIsTemperatureSheetOpen(true);
   };
-  const handleDeleteTemperature = (temperature: number) => {
-    setTemperatures((prev) =>
-      prev.filter((item) => item.temperature !== temperature),
-    );
-  };
-  const handleToggleModulus = (temperature: number, value: boolean) => {
-    setTemperatures((prev) =>
-      prev.map((item) =>
-        item.temperature === temperature ? { ...item, modulus: value } : item,
-      ),
-    );
-  };
-
-  const handleSaveTemperature = () => {
-    if (!newTemperature.trim() || !newQuantity.trim()) {
-      return;
-    }
-    const temperature = Number(newTemperature);
-    if (!isTemperatureUnique(temperatures, temperature)) {
-      alert("Такая температура уже добавлена");
-      setIsTemperatureSheetOpen(false);
-      return;
-    }
-    if (!selectedTestMethod || !selectedStandard) {
-      alert("Сначала выберите испытание и стандарт");
-      return;
-    }
-    if (selectedMethod && !isTemperatureAllowed(temperature, selectedMethod)) {
-      alert(
-        `Допустимый диапазон температур: ${selectedMethod.testTemperatureMin}°C ... ${selectedMethod.testTemperatureMax}°C`,
-      );
-      setIsTemperatureSheetOpen(false);
-      return;
-    }
-
-    setTemperatures((prev) =>
-      [
-        ...prev,
-        createTemperatureCondition(
-          temperature,
-          Number(newQuantity),
-          selectedMethod?.defaultModulus,
-        ),
-      ].sort((a, b) => a.temperature - b.temperature),
-    );
-    setNewTemperature("");
-    setNewQuantity("");
-    setIsTemperatureSheetOpen(false);
-  };
-
   // FORM SUBMISSION
-  const resetForm = () => {
-    setDocumentType("NTZ");
-    setKpoNumber("");
-    setMaterialName("");
-    setTopic("");
-    setSelectedTestMethod("");
-    setSelectedStandard("");
-    setTemperatures([]);
-    setIsUrgent(false);
-    setUrgentReason("");
-    setComment("");
-  };
 
   const handleCreateTask = async () => {
-    if (!selectedTestMethod || !selectedStandard || temperatures.length === 0) {
+    if (
+      !form.selectedTestMethod ||
+      !form.selectedStandard ||
+      form.temperatures.length === 0
+    ) {
       alert(
         "Заполните испытание, стандарт и добавьте хотя бы одну температуру",
       );
@@ -187,32 +55,34 @@ export const CreateApplicationPage = () => {
     }
     const task = {
       creatorId: currentUser.id,
-      type: documentType,
-      number: documentType === "KPO" ? kpoNumber : undefined,
-      materialName: materialName.trim(),
-      topic: topic.trim() || undefined,
-      testMethod: selectedTestMethod,
-      standard: selectedStandard,
-      temperatureConditions: temperatures.map((item) => ({
+      type: form.documentType,
+      number: form.documentType === "KPO" ? form.kpoNumber : undefined,
+      materialName: form.materialName.trim(),
+      topic: form.topic.trim() || undefined,
+      testMethod: form.selectedTestMethod,
+      standard: form.selectedStandard,
+      temperatureConditions: form.temperatures.map((item) => ({
         temperature: item.temperature,
         quantity: item.quantity,
         modulus:
-          selectedMethod &&
+          form.selectedMethod &&
           isModulusAvailable(
             item.temperature,
-            selectedMethod.modulusTemperatureMax,
+            form.selectedMethod.modulusTemperatureMax,
           )
             ? item.modulus
             : false,
       })),
-      isUrgent,
-      urgentReason: isUrgent ? urgentReason.trim() || undefined : undefined,
-      comment: comment.trim() || undefined,
+      isUrgent: form.isUrgent,
+      urgentReason: form.isUrgent
+        ? form.urgentReason.trim() || undefined
+        : undefined,
+      comment: form.comment.trim() || undefined,
     };
 
     try {
       await createTask(task);
-      resetForm();
+      form.resetForm();
     } catch (error) {
       alert("Не удалось создать заявку");
       console.log(error);
@@ -230,62 +100,65 @@ export const CreateApplicationPage = () => {
       <main className="flex-1 overflow-y-auto rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pb-24 pt-6">
         <div className="flex flex-col gap-4">
           <DocumentSection
-            documentType={documentType}
-            kpoNumber={kpoNumber}
-            onDocumentTypeChange={handleDocumentTypeChange}
-            onKpoNumberChange={setKpoNumber}
+            documentType={form.documentType}
+            kpoNumber={form.kpoNumber}
+            onDocumentTypeChange={form.handleDocumentTypeChange}
+            onKpoNumberChange={form.setKpoNumber}
           />
           <TopicSection
-            topic={topic}
-            onTopicChange={handleTopicChange}
-            materialName={materialName}
-            onMaterialNameChange={setMaterialName}
+            topic={form.topic}
+            onTopicChange={form.handleTopicChange}
+            materialName={form.materialName}
+            onMaterialNameChange={form.setMaterialName}
           />
           <TestMethodSection
-            selectedTestMethod={selectedTestMethod}
-            selectedStandard={selectedStandard}
+            selectedTestMethod={form.selectedTestMethod}
+            selectedStandard={form.selectedStandard}
             onOpenTestMethod={handleOpenTestMethod}
             onOpenStandard={handleOpenStandard}
           />
           <TemperatureSection
-            temperatures={temperatures}
-            selectedMethod={selectedMethod}
+            temperatures={form.temperatures}
+            selectedMethod={form.selectedMethod}
             onAddTemperature={handleAddTemperature}
-            onDeleteTemperature={handleDeleteTemperature}
-            onToggleModulus={handleToggleModulus}
+            onDeleteTemperature={form.handleDeleteTemperature}
+            onToggleModulus={form.handleToggleModulus}
           />
           <PrioritySection
-            isUrgent={isUrgent}
-            topic={topic}
-            urgentReason={urgentReason}
-            onUrgentChange={setIsUrgent}
-            onUrgentReasonChange={setUrgentReason}
+            isUrgent={form.isUrgent}
+            topic={form.topic}
+            urgentReason={form.urgentReason}
+            onUrgentChange={form.setIsUrgent}
+            onUrgentReasonChange={form.setUrgentReason}
           />
-          <CommentSection comment={comment} onCommentChange={setComment} />
+          <CommentSection
+            comment={form.comment}
+            onCommentChange={form.setComment}
+          />
           <ActionButton onClick={handleCreateTask}>Создать заявку</ActionButton>
         </div>
       </main>
       <TemperatureBottomSheet
         isOpen={isTemperatureSheetOpen}
         onClose={() => setIsTemperatureSheetOpen(false)}
-        temperature={newTemperature}
-        quantity={newQuantity}
-        onTemperatureChange={setNewTemperature}
-        onQuantityChange={setNewQuantity}
-        onSave={handleSaveTemperature}
+        temperature={form.newTemperature}
+        quantity={form.newQuantity}
+        onTemperatureChange={form.setNewTemperature}
+        onQuantityChange={form.setNewQuantity}
+        onSave={form.handleSaveTemperature}
       />
       <TestMethodBottomSheet
         isOpen={isTestMethodSheetOpen}
         onClose={() => setIsTestMethodSheetOpen(false)}
-        methods={testNames}
-        onSelect={handleTestMethodSelect}
+        methods={form.testNames}
+        onSelect={form.handleTestMethodSelect}
       />
       <StandardBottomSheet
         isOpen={isStandardSheetOpen}
         onClose={() => setIsStandardSheetOpen(false)}
-        standards={availableStandards}
-        onSelect={handleStandardSelect}
-        selectedMethod={selectedTestMethod}
+        standards={form.availableStandards}
+        onSelect={form.handleStandardSelect}
+        selectedMethod={form.selectedTestMethod}
       />
     </div>
   );

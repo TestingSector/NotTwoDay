@@ -6,6 +6,7 @@ import { DashboardPage } from "../pages/DashboardPage";
 import { MyTasksPage } from "../pages/MyTasksPage";
 import { ProfilePage } from "../pages/ProfilePage";
 import { CreateApplicationPage } from "../pages/CreateApplicationPage";
+import { EditApplicationPage } from "../pages/EditApplicationPage";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
       {
         path: "create-application",
         element: <CreateApplicationPage />,
+      },
+      {
+        path: "edit-application/:id",
+        element: <EditApplicationPage />,
       },
     ],
   },

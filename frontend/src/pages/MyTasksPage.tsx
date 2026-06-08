@@ -2,11 +2,15 @@ import { Search } from "lucide-react";
 import { currentUser } from "../data/user/currentUser";
 import { getMyTasks } from "../helpers/task";
 import { useState, useEffect } from "react";
-import { getTasks } from "../api";
+import { acceptTask, completeTask, getTasks } from "../api";
 import { TaskList } from "../components/shared/TaskList";
 export const MyTasksPage = () => {
   const [tasks, setTasks] = useState([]);
+  const loadTasks = async () => {
+    const data = await getTasks();
 
+    setTasks(data);
+  };
   useEffect(() => {
     getTasks()
       .then((data) => {
@@ -16,6 +20,24 @@ export const MyTasksPage = () => {
         console.error(error);
       });
   }, []);
+
+  const handleAcceptTask = async (taskId: string, executorId: string) => {
+    try {
+      await acceptTask(taskId, executorId);
+      await loadTasks();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCompleteTask = async (taskId: string) => {
+    try {
+      await completeTask(taskId);
+      await loadTasks();
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <div className="flex h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
       <header className="px-6 pb-8 pt-14">
@@ -60,7 +82,11 @@ export const MyTasksPage = () => {
         </section>
 
         <section className="flex-1 overflow-y-auto px-4 pb-28 pt-6">
-          <TaskList tasks={getMyTasks(tasks, currentUser)} />
+          <TaskList
+            tasks={getMyTasks(tasks, currentUser)}
+            onAcceptTask={handleAcceptTask}
+            onCompleteTask={handleCompleteTask}
+          />
         </section>
       </main>
     </div>

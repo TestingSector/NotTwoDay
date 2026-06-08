@@ -1,11 +1,11 @@
 import type { User } from "./user";
-
+import type { DocumentType } from "./application";
 export type TaskStatus = "pending" | "active" | "completed";
 
 export type Task = {
   id: string;
 
-  type: string;
+  type: DocumentType;
   number: string;
 
   materialName: string;

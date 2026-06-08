@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { createTask } from "../api";
+import { useEffect, useState } from "react";
+import { updateTask, getTask } from "../api";
 
 import { currentUser } from "../data/user/currentUser";
 import {
@@ -16,9 +16,17 @@ import {
 
 import { ActionButton } from "../ui";
 import { useApplicationForm } from "../hooks/useApplicationForm";
+import { useNavigate, useParams } from "react-router-dom";
 
-export const CreateApplicationPage = () => {
+export const EditApplicationPage = () => {
   const form = useApplicationForm();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!id) return;
+
+    getTask(id).then(form.fillForm);
+  }, [id]);
   // FORM STATE
 
   // SHEETS
@@ -41,8 +49,9 @@ export const CreateApplicationPage = () => {
   };
   // FORM SUBMISSION
 
-  const handleCreateTask = async () => {
+  const handleUpdateTask = async () => {
     if (
+      !id ||
       !form.selectedTestMethod ||
       !form.selectedStandard ||
       form.temperatures.length === 0
@@ -50,15 +59,17 @@ export const CreateApplicationPage = () => {
       alert(
         "Заполните испытание, стандарт и добавьте хотя бы одну температуру",
       );
+
       return;
     }
 
     try {
-      await createTask(form.buildTaskPayload(currentUser.id));
+      await updateTask(id, form.buildTaskPayload(currentUser.id));
 
-      form.resetForm();
+      alert("Заявка обновлена");
+      navigate(-1);
     } catch (error) {
-      alert("Не удалось создать заявку");
+      alert("Не удалось обновить заявку");
 
       console.log(error);
     }
@@ -67,14 +78,17 @@ export const CreateApplicationPage = () => {
     <div className="flex h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
       <header className="px-6 pb-8 pt-14">
         <h1 className="text-[32px] font-semibold tracking-[-0.03em] text-white">
-          Создание заявки
+          Редактирование заявки
         </h1>
-        <p className="mt-3 text-sm text-white/70">Заявка на испытание</p>
+        <p className="mt-3 text-sm text-white/70">
+          Изменение параметров заявки
+        </p>
       </header>
       <main className="flex-1 overflow-y-auto rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pb-24 pt-6">
         <div className="flex flex-col gap-4">
           <DocumentSection
             documentType={form.documentType}
+            isDocumentTypeDisabled={true}
             kpoNumber={form.kpoNumber}
             onDocumentTypeChange={form.handleDocumentTypeChange}
             onKpoNumberChange={form.setKpoNumber}
@@ -90,6 +104,7 @@ export const CreateApplicationPage = () => {
             selectedStandard={form.selectedStandard}
             onOpenTestMethod={handleOpenTestMethod}
             onOpenStandard={handleOpenStandard}
+            disabled={true}
           />
           <TemperatureSection
             temperatures={form.temperatures}
@@ -108,8 +123,11 @@ export const CreateApplicationPage = () => {
           <CommentSection
             comment={form.comment}
             onCommentChange={form.setComment}
+            isCommentSectionDisabled={true}
           />
-          <ActionButton onClick={handleCreateTask}>Создать заявку</ActionButton>
+          <ActionButton onClick={handleUpdateTask}>
+            Сохранить изменения
+          </ActionButton>
         </div>
       </main>
       <TemperatureBottomSheet

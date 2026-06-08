@@ -111,22 +111,19 @@ export class TasksService {
     }
 
     task.materialName = updateTaskDto.materialName ?? task.materialName;
-
+    task.number = updateTaskDto.number ?? task.number;
     task.topic = updateTaskDto.topic ?? task.topic;
-
-    task.testMethod = updateTaskDto.testMethod ?? task.testMethod;
-
-    task.standard = updateTaskDto.standard ?? task.standard;
 
     task.temperatureConditions =
       updateTaskDto.temperatureConditions ?? task.temperatureConditions;
 
-    task.isUrgent = updateTaskDto.isUrgent ?? task.isUrgent;
+    if (updateTaskDto.isUrgent !== undefined) {
+      task.isUrgent = updateTaskDto.isUrgent;
 
-    task.urgentReason = updateTaskDto.isUrgent
-      ? updateTaskDto.urgentReason
-      : undefined;
-
+      task.urgentReason = updateTaskDto.isUrgent
+        ? updateTaskDto.urgentReason
+        : undefined;
+    }
     return this.taskRepository.save(task);
   }
   async acceptTask(taskId: string, executorId: string) {

@@ -4,7 +4,7 @@ import type { DocumentType } from "../../types/application";
 interface Props {
   documentType: DocumentType;
   kpoNumber: string;
-
+  isDocumentTypeDisabled?: boolean;
   onDocumentTypeChange: (value: DocumentType) => void;
   onKpoNumberChange: (value: string) => void;
 }
@@ -14,12 +14,14 @@ export const DocumentSection = ({
   kpoNumber,
   onDocumentTypeChange,
   onKpoNumberChange,
+  isDocumentTypeDisabled,
 }: Props) => {
   return (
     <ApplicationCard title="Документ">
       <div className="flex gap-2">
         <button
           onClick={() => onDocumentTypeChange("NTZ")}
+          disabled={isDocumentTypeDisabled}
           className={`flex-1 rounded-[18px] px-4 py-3 text-sm font-medium transition ${
             documentType === "NTZ"
               ? "bg-[var(--color-accent)] text-white"
@@ -30,6 +32,7 @@ export const DocumentSection = ({
         </button>
 
         <button
+          disabled={isDocumentTypeDisabled}
           onClick={() => onDocumentTypeChange("KPO")}
           className={`flex-1 rounded-[18px] px-4 py-3 text-sm font-medium transition ${
             documentType === "KPO"
@@ -56,16 +59,7 @@ export const DocumentSection = ({
           value={kpoNumber}
           onChange={(e) => onKpoNumberChange(e.target.value)}
           placeholder="Введите номер КПО"
-          className="
-            w-full
-            rounded-[18px]
-            border
-            border-[var(--color-border)]
-            bg-[var(--color-surface-secondary)]
-            px-4
-            py-3
-            outline-none
-          "
+          className="w-full rounded-[18px] border border-[var(--color-border)] bg-[var(--color-surface-secondary)] px-4 py-3 outline-none"
         />
       </div>
     </ApplicationCard>

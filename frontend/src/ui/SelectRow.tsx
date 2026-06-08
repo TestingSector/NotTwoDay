@@ -11,14 +11,7 @@ export const SelectRow = ({ label, value, onClick }: SelectRowProps) => {
     <button
       type="button"
       onClick={onClick}
-      className="
-        flex
-        w-full
-        items-center
-        justify-between
-        py-4
-        text-left
-      "
+      className="flex w-full items-center justify-between py-4 text-left"
     >
       <div>
         <p className="text-sm text-[var(--color-text-secondary)]">{label}</p>

@@ -12,6 +12,8 @@ import { ActionButton } from "../ui/ActionButton";
 import { useRef } from "react";
 import { getPrimaryTaskAction } from "../helpers/taskDetails/getPrimaryTaskAction";
 import { currentUser } from "../data/user/currentUser";
+import { useNavigate } from "react-router-dom";
+import { deleteTask, getTasks } from "../api";
 
 type TaskDetailsSheetProps = {
   task: Task | null;
@@ -31,10 +33,25 @@ export const TaskDetailsSheet = ({
   const sheetRef = useRef<HTMLDivElement>(null);
   const dragControls = useDragControls();
   const y = useMotionValue(0);
-
+  const navigate = useNavigate();
   const primaryAction = task ? getPrimaryTaskAction(task) : null;
-  if (!isOpen || !task) return null;
 
+  if (!isOpen || !task) return null;
+  const handleDeleteTask = async () => {
+    const confirmed = window.confirm(
+      "Удалить заявку без возможности восстановления?",
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteTask(task.id);
+
+      onClose();
+    } catch (error) {
+      alert("Не удалось удалить заявку");
+    }
+  };
   return (
     <motion.div
       className="fixed inset-0 z-50"
@@ -76,7 +93,13 @@ export const TaskDetailsSheet = ({
         className="absolute bottom-0 left-0 right-0 h-[85dvh] overflow-y-auto rounded-t-[32px] bg-[var(--color-surface)]"
         ref={sheetRef}
       >
-        <TaskHeader task={task} dragControls={dragControls} />
+        <TaskHeader
+          task={task}
+          dragControls={dragControls}
+          onEdit={() => navigate(`/edit-application/${task.id}`)}
+          onDelete={handleDeleteTask}
+        />
+
         <main className="px-4 py-3">
           {task.isUrgent && (
             <TaskInformation

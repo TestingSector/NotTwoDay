@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
-
 import { getTestMethods } from "../api";
-
 import type {
   ApplicationTemperatureCondition,
   DocumentType,
   TestMethod,
 } from "../types/application";
-
 import {
   createTemperatureCondition,
   getAvailableStandards,
@@ -16,43 +13,36 @@ import {
   isTemperatureAllowed,
   isTemperatureUnique,
 } from "../helpers/application";
+import { isModulusAvailable } from "../helpers/application";
+import type { Task } from "../types/task";
 
 export const useApplicationForm = () => {
   const [testMethods, setTestMethods] = useState<TestMethod[]>([]);
-
   useEffect(() => {
     getTestMethods().then(setTestMethods);
   }, []);
 
   const [documentType, setDocumentType] = useState<DocumentType>("NTZ");
-
   const [temperatures, setTemperatures] = useState<
     ApplicationTemperatureCondition[]
   >([]);
-
   const [selectedTestMethod, setSelectedTestMethod] = useState("");
   const [selectedStandard, setSelectedStandard] = useState("");
-
   const [kpoNumber, setKpoNumber] = useState("");
   const [topic, setTopic] = useState("");
   const [materialName, setMaterialName] = useState("");
-
   const [isUrgent, setIsUrgent] = useState(false);
   const [urgentReason, setUrgentReason] = useState("");
-
   const [comment, setComment] = useState("");
-
   const [newTemperature, setNewTemperature] = useState("");
   const [newQuantity, setNewQuantity] = useState("");
 
   const testNames = getTestNames(testMethods);
-
   const selectedMethod = getSelectedMethod(
     testMethods,
     selectedTestMethod,
     selectedStandard,
   );
-
   const availableStandards = getAvailableStandards(
     testMethods,
     selectedTestMethod,
@@ -60,7 +50,6 @@ export const useApplicationForm = () => {
 
   const handleDocumentTypeChange = (value: DocumentType) => {
     setDocumentType(value);
-
     if (value === "NTZ") {
       setKpoNumber("");
     }
@@ -68,7 +57,6 @@ export const useApplicationForm = () => {
 
   const handleTopicChange = (value: string) => {
     setTopic(value);
-
     if (!value.trim()) {
       setIsUrgent(false);
       setUrgentReason("");
@@ -77,14 +65,12 @@ export const useApplicationForm = () => {
 
   const handleTestMethodSelect = (value: string) => {
     setSelectedTestMethod(value);
-
     setSelectedStandard("");
     setTemperatures([]);
   };
 
   const handleStandardSelect = (value: string) => {
     setSelectedStandard(value);
-
     setTemperatures([]);
   };
 
@@ -106,27 +92,21 @@ export const useApplicationForm = () => {
     if (!newTemperature.trim() || !newQuantity.trim()) {
       return;
     }
-
     const temperature = Number(newTemperature);
-
     if (!isTemperatureUnique(temperatures, temperature)) {
       alert("Такая температура уже добавлена");
       return;
     }
-
     if (!selectedTestMethod || !selectedStandard) {
       alert("Сначала выберите испытание и стандарт");
       return;
     }
-
     if (selectedMethod && !isTemperatureAllowed(temperature, selectedMethod)) {
       alert(
         `Допустимый диапазон температур: ${selectedMethod.testTemperatureMin}°C ... ${selectedMethod.testTemperatureMax}°C`,
       );
-
       return;
     }
-
     setTemperatures((prev) =>
       [
         ...prev,
@@ -137,7 +117,6 @@ export const useApplicationForm = () => {
         ),
       ].sort((a, b) => a.temperature - b.temperature),
     );
-
     setNewTemperature("");
     setNewQuantity("");
   };
@@ -152,6 +131,50 @@ export const useApplicationForm = () => {
     setIsUrgent(false);
     setUrgentReason("");
     setComment("");
+  };
+
+  const buildTaskPayload = (creatorId: string) => ({
+    creatorId,
+    type: documentType,
+    number: documentType === "KPO" ? kpoNumber : undefined,
+    materialName: materialName.trim(),
+    topic: topic.trim() || undefined,
+    testMethod: selectedTestMethod,
+    standard: selectedStandard,
+    temperatureConditions: temperatures.map((item) => ({
+      temperature: item.temperature,
+      quantity: item.quantity,
+      modulus:
+        selectedMethod &&
+        isModulusAvailable(
+          item.temperature,
+          selectedMethod.modulusTemperatureMax,
+        )
+          ? item.modulus
+          : false,
+    })),
+
+    isUrgent,
+    urgentReason: isUrgent ? urgentReason.trim() || undefined : undefined,
+    comment: comment.trim() || undefined,
+  });
+  const fillForm = (task: Task) => {
+    setDocumentType(task.type);
+    setKpoNumber(task.number);
+
+    setMaterialName(task.materialName);
+
+    setTopic(task.topic ?? "");
+
+    setSelectedTestMethod(task.testMethod);
+    setSelectedStandard(task.standard);
+
+    setTemperatures(task.temperatureConditions);
+
+    setIsUrgent(task.isUrgent);
+    setUrgentReason(task.urgentReason ?? "");
+
+    setComment(task.comment ?? "");
   };
   return {
     documentType,
@@ -194,6 +217,8 @@ export const useApplicationForm = () => {
     handleToggleModulus,
     handleSaveTemperature,
 
+    buildTaskPayload,
     resetForm,
+    fillForm,
   };
 };

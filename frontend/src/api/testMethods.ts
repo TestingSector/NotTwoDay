@@ -1,5 +1,5 @@
 import { api } from "./api";
-import type { TestMethod } from "../../types/application/DocumentType";
+import type { TestMethod } from "../types/application";
 
 export const getTestMethods = async (): Promise<TestMethod[]> => {
   const response = await api.get("/test-methods");

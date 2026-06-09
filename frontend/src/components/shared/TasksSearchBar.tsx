@@ -1,18 +1,20 @@
 import { SlidersHorizontal } from "lucide-react";
 
-type TaskSearchProps = {
+type TasksSearchBarProps = {
   search: string;
   onSearchChange: (value: string) => void;
-  statusFilter: "all" | "urgent" | "pending" | "active";
+
+  hasActiveFilter: boolean;
+
   onOpenFilters: () => void;
 };
 
-export function TaskSearch({
+export function TasksSearchBar({
   search,
   onSearchChange,
-  statusFilter,
+  hasActiveFilter,
   onOpenFilters,
-}: TaskSearchProps) {
+}: TasksSearchBarProps) {
   return (
     <div className="mt-4 flex gap-3">
       <input
@@ -28,7 +30,7 @@ export function TaskSearch({
       >
         <SlidersHorizontal size={18} />
 
-        {statusFilter !== "all" && (
+        {hasActiveFilter && (
           <div className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[var(--color-accent)]" />
         )}
       </button>

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Plus, FolderKanban } from "lucide-react";
 import type { User } from "../../types/user";
 import { StatCard } from "./StatCard";
-import { TaskSearch } from "./TaskSearch";
+import { TasksSearchBar } from "../shared/TasksSearchBar";
 import { DashboardHeader } from "./DashboardHeader";
 
 type TasksOverviewProps = {
@@ -10,7 +10,7 @@ type TasksOverviewProps = {
   totalTasks: number;
   search: string;
   onSearchChange: (value: string) => void;
-  statusFilter: "all" | "urgent" | "pending" | "active";
+  hasActiveFilter: boolean;
   onOpenFilters: () => void;
   pendingCount: number;
   activeCount: number;
@@ -21,7 +21,7 @@ export const TasksOverview = ({
   user,
   search,
   onSearchChange,
-  statusFilter,
+  hasActiveFilter,
   onOpenFilters,
   pendingCount,
   activeCount,
@@ -80,10 +80,10 @@ export const TasksOverview = ({
           <p className="mt-2 text-sm text-white/70">Мои задачи</p>
         </Link>
       </div>
-      <TaskSearch
+      <TasksSearchBar
         search={search}
         onSearchChange={onSearchChange}
-        statusFilter={statusFilter}
+        hasActiveFilter={hasActiveFilter}
         onOpenFilters={onOpenFilters}
       />
     </section>

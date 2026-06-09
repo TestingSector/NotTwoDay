@@ -18,7 +18,7 @@ export const createTask = async (task: unknown) => {
 };
 export const acceptTask = async (taskId: string, executorId: string) => {
   const response = await api.patch(`/tasks/${taskId}/accept`, {
-    executorId,
+    executorId: executorId,
   });
 
   return response.data;

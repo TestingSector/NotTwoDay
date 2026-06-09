@@ -1,7 +1,7 @@
 import type { User } from "../../types/user";
 
 export const currentUser: User = {
-  id: "b944f596-a1a0-41e6-82e8-9d610a84047f",
+  id: "e6519dc9-b8a0-4aa4-8751-9a2cf0472898",
   firstName: "Антон",
   lastName: "Губин",
   middleName: "Михайлович",

@@ -5,7 +5,7 @@ import { getMyTasks, matchesTaskFilter } from "../helpers/task";
 import { TasksView } from "../components/shared/TasksView";
 import type { Task } from "../types/task";
 
-export const MyTasksPage = () => {
+export const HistoryPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [search, setSearch] = useState("");
   const loadTasks = async () => {
@@ -29,9 +29,9 @@ export const MyTasksPage = () => {
 
     await loadTasks();
   };
+  const historyTasks = tasks.filter((task) => task.status === "completed");
 
-  const myTasks = getMyTasks(tasks, currentUser);
-  const filteredTasks = myTasks.filter((task) =>
+  const filteredTasks = historyTasks.filter((task) =>
     matchesTaskFilter({
       task,
       search,
@@ -41,7 +41,7 @@ export const MyTasksPage = () => {
   return (
     <TasksView
       title="Мои задачи"
-      subtitle={`${myTasks.length} активных задач`}
+      subtitle={`Выполненных испытаний: ${historyTasks.length}.`}
       tasks={filteredTasks}
       onAcceptTask={handleAcceptTask}
       onCompleteTask={handleCompleteTask}

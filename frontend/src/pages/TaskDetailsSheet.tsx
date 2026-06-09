@@ -13,7 +13,7 @@ import { useRef } from "react";
 import { getPrimaryTaskAction } from "../helpers/taskDetails/getPrimaryTaskAction";
 import { currentUser } from "../data/user/currentUser";
 import { useNavigate } from "react-router-dom";
-import { deleteTask, getTasks } from "../api";
+import { deleteTask } from "../api";
 
 type TaskDetailsSheetProps = {
   task: Task | null;

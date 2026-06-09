@@ -2,22 +2,22 @@ import { TasksOverview } from "../components/dashboard/TasksOverview";
 import { TaskList } from "../components/shared/TaskList";
 import { useState, useEffect } from "react";
 import { currentUser } from "../data/user/currentUser";
-import {
-  getDashboardTasks,
-  getTaskStats,
-  matchesTaskFilter,
-} from "../helpers/task";
+import { getDashboardTasks, getTaskStats } from "../helpers/task";
 import { acceptTask, completeTask, getTasks } from "../api";
-import { FilterSheet } from "../components/dashboard";
-import type { TaskStatusFilter } from "../types/taskStatusFilter";
+import { FilterSheet } from "../components/dashboard/FilterSheet";
 import type { Task } from "../types/task";
+import type { DashboardFilters } from "../types/dashboardFilters";
+import { matchesDashboardFilters } from "../helpers/task/matchesDashboardFilters";
 
 export const DashboardPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [search, setSearch] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const [statusFilter, setStatusFilter] = useState<TaskStatusFilter>("all");
+  const [filters, setFilters] = useState<DashboardFilters>({
+    status: "all",
+    laboratory: null,
+  });
   const loadTasks = async () => {
     const data = await getTasks();
 
@@ -35,10 +35,10 @@ export const DashboardPage = () => {
     getTaskStats(dashboardTasks);
 
   const filteredTasks = dashboardTasks.filter((task) =>
-    matchesTaskFilter({
+    matchesDashboardFilters({
       task,
       search,
-      statusFilter,
+      filters,
     }),
   );
 
@@ -70,7 +70,9 @@ export const DashboardPage = () => {
           totalTasks={dashboardTasks.length}
           search={search}
           onSearchChange={setSearch}
-          statusFilter={statusFilter}
+          hasActiveFilter={
+            filters.status !== "all" || filters.laboratory !== null
+          }
           onOpenFilters={handleOpenFilters}
           pendingCount={pendingCount}
           activeCount={activeCount}
@@ -89,8 +91,8 @@ export const DashboardPage = () => {
         <FilterSheet
           isFilterOpen={isFilterOpen}
           setIsFilterOpen={setIsFilterOpen}
-          statusFilter={statusFilter}
-          onStatusFilterChange={setStatusFilter}
+          filters={filters}
+          onFiltersChange={setFilters}
         />
       </section>
     </div>

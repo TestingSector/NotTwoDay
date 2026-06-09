@@ -1,5 +1,5 @@
 import type { DragControls } from "framer-motion";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { getTaskTypeLabel } from "../../helpers/shared";
 import type { Task } from "../../types/task";
 import { useState } from "react";
@@ -51,25 +51,44 @@ export const TaskHeader = ({
           Испытание на {task.testMethod.toLowerCase()}
         </p>
 
-        {isActionsOpen && (
-          <div className="absolute right-0 top-10 z-50 w-52 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg">
-            <button
-              className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-black/5"
-              onClick={onEdit}
-            >
-              <Pencil size={18} />
-              Редактировать
-            </button>
+        <AnimatePresence>
+          {isActionsOpen && (
+            <>
+              <motion.div
+                className="fixed inset-0 z-40"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.12 }}
+                onClick={() => setIsActionsOpen(false)}
+              />
 
-            <button
-              className="flex w-full items-center gap-3 px-4 py-3 text-left text-red-600 hover:bg-red-50"
-              onClick={onDelete}
-            >
-              <Trash2 size={18} />
-              Удалить
-            </button>
-          </div>
-        )}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.12 }}
+                className="absolute right-0 top-10 z-50 w-52 origin-top-right overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg"
+              >
+                <button
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-black/5"
+                  onClick={onEdit}
+                >
+                  <Pencil size={18} />
+                  Редактировать
+                </button>
+
+                <button
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left text-red-600 hover:bg-red-50"
+                  onClick={onDelete}
+                >
+                  <Trash2 size={18} />
+                  Удалить
+                </button>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </div>
     </motion.header>
   );

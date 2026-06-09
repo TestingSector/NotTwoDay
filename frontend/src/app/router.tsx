@@ -7,6 +7,7 @@ import { MyTasksPage } from "../pages/MyTasksPage";
 import { ProfilePage } from "../pages/ProfilePage";
 import { CreateApplicationPage } from "../pages/CreateApplicationPage";
 import { EditApplicationPage } from "../pages/EditApplicationPage";
+import { HistoryPage } from "../pages/HistoryPage";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
       {
         path: "edit-application/:id",
         element: <EditApplicationPage />,
+      },
+      {
+        path: "history",
+        element: <HistoryPage />,
       },
     ],
   },

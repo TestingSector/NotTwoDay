@@ -1,33 +1,22 @@
-import { useEffect, useState } from "react";
-import { acceptTask, completeTask, getTasks } from "../api";
+import { useState } from "react";
 import { currentUser } from "../data/user/currentUser";
 import { getMyTasks, matchesTaskFilter } from "../helpers/task";
 import { TasksView } from "../components/shared/TasksView";
-import type { Task } from "../types/task";
+import { useTasksStore } from "../store/tasksStore";
 
 export const MyTasksPage = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const tasks = useTasksStore((state) => state.tasks);
+  const acceptTaskStore = useTasksStore((state) => state.acceptTask);
+  const completeTaskStore = useTasksStore((state) => state.completeTask);
+
   const [search, setSearch] = useState("");
-  const loadTasks = async () => {
-    const data = await getTasks();
-
-    setTasks(data);
-  };
-
-  useEffect(() => {
-    loadTasks();
-  }, []);
 
   const handleAcceptTask = async (taskId: string, executorId: string) => {
-    await acceptTask(taskId, executorId);
-
-    await loadTasks();
+    await acceptTaskStore(taskId, executorId);
   };
 
   const handleCompleteTask = async (taskId: string) => {
-    await completeTask(taskId);
-
-    await loadTasks();
+    await completeTaskStore(taskId);
   };
 
   const myTasks = getMyTasks(tasks, currentUser);

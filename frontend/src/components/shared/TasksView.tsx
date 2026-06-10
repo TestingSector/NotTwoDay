@@ -8,9 +8,6 @@ type TasksViewProps = {
 
   tasks: Task[];
 
-  onAcceptTask: (taskId: string, executorId: string) => Promise<void>;
-
-  onCompleteTask: (taskId: string) => Promise<void>;
   search: string;
   onSearchChange: (value: string) => void;
 
@@ -22,8 +19,6 @@ export const TasksView = ({
   title,
   subtitle,
   tasks,
-  onAcceptTask,
-  onCompleteTask,
   search,
   onSearchChange,
   hasActiveFilter,
@@ -47,11 +42,7 @@ export const TasksView = ({
 
       <main className="flex-1 overflow-y-auto rounded-t-[var(--radius-lg)] bg-[var(--color-surface)]">
         <section className="flex h-full flex-col px-4 pb-28 pt-6">
-          <TaskList
-            tasks={tasks}
-            onAcceptTask={onAcceptTask}
-            onCompleteTask={onCompleteTask}
-          />
+          <TaskList tasks={tasks} />
         </section>
       </main>
     </div>

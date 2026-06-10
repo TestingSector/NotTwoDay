@@ -13,30 +13,32 @@ import { useRef } from "react";
 import { getPrimaryTaskAction } from "../helpers/taskDetails/getPrimaryTaskAction";
 import { currentUser } from "../data/user/currentUser";
 import { useNavigate } from "react-router-dom";
-import { deleteTask } from "../api";
+import { useTasksStore } from "../store/tasksStore";
 
 type TaskDetailsSheetProps = {
   task: Task | null;
   isOpen: boolean;
   onClose: () => void;
-  onAcceptTask: (taskId: string, executorId: string) => Promise<void>;
-  onCompleteTask: (taskId: string) => Promise<void>;
 };
 
 export const TaskDetailsSheet = ({
   task,
   isOpen,
   onClose,
-  onAcceptTask,
-  onCompleteTask,
 }: TaskDetailsSheetProps) => {
   const sheetRef = useRef<HTMLDivElement>(null);
   const dragControls = useDragControls();
   const y = useMotionValue(0);
   const navigate = useNavigate();
+
+  const acceptTask = useTasksStore((state) => state.acceptTask);
+  const completeTask = useTasksStore((state) => state.completeTask);
+  const deleteTask = useTasksStore((state) => state.deleteTask);
+
   const primaryAction = task ? getPrimaryTaskAction(task) : null;
 
   if (!isOpen || !task) return null;
+
   const handleDeleteTask = async () => {
     const confirmed = window.confirm(
       "Удалить заявку без возможности восстановления?",
@@ -46,12 +48,12 @@ export const TaskDetailsSheet = ({
 
     try {
       await deleteTask(task.id);
-
       onClose();
-    } catch (error) {
+    } catch {
       alert("Не удалось удалить заявку");
     }
   };
+
   return (
     <motion.div
       className="fixed inset-0 z-50"
@@ -59,9 +61,7 @@ export const TaskDetailsSheet = ({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      style={{
-        backgroundColor: "rgba(0,0,0,0.3)",
-      }}
+      style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
       onClick={onClose}
     >
       <motion.div
@@ -109,27 +109,31 @@ export const TaskDetailsSheet = ({
               variant="urgent"
             />
           )}
+
           <TaskInformation
             Icon={Package}
             title="Материал"
             description={task.materialName}
             variant="material"
           />
+
           <TaskInformation
             Icon={DockIcon}
             title="Договор/тематика"
             description={task.topic}
             variant="document"
           />
+
           <TemperatureConditionsCard
             standard={task.standard}
             conditions={task.temperatureConditions}
           />
+
           {primaryAction === "accept" && (
             <ActionButton
               className="mt-6"
               onClick={async () => {
-                await onAcceptTask(task.id, currentUser.id);
+                await acceptTask(task.id, currentUser.id);
                 onClose();
               }}
             >
@@ -141,14 +145,16 @@ export const TaskDetailsSheet = ({
             <ActionButton
               className="mt-6"
               onClick={async () => {
-                await onCompleteTask(task.id);
+                await completeTask(task.id);
                 onClose();
               }}
             >
               Завершить работу
             </ActionButton>
           )}
+
           {task.comment && <TaskComments task={task} />}
+
           <TaskHistory
             task={task}
             onOpenHistory={() => {

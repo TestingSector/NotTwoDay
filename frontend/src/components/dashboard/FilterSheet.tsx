@@ -3,7 +3,7 @@ import { BottomSheet } from "../../ui";
 
 interface DashboardFilterSheetProps {
   isFilterOpen: boolean;
-  setIsFilterOpen: (value: boolean) => void;
+  onClose: () => void;
   filters: DashboardFilters;
   onFiltersChange: (filters: DashboardFilters) => void;
 }
@@ -28,14 +28,14 @@ const filterOptions = [
 const laboratories = ["610", "611", "612"] as const;
 export const FilterSheet = ({
   isFilterOpen,
-  setIsFilterOpen,
+  onClose,
   filters,
   onFiltersChange,
 }: DashboardFilterSheetProps) => {
   return (
     <BottomSheet
       isOpen={isFilterOpen}
-      onClose={() => setIsFilterOpen(false)}
+      onClose={onClose}
       title="Фильтр задач"
       subtitle="Выберите отображаемые задачи"
     >
@@ -102,7 +102,7 @@ export const FilterSheet = ({
       ))}
 
       <button
-        onClick={() => setIsFilterOpen(false)}
+        onClick={onClose}
         className="mt-5 w-full rounded-[20px] bg-[var(--color-accent)] p-4 font-medium text-white"
       >
         Применить

@@ -5,9 +5,10 @@ import type { Task } from "../types/task";
 import { matchesHistoryFilters } from "../helpers/task/matchesHistoryFilters";
 import type { HistoryFilters } from "../types/historyFilters";
 import { HistoryFilterSheet } from "../components/history/HistoryFilterSheet";
+import { useTasksStore } from "../store/tasksStore";
 
 export const HistoryPage = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const tasks = useTasksStore((state) => state.tasks);
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<HistoryFilters>({
     period: "all",
@@ -17,27 +18,7 @@ export const HistoryPage = () => {
   });
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const loadTasks = async () => {
-    const data = await getTasks();
 
-    setTasks(data);
-  };
-
-  useEffect(() => {
-    loadTasks();
-  }, []);
-
-  const handleAcceptTask = async (taskId: string, executorId: string) => {
-    await acceptTask(taskId, executorId);
-
-    await loadTasks();
-  };
-
-  const handleCompleteTask = async (taskId: string) => {
-    await completeTask(taskId);
-
-    await loadTasks();
-  };
   const historyTasks = tasks.filter((task) => task.status === "completed");
 
   const filteredTasks = historyTasks.filter((task) =>
@@ -53,8 +34,6 @@ export const HistoryPage = () => {
         title="История"
         subtitle={`Завершённых испытаний: ${historyTasks.length}.`}
         tasks={filteredTasks}
-        onAcceptTask={handleAcceptTask}
-        onCompleteTask={handleCompleteTask}
         search={search}
         onSearchChange={setSearch}
         hasActiveFilter={

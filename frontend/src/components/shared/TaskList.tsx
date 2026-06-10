@@ -5,16 +5,11 @@ import { TaskDetailsSheet } from "../../pages/TaskDetailsSheet";
 
 type TaskListProps = {
   tasks: Task[];
-  onAcceptTask: (taskId: string, executorId: string) => Promise<void>;
-  onCompleteTask: (taskId: string) => Promise<void>;
 };
 
-export const TaskList = ({
-  tasks,
-  onAcceptTask,
-  onCompleteTask,
-}: TaskListProps) => {
+export const TaskList = ({ tasks }: TaskListProps) => {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
   return (
     <>
       {tasks.map((task, index) => (
@@ -29,8 +24,6 @@ export const TaskList = ({
         task={selectedTask}
         isOpen={!!selectedTask}
         onClose={() => setSelectedTask(null)}
-        onAcceptTask={onAcceptTask}
-        onCompleteTask={onCompleteTask}
       />
     </>
   );

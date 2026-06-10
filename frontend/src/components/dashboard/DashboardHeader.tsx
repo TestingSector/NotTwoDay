@@ -1,10 +1,7 @@
-import type { User } from "../../types/user";
+import { currentUser } from "../../data/user/currentUser";
 
-type DashboardHeaderProps = {
-  user: User;
-};
-
-export const DashboardHeader = ({ user }: DashboardHeaderProps) => {
+export const DashboardHeader = () => {
+  const user = currentUser;
   return (
     <>
       {" "}

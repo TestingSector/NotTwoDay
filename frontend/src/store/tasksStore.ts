@@ -1,5 +1,11 @@
 import { create } from "zustand";
-import { acceptTask, completeTask, getTasks } from "../api";
+import {
+  acceptTask,
+  completeTask,
+  deleteTask,
+  getTasks,
+  updateTask,
+} from "../api";
 import type { Task } from "../types/task";
 
 type TasksStore = {
@@ -11,6 +17,8 @@ type TasksStore = {
   acceptTask: (taskId: string, executorId: string) => Promise<void>;
 
   completeTask: (taskId: string) => Promise<void>;
+  deleteTask: (taskId: string) => Promise<void>;
+  updateTask: (taskId: string, data: any) => Promise<void>;
 };
 
 export const useTasksStore = create<TasksStore>((set) => ({
@@ -36,6 +44,21 @@ export const useTasksStore = create<TasksStore>((set) => ({
 
   completeTask: async (taskId) => {
     await completeTask(taskId);
+
+    const tasks = await getTasks();
+
+    set({ tasks });
+  },
+  deleteTask: async (taskId) => {
+    await deleteTask(taskId);
+
+    const tasks = await getTasks();
+
+    set({ tasks });
+  },
+
+  updateTask: async (taskId, payload) => {
+    await updateTask(taskId, payload);
 
     const tasks = await getTasks();
 

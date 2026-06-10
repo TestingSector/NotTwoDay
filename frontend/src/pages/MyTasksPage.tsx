@@ -6,18 +6,8 @@ import { useTasksStore } from "../store/tasksStore";
 
 export const MyTasksPage = () => {
   const tasks = useTasksStore((state) => state.tasks);
-  const acceptTaskStore = useTasksStore((state) => state.acceptTask);
-  const completeTaskStore = useTasksStore((state) => state.completeTask);
 
   const [search, setSearch] = useState("");
-
-  const handleAcceptTask = async (taskId: string, executorId: string) => {
-    await acceptTaskStore(taskId, executorId);
-  };
-
-  const handleCompleteTask = async (taskId: string) => {
-    await completeTaskStore(taskId);
-  };
 
   const myTasks = getMyTasks(tasks, currentUser);
   const filteredTasks = myTasks.filter((task) =>
@@ -32,8 +22,6 @@ export const MyTasksPage = () => {
       title="Мои задачи"
       subtitle={`${myTasks.length} активных задач`}
       tasks={filteredTasks}
-      onAcceptTask={handleAcceptTask}
-      onCompleteTask={handleCompleteTask}
       search={search}
       onSearchChange={setSearch}
       hasActiveFilter={false}

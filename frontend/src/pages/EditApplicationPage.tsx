@@ -17,6 +17,7 @@ import {
 import { ActionButton } from "../ui";
 import { useApplicationForm } from "../hooks/useApplicationForm";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTasksStore } from "../store/tasksStore";
 
 export const EditApplicationPage = () => {
   const form = useApplicationForm();
@@ -28,7 +29,7 @@ export const EditApplicationPage = () => {
     getTask(id).then(form.fillForm);
   }, [id]);
   // FORM STATE
-
+  const updateTask = useTasksStore((state) => state.updateTask);
   // SHEETS
   const [isTestMethodSheetOpen, setIsTestMethodSheetOpen] = useState(false);
   const [isTemperatureSheetOpen, setIsTemperatureSheetOpen] = useState(false);

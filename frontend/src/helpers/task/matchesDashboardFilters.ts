@@ -29,17 +29,18 @@ export const matchesDashboardFilters = ({
     creator.toLowerCase().includes(searchValue) ||
     executor.toLowerCase().includes(searchValue);
 
-  const matchesStatus =
-    filters.status === "all"
-      ? true
-      : filters.status === "urgent"
-        ? task.isUrgent && task.status === "pending"
-        : task.status === filters.status;
+  let matchesStatus = true;
+
+  if (filters.status === "urgent") {
+    matchesStatus = task.isUrgent && task.status === "pending";
+  } else if (filters.status !== "all") {
+    matchesStatus = task.status === filters.status;
+  }
 
   const matchesLaboratory =
     filters.laboratory === null
       ? true
-      : task.creator.laboratory === filters.laboratory;
+      : task.creator?.laboratory === filters.laboratory;
 
   return matchesSearch && matchesStatus && matchesLaboratory;
 };

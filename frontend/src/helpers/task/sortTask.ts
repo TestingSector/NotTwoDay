@@ -5,7 +5,7 @@ const getTaskPriority = (task: Task) => {
     return 0;
   }
 
-  if (task.isUrgent) {
+  if (task.isUrgent && task.status === "pending") {
     return 1;
   }
 

@@ -10,6 +10,7 @@ import { Task, TaskStatus } from './task.entity';
 import { User } from '../users/user.entity';
 import { SystemSettingsService } from '../system-settings/system-settings.service';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { MOCK_TASKS } from './tasks.data';
 
 @Injectable()
 export class TasksService {
@@ -226,5 +227,35 @@ export class TasksService {
     return {
       message: 'Task deleted',
     };
+  }
+
+  async seed() {
+    const users = await this.userRepository.find();
+
+    const gubin = users.find((u) => u.lastName === 'Губин');
+    const ivanov = users.find((u) => u.lastName === 'Иванов');
+
+    const nacharkina = users.find((u) => u.lastName === 'Начаркина');
+    const kovalenko = users.find((u) => u.lastName === 'Коваленко');
+    const userMap = {
+      nacharkina,
+      kovalenko,
+      gubin,
+      ivanov,
+    };
+
+    if (!gubin || !ivanov || !nacharkina || !kovalenko) {
+      throw new NotFoundException('Seed users not found');
+    }
+
+    const tasks = MOCK_TASKS.map((task) => ({
+      ...task,
+      creator: userMap[task.creator],
+      executor: task.executor ? userMap[task.executor] : null,
+    }));
+
+    await this.taskRepository.save(tasks);
+
+    return this.findAll();
   }
 }

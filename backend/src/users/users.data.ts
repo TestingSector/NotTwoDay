@@ -31,4 +31,14 @@ export const MOCK_USERS = [
     isApproved: false,
     createdAt: '2026-06-02T12:54:28.708Z',
   },
+  {
+    firstName: 'Дмитрий',
+    lastName: 'Иванов',
+    middleName: 'Денисович',
+    laboratory: '611',
+    phoneNumber: '+79991234567',
+    role: UserRole.ENGINEER,
+    isApproved: true,
+    createdAt: '2026-06-01T12:54:28.708Z',
+  },
 ];

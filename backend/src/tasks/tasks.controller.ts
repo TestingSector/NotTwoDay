@@ -79,4 +79,9 @@ export class TasksController {
   ) {
     return this.tasksService.remove(id);
   }
+
+  @Post('seed')
+  seed() {
+    return this.tasksService.seed();
+  }
 }

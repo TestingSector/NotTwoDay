@@ -33,7 +33,7 @@ export const matchesDashboardFilters = ({
     filters.status === "all"
       ? true
       : filters.status === "urgent"
-        ? task.isUrgent
+        ? task.isUrgent && task.status === "pending"
         : task.status === filters.status;
 
   const matchesLaboratory =

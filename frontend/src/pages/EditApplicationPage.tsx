@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { updateTask, getTask } from "../api";
+import { getTask } from "../api";
 
 import { currentUser } from "../data/user/currentUser";
 import {

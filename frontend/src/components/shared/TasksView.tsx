@@ -1,6 +1,7 @@
 import { TaskList } from "./TaskList";
 import type { Task } from "../../types/task";
 import { TasksSearchBar } from "./TasksSearchBar";
+import { TaskFilters } from "./TaskFilters";
 
 type TasksViewProps = {
   title: string;
@@ -11,8 +12,8 @@ type TasksViewProps = {
   search: string;
   onSearchChange: (value: string) => void;
 
-  hasActiveFilter: boolean;
-  onOpenFilters: () => void;
+  showStatusFilter?: boolean;
+  showDateFilter?: boolean;
 };
 
 export const TasksView = ({
@@ -21,8 +22,8 @@ export const TasksView = ({
   tasks,
   search,
   onSearchChange,
-  hasActiveFilter,
-  onOpenFilters,
+  showStatusFilter = false,
+  showDateFilter = false,
 }: TasksViewProps) => {
   return (
     <div className="flex h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
@@ -32,16 +33,15 @@ export const TasksView = ({
         </h1>
 
         <p className="mt-3 text-sm font-medium text-white/70">{subtitle}</p>
-        <TasksSearchBar
-          search={search}
-          onSearchChange={onSearchChange}
-          hasActiveFilter={hasActiveFilter}
-          onOpenFilters={onOpenFilters}
-        />
+        <TasksSearchBar search={search} onSearchChange={onSearchChange} />
       </header>
 
       <main className="flex-1 overflow-y-auto rounded-t-[var(--radius-lg)] bg-[var(--color-surface)]">
-        <section className="flex h-full flex-col px-4 pb-28 pt-6">
+        <section className="flex flex-col px-4 pb-28 pt-6">
+          <TaskFilters
+            showStatus={showStatusFilter}
+            showDate={showDateFilter}
+          />
           <TaskList tasks={tasks} />
         </section>
       </main>

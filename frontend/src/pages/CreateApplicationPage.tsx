@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { createTask } from "../api";
-
 import { currentUser } from "../data/user/currentUser";
 import {
   DocumentSection,
@@ -16,9 +14,11 @@ import {
 
 import { ActionButton } from "../ui";
 import { useApplicationForm } from "../hooks/useApplicationForm";
+import { useTasksStore } from "../store/tasksStore";
 
 export const CreateApplicationPage = () => {
   const form = useApplicationForm();
+  const createTask = useTasksStore((state) => state.createTask);
   // FORM STATE
 
   // SHEETS

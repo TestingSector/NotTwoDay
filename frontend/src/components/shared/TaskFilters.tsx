@@ -1,6 +1,6 @@
-import { ChevronDown, X } from "lucide-react";
 import { useAppStore } from "../../store/appStore";
 import { TaskFiltersSheet } from "./TaskFiltersSheet";
+import { FilterChip } from "./FilterChip";
 type TaskFiltersProps = {
   showStatus?: boolean;
   showDate?: boolean;
@@ -25,51 +25,21 @@ export const TaskFilters = ({
     <>
       <div className="mb-4 flex gap-2 overflow-x-auto">
         {showStatus && (
-          <button
+          <FilterChip
+            label="Статус"
+            active={isStatusActive}
             onClick={() => openSheet("status")}
-            className={`flex shrink-0 items-center gap-1 rounded-full px-3 py-1.5 text-[12px] font-medium transition-colors ${
-              isStatusActive
-                ? "bg-[var(--color-accent)] text-white"
-                : "border-[var(--color-accent)]/20 bg-[var(--color-accent)]/10 border text-[var(--color-text)]"
-            }`}
-          >
-            Статус
-            {isStatusActive ? (
-              <X
-                size={12}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setStatusFilter("all");
-                }}
-              />
-            ) : (
-              <ChevronDown size={12} />
-            )}
-          </button>
+            onReset={() => setStatusFilter("all")}
+          />
         )}
 
         {showDate && (
-          <button
+          <FilterChip
+            label="Период"
+            active={isDateActive}
             onClick={() => openSheet("date")}
-            className={`flex shrink-0 items-center gap-1 rounded-full px-3 py-1.5 text-[12px] font-medium transition-colors ${
-              isDateActive
-                ? "bg-[var(--color-accent)] text-white"
-                : "border-[var(--color-accent)]/20 bg-[var(--color-accent)]/10 border text-[var(--color-text)]"
-            }`}
-          >
-            Период
-            {isDateActive ? (
-              <X
-                size={12}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setDateFilter("all");
-                }}
-              />
-            ) : (
-              <ChevronDown size={12} />
-            )}
-          </button>
+            onReset={() => setDateFilter("all")}
+          />
         )}
       </div>
 

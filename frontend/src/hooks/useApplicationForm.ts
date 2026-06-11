@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
-import { getTestMethods } from "../api";
+import { useState } from "react";
 import type {
   ApplicationTemperatureCondition,
   DocumentType,
-  TestMethod,
 } from "../types/application";
 import {
   createTemperatureCondition,
@@ -15,12 +13,11 @@ import {
 } from "../helpers/application";
 import { isModulusAvailable } from "../helpers/application";
 import type { Task } from "../types/task";
+import { useReferenceStore } from "../store/referenceStore";
+import type { TaskPayload } from "../types/taskPayload";
 
 export const useApplicationForm = () => {
-  const [testMethods, setTestMethods] = useState<TestMethod[]>([]);
-  useEffect(() => {
-    getTestMethods().then(setTestMethods);
-  }, []);
+  const testMethods = useReferenceStore((state) => state.testMethods);
 
   const [documentType, setDocumentType] = useState<DocumentType>("NTZ");
   const [temperatures, setTemperatures] = useState<
@@ -133,7 +130,7 @@ export const useApplicationForm = () => {
     setComment("");
   };
 
-  const buildTaskPayload = (creatorId: string) => ({
+  const buildTaskPayload = (creatorId: string): TaskPayload => ({
     creatorId,
     type: documentType,
     number: documentType === "KPO" ? kpoNumber : undefined,

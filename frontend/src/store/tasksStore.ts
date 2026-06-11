@@ -1,12 +1,14 @@
 import { create } from "zustand";
 import {
-  acceptTask,
-  completeTask,
-  deleteTask,
-  getTasks,
-  updateTask,
+  createTask as createTaskApi,
+  updateTask as updateTaskApi,
+  deleteTask as deleteTaskApi,
+  acceptTask as acceptTaskApi,
+  completeTask as completeTaskApi,
+  getTasks as getTasksApi,
 } from "../api";
 import type { Task } from "../types/task";
+import type { TaskPayload } from "../types/taskPayload";
 
 type TasksStore = {
   tasks: Task[];
@@ -18,15 +20,22 @@ type TasksStore = {
 
   completeTask: (taskId: string) => Promise<void>;
   deleteTask: (taskId: string) => Promise<void>;
-  updateTask: (taskId: string, data: any) => Promise<void>;
+  updateTask: (taskId: string, data: TaskPayload) => Promise<void>;
+  createTask: (payload: TaskPayload) => Promise<void>;
+  refreshTasks: () => Promise<void>;
 };
 
-export const useTasksStore = create<TasksStore>((set) => ({
+export const useTasksStore = create<TasksStore>((set, get) => ({
   tasks: [],
   isLoaded: false,
 
+  refreshTasks: async () => {
+    const tasks = await getTasksApi();
+
+    set({ tasks });
+  },
   loadTasks: async () => {
-    const tasks = await getTasks();
+    const tasks = await getTasksApi();
 
     set({
       tasks,
@@ -35,33 +44,29 @@ export const useTasksStore = create<TasksStore>((set) => ({
   },
 
   acceptTask: async (taskId, executorId) => {
-    await acceptTask(taskId, executorId);
+    await acceptTaskApi(taskId, executorId);
 
-    const tasks = await getTasks();
-
-    set({ tasks });
+    await get().refreshTasks();
   },
 
   completeTask: async (taskId) => {
-    await completeTask(taskId);
+    await completeTaskApi(taskId);
 
-    const tasks = await getTasks();
-
-    set({ tasks });
+    await get().refreshTasks();
   },
   deleteTask: async (taskId) => {
-    await deleteTask(taskId);
+    await deleteTaskApi(taskId);
 
-    const tasks = await getTasks();
-
-    set({ tasks });
+    await get().refreshTasks();
   },
 
   updateTask: async (taskId, payload) => {
-    await updateTask(taskId, payload);
+    await updateTaskApi(taskId, payload);
 
-    const tasks = await getTasks();
-
-    set({ tasks });
+    await get().refreshTasks();
+  },
+  createTask: async (payload) => {
+    await createTaskApi(payload);
+    await get().refreshTasks();
   },
 }));

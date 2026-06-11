@@ -21,6 +21,7 @@ import { useTasksStore } from "../store/tasksStore";
 
 export const EditApplicationPage = () => {
   const form = useApplicationForm();
+  const updateTask = useTasksStore((state) => state.updateTask);
   const { id } = useParams();
   const navigate = useNavigate();
   useEffect(() => {
@@ -29,7 +30,7 @@ export const EditApplicationPage = () => {
     getTask(id).then(form.fillForm);
   }, [id]);
   // FORM STATE
-  const updateTask = useTasksStore((state) => state.updateTask);
+
   // SHEETS
   const [isTestMethodSheetOpen, setIsTestMethodSheetOpen] = useState(false);
   const [isTemperatureSheetOpen, setIsTemperatureSheetOpen] = useState(false);

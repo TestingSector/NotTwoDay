@@ -63,15 +63,15 @@ export const BottomSheet = ({
       >
         <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-[var(--color-border)]" />
 
-        <h2 className="text-2xl font-semibold">{title}</h2>
+        <h2 className="text-center text-2xl font-semibold">{title}</h2>
 
         {subtitle && (
-          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
+          <p className="mt-1 text-center text-sm text-[var(--color-text-secondary)]">
             {subtitle}
           </p>
         )}
 
-        <div className="mt-4 flex-1 overflow-y-auto pb-8">{children}</div>
+        <div className="mt-4 flex-1 overflow-y-auto">{children}</div>
       </motion.div>
     </motion.div>
   );

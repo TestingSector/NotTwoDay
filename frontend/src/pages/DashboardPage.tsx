@@ -36,14 +36,14 @@ export const DashboardPage = () => {
   return (
     <div className="flex h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
       <div className="shrink-0 px-4 pt-4">
-        <section className="relative overflow-hidden pb-5 pt-4">
+        <section className="pb-5">
           <DashboardHeader />
           <DashboardWidgets />
           <TasksSearchBar search={search} onSearchChange={setSearch} />
         </section>
       </div>
       <section className="mx-4 flex min-h-0 flex-1 flex-col rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pt-5 shadow-sm">
-        <div className="flex-1 overflow-y-auto pb-28">
+        <div className="flex-1 overflow-y-auto pb-10">
           <TaskFilters showDate={true} showStatus={true} />
           <TaskList tasks={filteredTasks} />
         </div>

@@ -1,21 +1,27 @@
+import type { ApplicationFormData } from "../../schemas/applicationSchema";
 import { ApplicationCard, FormInput, FormSwitch } from "../../ui";
-
+import {
+  Controller,
+  type Control,
+  type FieldErrors,
+  type UseFormRegister,
+  type UseFormWatch,
+} from "react-hook-form";
 interface Props {
-  isUrgent: boolean;
-  topic: string;
-  urgentReason: string;
-
-  onUrgentChange: (value: boolean) => void;
-  onUrgentReasonChange: (value: string) => void;
+  control: Control<ApplicationFormData>;
+  register: UseFormRegister<ApplicationFormData>;
+  watch: UseFormWatch<ApplicationFormData>;
+  errors: FieldErrors<ApplicationFormData>;
 }
 
 export const PrioritySection = ({
-  isUrgent,
-  topic,
-  urgentReason,
-  onUrgentChange,
-  onUrgentReasonChange,
+  control,
+  register,
+  watch,
+  errors,
 }: Props) => {
+  const isUrgent = watch("isUrgent");
+  const topic = watch("topic");
   return (
     <ApplicationCard title="Приоритет">
       <div className="flex items-center justify-between">
@@ -26,11 +32,16 @@ export const PrioritySection = ({
             Требует заполненной тематики или договора
           </p>
         </div>
-
-        <FormSwitch
-          checked={isUrgent}
-          onChange={onUrgentChange}
-          disabled={!topic.trim()}
+        <Controller
+          name="isUrgent"
+          control={control}
+          render={({ field }) => (
+            <FormSwitch
+              checked={field.value}
+              onChange={field.onChange}
+              disabled={!topic.trim()}
+            />
+          )}
         />
       </div>
 
@@ -40,10 +51,14 @@ export const PrioritySection = ({
         }`}
       >
         <FormInput
-          value={urgentReason}
-          onChange={onUrgentReasonChange}
+          {...register("urgentReason")}
           placeholder="Укажите причину срочности"
         />
+        {errors.urgentReason && (
+          <p className="mt-1 text-xs text-red-400">
+            {errors.urgentReason.message}
+          </p>
+        )}
       </div>
     </ApplicationCard>
   );

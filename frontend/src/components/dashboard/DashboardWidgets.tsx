@@ -10,39 +10,50 @@ export const DashboardWidgets = () => {
   const { pendingCount, activeCount, urgentCount } = getTaskStats(tasks);
 
   return (
-    <div className="mt-5 grid grid-cols-2 gap-3">
-      <div className="grid grid-cols-2 gap-2">
-        <StatCard
-          value={pendingCount}
-          label="Ожидание"
-          borderColor="#3B82F680"
-          backgroundColor="#3B82F670"
-        />
+    <div className="mt-5 snap-x snap-mandatory overflow-x-auto">
+      <div className="flex min-w-max gap-3">
+        <div className="w-[42%] shrink-0 snap-start">
+          <div className="grid grid-cols-2 gap-2">
+            <StatCard
+              value={pendingCount}
+              label="Ожидание"
+              borderColor="#3B82F680"
+              backgroundColor="#3B82F670"
+            />
 
-        <StatCard
-          value={activeCount}
-          label="В работе"
-          borderColor="#22C55E80"
-          backgroundColor="#22C55E70"
-        />
+            <StatCard
+              value={activeCount}
+              label="В работе"
+              borderColor="#22C55E80"
+              backgroundColor="#22C55E70"
+            />
 
-        <StatCard
-          value={urgentCount}
-          label="Срочно"
-          borderColor="#F59E0B80"
-          backgroundColor="#F59E0B70"
-        />
+            <StatCard
+              value={urgentCount}
+              label="Срочно"
+              borderColor="#F59E0B80"
+              backgroundColor="#F59E0B70"
+            />
+            <Link
+              to="/create-application"
+              className="flex h-[64px] items-center justify-center rounded-[18px] bg-[var(--color-accent)]"
+            >
+              <Plus size={24} className="text-white" />
+            </Link>
+          </div>
+        </div>
 
-        <Link
-          to="/create-application"
-          className="flex h-[64px] items-center justify-center rounded-[18px] bg-[var(--color-accent)]"
-        >
-          <Plus size={24} className="text-white" />
-        </Link>
+        <div className="w-[42%] shrink-0 snap-start">
+          <QuickLinkCard
+            to="/my-tasks"
+            title="Мои задачи"
+            icon={FolderKanban}
+          />
+        </div>
+        <div className="w-[42%] shrink-0 snap-start">
+          <QuickLinkCard to="/history" title="История задач" icon={History} />
+        </div>
       </div>
-
-      <QuickLinkCard to="/my-tasks" title="Мои задачи" icon={FolderKanban} />
-      <QuickLinkCard to="/history" title="История" icon={History} />
     </div>
   );
 };

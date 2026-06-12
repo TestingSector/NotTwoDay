@@ -13,7 +13,7 @@ export const Layout = () => {
   }, [loadTestMethods, loadTasks]);
 
   return (
-    <div className="flex h-screen justify-center bg-[var(--color-shell)]">
+    <div className="flex min-h-screen justify-center bg-[var(--color-shell)]">
       <div className="relative flex h-screen w-full max-w-md overflow-hidden">
         <Outlet />
       </div>

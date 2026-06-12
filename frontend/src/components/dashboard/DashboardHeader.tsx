@@ -4,7 +4,6 @@ export const DashboardHeader = () => {
   const user = currentUser;
   return (
     <>
-      {" "}
       <div className="absolute -top-20 left-0 overflow-hidden">
         <svg
           width="220"

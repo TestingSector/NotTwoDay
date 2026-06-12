@@ -1,37 +1,37 @@
 import { ApplicationCard, FormInput } from "../../ui";
 
-interface Props {
-  topic: string;
-  onTopicChange: (value: string) => void;
-  materialName: string;
-  onMaterialNameChange: (value: string) => void;
-}
+import type { FieldErrors, UseFormRegister } from "react-hook-form";
 
-export const TopicSection = ({
-  topic,
-  onTopicChange,
-  materialName,
-  onMaterialNameChange,
-}: Props) => {
+import type { ApplicationFormData } from "../../schemas/applicationSchema";
+
+interface Props {
+  register: UseFormRegister<ApplicationFormData>;
+  errors: FieldErrors<ApplicationFormData>;
+}
+export const TopicSection = ({ register, errors }: Props) => {
   return (
-    <>
-      <ApplicationCard title="Материал и тематика/договор">
+    <ApplicationCard title="Материал и тематика/договор">
+      <FormInput
+        {...register("materialName")}
+        placeholder="Введите название материала"
+      />
+
+      {errors.materialName && (
+        <p className="mt-1 text-xs text-red-400">
+          {errors.materialName.message}
+        </p>
+      )}
+
+      <div className="mt-4">
         <FormInput
-          value={materialName}
-          onChange={onMaterialNameChange}
-          placeholder="Введите название материала"
+          {...register("topic")}
+          placeholder="Введите номер договора или тематику"
         />
-        <div className="mt-4">
-          <FormInput
-            value={topic}
-            onChange={onTopicChange}
-            placeholder="Введите номер договора или тематику"
-          />
-          <p className="mt-2 text-xs text-[var(--color-text-secondary)]">
-            Заполняется при необходимости
-          </p>
-        </div>
-      </ApplicationCard>
-    </>
+
+        <p className="mt-2 text-xs text-[var(--color-text-secondary)]">
+          Заполняется при необходимости
+        </p>
+      </div>
+    </ApplicationCard>
   );
 };

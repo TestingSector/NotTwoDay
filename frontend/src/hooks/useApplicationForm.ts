@@ -1,8 +1,5 @@
 import { useState } from "react";
-import type {
-  ApplicationTemperatureCondition,
-  DocumentType,
-} from "../types/application";
+import type { ApplicationTemperatureCondition } from "../types/application";
 import {
   createTemperatureCondition,
   getAvailableStandards,
@@ -15,22 +12,17 @@ import { isModulusAvailable } from "../helpers/application";
 import type { Task } from "../types/task";
 import { useReferenceStore } from "../store/referenceStore";
 import type { TaskPayload } from "../types/taskPayload";
+import type { ApplicationFormData } from "../schemas/applicationSchema";
 
 export const useApplicationForm = () => {
   const testMethods = useReferenceStore((state) => state.testMethods);
 
-  const [documentType, setDocumentType] = useState<DocumentType>("NTZ");
   const [temperatures, setTemperatures] = useState<
     ApplicationTemperatureCondition[]
   >([]);
   const [selectedTestMethod, setSelectedTestMethod] = useState("");
   const [selectedStandard, setSelectedStandard] = useState("");
-  const [kpoNumber, setKpoNumber] = useState("");
-  const [topic, setTopic] = useState("");
-  const [materialName, setMaterialName] = useState("");
-  const [isUrgent, setIsUrgent] = useState(false);
-  const [urgentReason, setUrgentReason] = useState("");
-  const [comment, setComment] = useState("");
+
   const [newTemperature, setNewTemperature] = useState("");
   const [newQuantity, setNewQuantity] = useState("");
 
@@ -44,21 +36,6 @@ export const useApplicationForm = () => {
     testMethods,
     selectedTestMethod,
   );
-
-  const handleDocumentTypeChange = (value: DocumentType) => {
-    setDocumentType(value);
-    if (value === "NTZ") {
-      setKpoNumber("");
-    }
-  };
-
-  const handleTopicChange = (value: string) => {
-    setTopic(value);
-    if (!value.trim()) {
-      setIsUrgent(false);
-      setUrgentReason("");
-    }
-  };
 
   const handleTestMethodSelect = (value: string) => {
     setSelectedTestMethod(value);
@@ -118,24 +95,23 @@ export const useApplicationForm = () => {
     setNewQuantity("");
   };
   const resetForm = () => {
-    setDocumentType("NTZ");
-    setKpoNumber("");
-    setMaterialName("");
-    setTopic("");
     setSelectedTestMethod("");
     setSelectedStandard("");
     setTemperatures([]);
-    setIsUrgent(false);
-    setUrgentReason("");
-    setComment("");
+
+    setNewTemperature("");
+    setNewQuantity("");
   };
 
-  const buildTaskPayload = (creatorId: string): TaskPayload => ({
+  const buildTaskPayload = (
+    creatorId: string,
+    formData: ApplicationFormData,
+  ): TaskPayload => ({
     creatorId,
-    type: documentType,
-    number: documentType === "KPO" ? kpoNumber : undefined,
-    materialName: materialName.trim(),
-    topic: topic.trim() || undefined,
+    type: formData.documentType,
+    number: formData.documentType === "KPO" ? formData.kpoNumber : undefined,
+    materialName: formData.materialName.trim(),
+    topic: formData.topic.trim() || undefined,
     testMethod: selectedTestMethod,
     standard: selectedStandard,
     temperatureConditions: temperatures.map((item) => ({
@@ -151,41 +127,32 @@ export const useApplicationForm = () => {
           : false,
     })),
 
-    isUrgent,
-    urgentReason: isUrgent ? urgentReason.trim() || undefined : undefined,
-    comment: comment.trim() || undefined,
+    isUrgent: formData.isUrgent,
+    urgentReason: formData.isUrgent
+      ? formData.urgentReason.trim() || undefined
+      : undefined,
+
+    comment: formData.comment.trim() || undefined,
   });
   const fillForm = (task: Task) => {
-    setDocumentType(task.type);
-    setKpoNumber(task.number);
-
-    setMaterialName(task.materialName);
-
-    setTopic(task.topic ?? "");
-
     setSelectedTestMethod(task.testMethod);
     setSelectedStandard(task.standard);
-
     setTemperatures(task.temperatureConditions);
-
-    setIsUrgent(task.isUrgent);
-    setUrgentReason(task.urgentReason ?? "");
-
-    setComment(task.comment ?? "");
   };
+
+  const getFormValues = (task: Task): ApplicationFormData => ({
+    documentType: task.type,
+    kpoNumber: task.number ?? "",
+    materialName: task.materialName,
+    topic: task.topic ?? "",
+    isUrgent: task.isUrgent,
+    urgentReason: task.urgentReason ?? "",
+    comment: task.comment ?? "",
+  });
   return {
-    documentType,
     temperatures,
     selectedTestMethod,
     selectedStandard,
-
-    kpoNumber,
-    topic,
-    materialName,
-
-    isUrgent,
-    urgentReason,
-    comment,
 
     newTemperature,
     newQuantity,
@@ -194,18 +161,8 @@ export const useApplicationForm = () => {
     availableStandards,
     selectedMethod,
 
-    setDocumentType,
-    setKpoNumber,
-    setMaterialName,
-    setUrgentReason,
-    setComment,
-
     setNewTemperature,
     setNewQuantity,
-    setIsUrgent,
-
-    handleDocumentTypeChange,
-    handleTopicChange,
 
     handleTestMethodSelect,
     handleStandardSelect,
@@ -213,7 +170,7 @@ export const useApplicationForm = () => {
     handleDeleteTemperature,
     handleToggleModulus,
     handleSaveTemperature,
-
+    getFormValues,
     buildTaskPayload,
     resetForm,
     fillForm,

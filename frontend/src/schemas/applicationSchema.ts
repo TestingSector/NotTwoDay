@@ -21,6 +21,8 @@ export const applicationSchema = z
     comment: z.string(),
     selectedTestMethod: z.string().min(1, "Выберите испытание"),
     selectedStandard: z.string().min(1, "Выберите стандарт"),
+    isCustomTestMethod: z.boolean(),
+    isCustomStandard: z.boolean(),
     temperatures: z
       .array(
         z.object({
@@ -64,21 +66,7 @@ export const applicationSchema = z
     }
     const standardPattern = /(ГОСТ|ASTM|ISO|ОСТ)/i;
 
-    if (
-      data.customTestMethod.trim() &&
-      !standardPattern.test(data.selectedTestMethod)
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["selectedTestMethod"],
-        message: "Укажите ГОСТ, ASTM, ISO или ОСТ",
-      });
-    }
-
-    if (
-      data.customStandard.trim() &&
-      !standardPattern.test(data.selectedStandard)
-    ) {
+    if (data.selectedStandard && !standardPattern.test(data.selectedStandard)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["selectedStandard"],

@@ -11,11 +11,12 @@ import { isModulusAvailable } from "../helpers/application";
 import { useReferenceStore } from "../store/referenceStore";
 import type { TaskPayload } from "../types/taskPayload";
 import type { ApplicationFormData } from "../schemas/applicationSchema";
-import type { UseFormSetValue, UseFormWatch } from "react-hook-form";
+import type { UseFormSetValue, UseFormWatch, UseFormSetError } from "react-hook-form";
 
 export const useApplicationForm = (
   setValue: UseFormSetValue<ApplicationFormData>,
   watch: UseFormWatch<ApplicationFormData>,
+  setError: UseFormSetError<ApplicationFormData>,
 ) => {
   const testMethods = useReferenceStore((state) => state.testMethods);
 
@@ -55,35 +56,61 @@ export const useApplicationForm = (
     );
   };
 
-  // Возвращает `true` при успешном добавлении, или строку с сообщением ошибки
-  const handleSaveTemperature = (): true | string => {
+  type SaveResult =
+    | { success: true }
+    | { success: false; modal: false }
+    | { success: false; modal: true; message: string };
+
+  const handleSaveTemperature = (): SaveResult => {
     const temperatureValue = draftTemperature?.trim() ?? "";
     const quantityValue = draftQuantity?.trim() ?? "";
 
     if (!temperatureValue || !quantityValue) {
-      if (!temperatureValue && !quantityValue) {
-        return "Введите температуру и количество образцов";
+      if (!temperatureValue) {
+        setError("draftTemperature", {
+          type: "required",
+          message: "Введите температуру",
+        });
       }
-      if (!temperatureValue) return "Введите температуру";
-      return "Введите количество образцов";
+      if (!quantityValue) {
+        setError("draftQuantity", {
+          type: "required",
+          message: "Введите количество образцов",
+        });
+      }
+
+      return { success: false, modal: false };
     }
 
     const temperature = Number(temperatureValue);
 
     if (!isTemperatureUnique(temperatures, temperature)) {
-      return "Такая температура уже добавлена";
+      return { success: false, modal: true, message: "Такая температура уже добавлена" };
     }
 
     if (!selectedTestMethod || !selectedStandard) {
-      if (!selectedTestMethod && !selectedStandard) {
-        return "Выберите испытание и стандарт";
+      if (!selectedTestMethod) {
+        setError("selectedTestMethod", {
+          type: "required",
+          message: "Выберите испытание",
+        });
       }
-      if (!selectedTestMethod) return "Выберите испытание";
-      return "Выберите стандарт";
+      if (!selectedStandard) {
+        setError("selectedStandard", {
+          type: "required",
+          message: "Выберите стандарт",
+        });
+      }
+
+      return { success: false, modal: false };
     }
 
     if (selectedMethod && !isTemperatureAllowed(temperature, selectedMethod)) {
-      return `Допустимый диапазон температур: ${selectedMethod.testTemperatureMin}°C ... ${selectedMethod.testTemperatureMax}°C`;
+      return {
+        success: false,
+        modal: true,
+        message: `Допустимый диапазон температур: ${selectedMethod.testTemperatureMin}°C ... ${selectedMethod.testTemperatureMax}°C`,
+      };
     }
 
     const updatedTemperatures = [
@@ -97,8 +124,7 @@ export const useApplicationForm = (
 
     setValue("temperatures", updatedTemperatures, { shouldValidate: true });
 
-    // очистка полей оставляем на родительской странице (там закрывают шторку и показывают модал)
-    return true;
+    return { success: true };
   };
 
   const setDraftTemperature = (value: string) =>
@@ -113,16 +139,20 @@ export const useApplicationForm = (
   const resetCustomDrafts = () => {
     setValue("customTestMethod", "", { shouldValidate: false });
     setValue("customStandard", "", { shouldValidate: false });
+    setValue("isCustomTestMethod", false, { shouldValidate: false });
+    setValue("isCustomStandard", false, { shouldValidate: false });
   };
 
-  const selectTestMethod = (value: string) => {
+  const selectTestMethod = (value: string, isCustom = false) => {
     setValue("selectedTestMethod", value, { shouldValidate: true });
     setValue("selectedStandard", "", { shouldValidate: true });
+    setValue("isCustomTestMethod", isCustom, { shouldValidate: false });
     resetCustomDrafts();
   };
 
-  const selectStandard = (value: string) => {
+  const selectStandard = (value: string, isCustom = false) => {
     setValue("selectedStandard", value, { shouldValidate: true });
+    setValue("isCustomStandard", isCustom, { shouldValidate: false });
     setCustomStandard("");
   };
 

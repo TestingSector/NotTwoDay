@@ -25,7 +25,7 @@ type TestMethodBottomSheetProps = {
   methods: string[];
   customMethod: string;
   setCustomMethod: (value: string) => void;
-  onSelect: (value: string) => void;
+  onSelect: (value: string, isCustom?: boolean) => void;
 };
 
 export const TestMethodBottomSheet = ({
@@ -99,7 +99,7 @@ export const TestMethodBottomSheet = ({
               type="button"
               disabled={!customMethod.trim()}
               onClick={() => {
-                onSelect(customMethod.trim());
+                onSelect(customMethod.trim(), true);
                 onClose();
               }}
               className="flex-1 rounded-[18px] bg-[var(--color-accent)] px-4 py-3 font-medium text-white disabled:opacity-50"
@@ -115,7 +115,7 @@ export const TestMethodBottomSheet = ({
               key={method}
               type="button"
               onClick={() => {
-                onSelect(method);
+                onSelect(method, false);
               }}
               className="rounded-[18px] border border-[var(--color-border)] bg-[var(--color-surface-secondary)] px-4 py-4 text-left text-sm font-medium transition active:brightness-95"
             >

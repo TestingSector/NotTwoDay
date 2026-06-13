@@ -7,7 +7,7 @@ type StandardBottomSheetProps = {
   standards: string[];
   customStandard: string;
   setCustomStandard: (value: string) => void;
-  onSelect: (value: string) => void;
+  onSelect: (value: string, isCustom?: boolean) => void;
   selectedMethod: string;
 };
 const STANDARD_ORDER: Record<string, string[]> = {
@@ -116,7 +116,7 @@ export const StandardBottomSheet = ({
               type="button"
               disabled={!customStandard.trim()}
               onClick={() => {
-                onSelect(customStandard.trim());
+                onSelect(customStandard.trim(), true);
                 onClose();
               }}
               className="
@@ -141,7 +141,7 @@ export const StandardBottomSheet = ({
               key={standard}
               type="button"
               onClick={() => {
-                onSelect(standard);
+                onSelect(standard, false);
               }}
               className="rounded-[18px] border border-[var(--color-border)] bg-[var(--color-surface-secondary)] px-4 py-4 text-left text-sm font-medium transition active:brightness-95"
             >

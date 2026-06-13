@@ -50,8 +50,9 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
     reset,
     handleSubmit,
     setValue,
+    setError,
     clearErrors,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<ApplicationFormData>({
     resolver: zodResolver(applicationSchema),
     mode: "onChange",
@@ -62,6 +63,8 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
       draftQuantity: "",
       customTestMethod: "",
       customStandard: "",
+      isCustomTestMethod: false,
+      isCustomStandard: false,
       materialName: "",
       topic: "",
       isUrgent: false,
@@ -88,7 +91,7 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
   const createTask = useTasksStore((state) => state.createTask);
   const updateTask = useTasksStore((state) => state.updateTask);
   const config = pageConfig[mode];
-  const form = useApplicationForm(setValue, watch);
+  const form = useApplicationForm(setValue, watch, setError);
   const {
     selectedTestMethod,
     selectedStandard,
@@ -119,6 +122,8 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
     draftQuantity: "",
     customTestMethod: "",
     customStandard: "",
+    isCustomTestMethod: false,
+    isCustomStandard: false,
     materialName: task.materialName,
     topic: task.topic ?? "",
     isUrgent: task.isUrgent,
@@ -145,7 +150,6 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
     message: string;
     title?: string;
   } | null>(null);
-  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   // Test method & standard
   const handleOpenTestMethod = () => {
@@ -164,36 +168,37 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
   const handleSaveTemperatureSheet = () => {
     const result = handleSaveTemperature();
 
-    if (result === true) {
-      // при успехе — просто очистить и закрыть шторку; модалка не нужна
+    if (result.success) {
       setDraftTemperature("");
       setDraftQuantity("");
-      clearErrors();
+      clearErrors(["draftTemperature", "draftQuantity"]);
       setIsTemperatureSheetOpen(false);
       return;
     }
 
-    if (typeof result === "string") {
-      setDraftTemperature("");
-      setDraftQuantity("");
-      clearErrors();
-      setIsTemperatureSheetOpen(false);
-      setTimeout(
-        () => setGlobalAlert({ message: result, title: "Ошибка" }),
-        40,
-      );
+    if (!result.modal) {
+      return;
     }
+
+    setDraftTemperature("");
+    setDraftQuantity("");
+    clearErrors(["draftTemperature", "draftQuantity"]);
+    setIsTemperatureSheetOpen(false);
+    setTimeout(
+      () => setGlobalAlert({ message: result.message, title: "Ошибка" }),
+      40,
+    );
   };
 
-  const handleSelectTestMethod = (value: string) => {
-    selectTestMethod(value);
+  const handleSelectTestMethod = (value: string, isCustom = false) => {
+    selectTestMethod(value, isCustom);
     setCustomTestMethod("");
     clearErrors(["selectedTestMethod", "selectedStandard"]);
     setIsTestMethodSheetOpen(false);
   };
 
-  const handleSelectStandard = (value: string) => {
-    selectStandard(value);
+  const handleSelectStandard = (value: string, isCustom = false) => {
+    selectStandard(value, isCustom);
     setCustomStandard("");
     clearErrors(["selectedStandard"]);
     setIsStandardSheetOpen(false);
@@ -226,12 +231,6 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
     }
   };
 
-  useEffect(() => {
-    if (submitAttempted && isValid) {
-      setSubmitAttempted(false);
-    }
-  }, [isValid, submitAttempted]);
-
   return (
     <div className="flex h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
       <header className="px-6 pb-8 pt-14">
@@ -241,10 +240,7 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
         <p className="mt-3 text-sm text-white/70">{config.subtitle}</p>
       </header>
       <main className="flex-1 overflow-y-auto rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pb-24 pt-6">
-        <form
-          onSubmit={handleSubmit(onSubmit, () => setSubmitAttempted(true))}
-          className="flex flex-col gap-4"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <DocumentSection
             control={control}
             register={register}
@@ -282,9 +278,7 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
             isCommentSectionDisabled={isEditMode}
           />
 
-          <ActionButton type="submit" disabled={submitAttempted && !isValid}>
-            {config.submitText}
-          </ActionButton>
+          <ActionButton type="submit">{config.submitText}</ActionButton>
         </form>
       </main>
       <TemperatureBottomSheet
@@ -304,7 +298,7 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
         methods={testNames}
         customMethod={customTestMethod ?? ""}
         setCustomMethod={setCustomTestMethod}
-        onSelect={(value) => handleSelectTestMethod(value)}
+        onSelect={(value, isCustom) => handleSelectTestMethod(value, isCustom)}
       />
       <StandardBottomSheet
         isOpen={isStandardSheetOpen}
@@ -312,7 +306,7 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
         standards={availableStandards}
         customStandard={customStandard ?? ""}
         setCustomStandard={setCustomStandard}
-        onSelect={(value) => handleSelectStandard(value)}
+        onSelect={(value, isCustom) => handleSelectStandard(value, isCustom)}
         selectedMethod={selectedTestMethod}
       />
       {globalAlert && (

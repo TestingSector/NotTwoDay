@@ -15,7 +15,7 @@ import {
 } from "../components/application";
 import { getTestNames } from "../helpers/application";
 import { useReferenceStore } from "../store/referenceStore";
-import { ActionButton } from "../ui";
+import { ActionButton, ErrorModal } from "../ui";
 import { useApplicationForm } from "../hooks/useApplicationForm";
 import { useTasksStore } from "../store/tasksStore";
 import { getTask } from "../api";
@@ -50,7 +50,8 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
     reset,
     handleSubmit,
     setValue,
-    formState: { errors },
+    clearErrors,
+    formState: { errors, isValid },
   } = useForm<ApplicationFormData>({
     resolver: zodResolver(applicationSchema),
     mode: "onChange",
@@ -140,6 +141,11 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
   const [isTestMethodSheetOpen, setIsTestMethodSheetOpen] = useState(false);
   const [isTemperatureSheetOpen, setIsTemperatureSheetOpen] = useState(false);
   const [isStandardSheetOpen, setIsStandardSheetOpen] = useState(false);
+  const [globalAlert, setGlobalAlert] = useState<{
+    message: string;
+    title?: string;
+  } | null>(null);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   // Test method & standard
   const handleOpenTestMethod = () => {
@@ -153,6 +159,44 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
 
   const handleAddTemperature = () => {
     setIsTemperatureSheetOpen(true);
+  };
+
+  const handleSaveTemperatureSheet = () => {
+    const result = handleSaveTemperature();
+
+    if (result === true) {
+      // при успехе — просто очистить и закрыть шторку; модалка не нужна
+      setDraftTemperature("");
+      setDraftQuantity("");
+      clearErrors();
+      setIsTemperatureSheetOpen(false);
+      return;
+    }
+
+    if (typeof result === "string") {
+      setDraftTemperature("");
+      setDraftQuantity("");
+      clearErrors();
+      setIsTemperatureSheetOpen(false);
+      setTimeout(
+        () => setGlobalAlert({ message: result, title: "Ошибка" }),
+        40,
+      );
+    }
+  };
+
+  const handleSelectTestMethod = (value: string) => {
+    selectTestMethod(value);
+    setCustomTestMethod("");
+    clearErrors(["selectedTestMethod", "selectedStandard"]);
+    setIsTestMethodSheetOpen(false);
+  };
+
+  const handleSelectStandard = (value: string) => {
+    selectStandard(value);
+    setCustomStandard("");
+    clearErrors(["selectedStandard"]);
+    setIsStandardSheetOpen(false);
   };
   // FORM SUBMISSION
 
@@ -173,11 +217,20 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
     } catch (error) {
       console.error(error);
 
-      alert(
-        isEditMode ? "Не удалось обновить заявку" : "Не удалось создать заявку",
-      );
+      setGlobalAlert({
+        message: isEditMode
+          ? "Не удалось обновить заявку"
+          : "Не удалось создать заявку",
+        title: "Ошибка",
+      });
     }
   };
+
+  useEffect(() => {
+    if (submitAttempted && isValid) {
+      setSubmitAttempted(false);
+    }
+  }, [isValid, submitAttempted]);
 
   return (
     <div className="flex h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
@@ -188,7 +241,10 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
         <p className="mt-3 text-sm text-white/70">{config.subtitle}</p>
       </header>
       <main className="flex-1 overflow-y-auto rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pb-24 pt-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form
+          onSubmit={handleSubmit(onSubmit, () => setSubmitAttempted(true))}
+          className="flex flex-col gap-4"
+        >
           <DocumentSection
             control={control}
             register={register}
@@ -226,7 +282,9 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
             isCommentSectionDisabled={isEditMode}
           />
 
-          <ActionButton type="submit">{config.submitText}</ActionButton>
+          <ActionButton type="submit" disabled={submitAttempted && !isValid}>
+            {config.submitText}
+          </ActionButton>
         </form>
       </main>
       <TemperatureBottomSheet
@@ -236,7 +294,9 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
         quantity={draftQuantity}
         onTemperatureChange={setDraftTemperature}
         onQuantityChange={setDraftQuantity}
-        onSave={handleSaveTemperature}
+        onSave={handleSaveTemperatureSheet}
+        temperatureError={errors.draftTemperature?.message}
+        quantityError={errors.draftQuantity?.message}
       />
       <TestMethodBottomSheet
         isOpen={isTestMethodSheetOpen}
@@ -244,10 +304,7 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
         methods={testNames}
         customMethod={customTestMethod ?? ""}
         setCustomMethod={setCustomTestMethod}
-        onSelect={(value) => {
-          selectTestMethod(value);
-          setIsTestMethodSheetOpen(false);
-        }}
+        onSelect={(value) => handleSelectTestMethod(value)}
       />
       <StandardBottomSheet
         isOpen={isStandardSheetOpen}
@@ -255,12 +312,16 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
         standards={availableStandards}
         customStandard={customStandard ?? ""}
         setCustomStandard={setCustomStandard}
-        onSelect={(value) => {
-          selectStandard(value);
-          setIsStandardSheetOpen(false);
-        }}
+        onSelect={(value) => handleSelectStandard(value)}
         selectedMethod={selectedTestMethod}
       />
+      {globalAlert && (
+        <ErrorModal
+          title={globalAlert.title}
+          message={globalAlert.message}
+          onClose={() => setGlobalAlert(null)}
+        />
+      )}
     </div>
   );
 };

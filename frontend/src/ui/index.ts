@@ -5,3 +5,4 @@ export { FormSwitch } from "./FormSwitch";
 export { FormTextarea } from "./FormTextarea";
 export { SelectRow } from "./SelectRow";
 export * from "./ActionButton";
+export { ErrorModal } from "./ErrorModal";

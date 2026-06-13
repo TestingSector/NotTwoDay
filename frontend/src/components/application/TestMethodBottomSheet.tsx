@@ -116,7 +116,6 @@ export const TestMethodBottomSheet = ({
               type="button"
               onClick={() => {
                 onSelect(method);
-                onClose();
               }}
               className="rounded-[18px] border border-[var(--color-border)] bg-[var(--color-surface-secondary)] px-4 py-4 text-left text-sm font-medium transition active:brightness-95"
             >

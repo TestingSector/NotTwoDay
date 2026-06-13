@@ -16,7 +16,7 @@ export const ActionButton = ({
     <button
       type={type}
       disabled={disabled}
-      className={`${className} w-full rounded-[20px] bg-[var(--color-accent)] px-6 py-4 text-base font-semibold text-white transition active:brightness-90 ${className} `}
+      className={`${className} w-full rounded-[20px] bg-[var(--color-accent)] px-6 py-4 text-base font-semibold text-white transition active:brightness-90 ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
       style={{
         boxShadow: "0 8px 20px rgba(176, 16, 43, 0.25)",
       }}

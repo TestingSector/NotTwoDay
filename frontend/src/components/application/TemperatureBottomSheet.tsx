@@ -11,6 +11,8 @@ type TemperatureBottomSheetProps = {
   onQuantityChange: (value: string) => void;
 
   onSave: () => void;
+  temperatureError?: string | null;
+  quantityError?: string | null;
 };
 
 export const TemperatureBottomSheet = ({
@@ -24,6 +26,8 @@ export const TemperatureBottomSheet = ({
   onQuantityChange,
 
   onSave,
+  temperatureError,
+  quantityError,
 }: TemperatureBottomSheetProps) => {
   return (
     <BottomSheet
@@ -49,6 +53,9 @@ export const TemperatureBottomSheet = ({
               }
             }}
           />
+          {temperatureError && (
+            <p className="mt-1 text-xs text-red-400">{temperatureError}</p>
+          )}
         </div>
 
         <div>
@@ -67,13 +74,15 @@ export const TemperatureBottomSheet = ({
               }
             }}
           />
+          {quantityError && (
+            <p className="mt-1 text-xs text-red-400">{quantityError}</p>
+          )}
         </div>
 
         <button
           type="button"
           onClick={() => {
             onSave();
-            onClose();
           }}
           className="mt-2 w-full rounded-[20px] bg-[var(--color-accent)] px-6 py-4 text-base font-semibold text-white transition-all active:brightness-90"
         >

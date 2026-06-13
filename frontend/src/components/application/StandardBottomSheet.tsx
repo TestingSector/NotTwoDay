@@ -142,21 +142,8 @@ export const StandardBottomSheet = ({
               type="button"
               onClick={() => {
                 onSelect(standard);
-                onClose();
               }}
-              className="
-                rounded-[18px]
-                border
-                border-[var(--color-border)]
-                bg-[var(--color-surface-secondary)]
-                px-4
-                py-4
-                text-left
-                text-sm
-                font-medium
-                transition
-                active:brightness-95
-              "
+              className="rounded-[18px] border border-[var(--color-border)] bg-[var(--color-surface-secondary)] px-4 py-4 text-left text-sm font-medium transition active:brightness-95"
             >
               {standard}
             </button>
@@ -168,19 +155,7 @@ export const StandardBottomSheet = ({
               onClick={() => {
                 setIsCustomMode(true);
               }}
-              className="
-                w-full
-                rounded-[18px]
-                border
-                border-dashed
-                border-[var(--color-accent)]
-                px-4
-                py-4
-                text-left
-                text-sm
-                font-medium
-                text-[var(--color-accent)]
-              "
+              className="w-full rounded-[18px] border border-dashed border-[var(--color-accent)] px-4 py-4 text-left text-sm font-medium text-[var(--color-accent)]"
             >
               ✏️ Другой стандарт
             </button>

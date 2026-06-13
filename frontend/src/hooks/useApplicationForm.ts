@@ -55,31 +55,35 @@ export const useApplicationForm = (
     );
   };
 
-  const handleSaveTemperature = () => {
+  // Возвращает `true` при успешном добавлении, или строку с сообщением ошибки
+  const handleSaveTemperature = (): true | string => {
     const temperatureValue = draftTemperature?.trim() ?? "";
     const quantityValue = draftQuantity?.trim() ?? "";
 
     if (!temperatureValue || !quantityValue) {
-      return false;
+      if (!temperatureValue && !quantityValue) {
+        return "Введите температуру и количество образцов";
+      }
+      if (!temperatureValue) return "Введите температуру";
+      return "Введите количество образцов";
     }
 
     const temperature = Number(temperatureValue);
 
     if (!isTemperatureUnique(temperatures, temperature)) {
-      alert("Такая температура уже добавлена");
-      return false;
+      return "Такая температура уже добавлена";
     }
 
     if (!selectedTestMethod || !selectedStandard) {
-      alert("Сначала выберите испытание и стандарт");
-      return false;
+      if (!selectedTestMethod && !selectedStandard) {
+        return "Выберите испытание и стандарт";
+      }
+      if (!selectedTestMethod) return "Выберите испытание";
+      return "Выберите стандарт";
     }
 
     if (selectedMethod && !isTemperatureAllowed(temperature, selectedMethod)) {
-      alert(
-        `Допустимый диапазон температур: ${selectedMethod.testTemperatureMin}°C ... ${selectedMethod.testTemperatureMax}°C`,
-      );
-      return false;
+      return `Допустимый диапазон температур: ${selectedMethod.testTemperatureMin}°C ... ${selectedMethod.testTemperatureMax}°C`;
     }
 
     const updatedTemperatures = [
@@ -91,12 +95,9 @@ export const useApplicationForm = (
       ),
     ].sort((a, b) => a.temperature - b.temperature);
 
-    setValue("temperatures", updatedTemperatures, {
-      shouldValidate: true,
-    });
+    setValue("temperatures", updatedTemperatures, { shouldValidate: true });
 
-    setValue("draftTemperature", "", { shouldValidate: false });
-    setValue("draftQuantity", "", { shouldValidate: false });
+    // очистка полей оставляем на родительской странице (там закрывают шторку и показывают модал)
     return true;
   };
 

@@ -1,9 +1,14 @@
+import type { ApplicationFormData } from "../../schemas/applicationSchema";
 import { ApplicationCard, SelectRow } from "../../ui";
-
+import type { FieldErrors } from "react-hook-form";
 interface Props {
   selectedTestMethod: string;
   selectedStandard: string;
+
+  errors: FieldErrors<ApplicationFormData>;
+
   disabled?: boolean;
+
   onOpenTestMethod: () => void;
   onOpenStandard: () => void;
 }
@@ -14,6 +19,7 @@ export const TestMethodSection = ({
   onOpenTestMethod,
   onOpenStandard,
   disabled,
+  errors,
 }: Props) => {
   const handleOpenTestMethod = () => {
     if (disabled) return;
@@ -33,12 +39,21 @@ export const TestMethodSection = ({
           value={selectedTestMethod || "Не выбрано"}
           onClick={handleOpenTestMethod}
         />
-
+        {errors.selectedTestMethod && (
+          <p className="mt-1 text-xs text-red-400">
+            {errors.selectedTestMethod.message}
+          </p>
+        )}
         <SelectRow
           label="Стандарт"
           value={selectedStandard || "Не выбрано"}
           onClick={handleOpenStandard}
         />
+        {errors.selectedStandard && (
+          <p className="mt-1 text-xs text-red-400">
+            {errors.selectedStandard.message}
+          </p>
+        )}
       </div>
     </ApplicationCard>
   );

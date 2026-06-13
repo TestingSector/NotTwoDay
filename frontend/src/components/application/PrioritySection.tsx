@@ -4,6 +4,7 @@ import {
   Controller,
   type Control,
   type FieldErrors,
+  type UseFormSetValue,
   type UseFormRegister,
   type UseFormWatch,
 } from "react-hook-form";
@@ -12,6 +13,8 @@ interface Props {
   register: UseFormRegister<ApplicationFormData>;
   watch: UseFormWatch<ApplicationFormData>;
   errors: FieldErrors<ApplicationFormData>;
+  setValue: UseFormSetValue<ApplicationFormData>;
+  disabled?: boolean;
 }
 
 export const PrioritySection = ({
@@ -19,6 +22,8 @@ export const PrioritySection = ({
   register,
   watch,
   errors,
+  setValue,
+  disabled = false,
 }: Props) => {
   const isUrgent = watch("isUrgent");
   const topic = watch("topic");
@@ -38,8 +43,14 @@ export const PrioritySection = ({
           render={({ field }) => (
             <FormSwitch
               checked={field.value}
-              onChange={field.onChange}
-              disabled={!topic.trim()}
+              onChange={(value) => {
+                field.onChange(value);
+
+                if (!value) {
+                  setValue("urgentReason", "");
+                }
+              }}
+              disabled={disabled || !topic.trim()}
             />
           )}
         />
@@ -53,6 +64,7 @@ export const PrioritySection = ({
         <FormInput
           {...register("urgentReason")}
           placeholder="Укажите причину срочности"
+          disabled={disabled}
         />
         {errors.urgentReason && (
           <p className="mt-1 text-xs text-red-400">

@@ -4,8 +4,8 @@ type TemperatureBottomSheetProps = {
   isOpen: boolean;
   onClose: () => void;
 
-  temperature: string;
-  quantity: string;
+  temperature: string | undefined;
+  quantity: string | undefined;
 
   onTemperatureChange: (value: string) => void;
   onQuantityChange: (value: string) => void;
@@ -40,8 +40,14 @@ export const TemperatureBottomSheet = ({
 
           <FormInput
             value={temperature}
-            onChange={onTemperatureChange}
-            placeholder="Например: 120"
+            inputMode="numeric"
+            onChange={(e) => {
+              const value = e.target.value;
+
+              if (/^-?\d*$/.test(value)) {
+                onTemperatureChange(value);
+              }
+            }}
           />
         </div>
 
@@ -52,8 +58,14 @@ export const TemperatureBottomSheet = ({
 
           <FormInput
             value={quantity}
-            onChange={onQuantityChange}
-            placeholder="Например: 6"
+            inputMode="numeric"
+            onChange={(e) => {
+              const value = e.target.value;
+
+              if (/^\d*$/.test(value)) {
+                onQuantityChange(value);
+              }
+            }}
           />
         </div>
 

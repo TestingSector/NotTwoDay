@@ -4,6 +4,8 @@ import type {
   ApplicationTemperatureCondition,
   TestMethod,
 } from "../../types/application";
+import type { FieldErrors } from "react-hook-form";
+import type { ApplicationFormData } from "../../schemas/applicationSchema";
 
 type TemperatureSectionProps = {
   temperatures: ApplicationTemperatureCondition[];
@@ -11,6 +13,7 @@ type TemperatureSectionProps = {
   onAddTemperature: () => void;
   onDeleteTemperature: (index: number) => void;
   onToggleModulus: (index: number, value: boolean) => void;
+  errors?: FieldErrors<ApplicationFormData>;
 };
 
 export const TemperatureSection = ({
@@ -19,6 +22,7 @@ export const TemperatureSection = ({
   onAddTemperature,
   onDeleteTemperature,
   onToggleModulus,
+  errors,
 }: TemperatureSectionProps) => {
   return (
     <ApplicationCard title="Температуры">
@@ -80,7 +84,11 @@ export const TemperatureSection = ({
               ))}
           </div>
         ))}
-
+        {errors?.temperatures && (
+          <p className="mt-1 text-xs text-red-400">
+            {errors.temperatures.message}
+          </p>
+        )}
         <button
           type="button"
           onClick={onAddTemperature}

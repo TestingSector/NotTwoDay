@@ -23,6 +23,8 @@ type TestMethodBottomSheetProps = {
   isOpen: boolean;
   onClose: () => void;
   methods: string[];
+  customMethod: string;
+  setCustomMethod: (value: string) => void;
   onSelect: (value: string) => void;
 };
 
@@ -30,17 +32,18 @@ export const TestMethodBottomSheet = ({
   isOpen,
   onClose,
   methods,
+  customMethod,
+  setCustomMethod,
   onSelect,
 }: TestMethodBottomSheetProps) => {
   const [isCustomMode, setIsCustomMode] = useState(false);
-  const [customMethod, setCustomMethod] = useState("");
   useEffect(() => {
     if (!isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsCustomMode(false);
       setCustomMethod("");
     }
-  }, [isOpen]);
+  }, [isOpen, setCustomMethod]);
   const sortedMethods = [...methods].sort((a, b) => {
     const indexA = METHOD_ORDER.indexOf(a);
     const indexB = METHOD_ORDER.indexOf(b);
@@ -76,7 +79,7 @@ export const TestMethodBottomSheet = ({
 
           <FormInput
             value={customMethod}
-            onChange={setCustomMethod}
+            onChange={(event) => setCustomMethod(event.target.value)}
             placeholder="Введите название испытания"
           />
 
@@ -87,14 +90,7 @@ export const TestMethodBottomSheet = ({
                 setIsCustomMode(false);
                 setCustomMethod("");
               }}
-              className="
-          flex-1
-          rounded-[18px]
-          border
-          border-[var(--color-border)]
-          px-4
-          py-3
-        "
+              className="flex-1 rounded-[18px] border border-[var(--color-border)] px-4 py-3"
             >
               Назад
             </button>
@@ -106,16 +102,7 @@ export const TestMethodBottomSheet = ({
                 onSelect(customMethod.trim());
                 onClose();
               }}
-              className="
-          flex-1
-          rounded-[18px]
-          bg-[var(--color-accent)]
-          px-4
-          py-3
-          font-medium
-          text-white
-          disabled:opacity-50
-        "
+              className="flex-1 rounded-[18px] bg-[var(--color-accent)] px-4 py-3 font-medium text-white disabled:opacity-50"
             >
               Выбрать
             </button>
@@ -131,19 +118,7 @@ export const TestMethodBottomSheet = ({
                 onSelect(method);
                 onClose();
               }}
-              className="
-              rounded-[18px]
-              border
-              border-[var(--color-border)]
-              bg-[var(--color-surface-secondary)]
-              px-4
-              py-4
-              text-left
-              text-sm
-              font-medium
-              transition
-              active:brightness-95
-            "
+              className="rounded-[18px] border border-[var(--color-border)] bg-[var(--color-surface-secondary)] px-4 py-4 text-left text-sm font-medium transition active:brightness-95"
             >
               {method}
             </button>
@@ -154,19 +129,7 @@ export const TestMethodBottomSheet = ({
               onClick={() => {
                 setIsCustomMode(true);
               }}
-              className="
-              w-full
-              rounded-[18px]
-              border
-              border-dashed
-              border-[var(--color-accent)]
-              px-4
-              py-4
-              text-left
-              text-sm
-              font-medium
-              text-[var(--color-accent)]
-            "
+              className="w-full rounded-[18px] border border-dashed border-[var(--color-accent)] px-4 py-4 text-left text-sm font-medium text-[var(--color-accent)]"
             >
               ✏️ Другое испытание
             </button>

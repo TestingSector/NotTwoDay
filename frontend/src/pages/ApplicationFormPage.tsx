@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { currentUser } from "../data/user/currentUser";
 import { useNavigate, useParams } from "react-router-dom";
+import type { Task } from "../types/task";
 import {
   DocumentSection,
   TopicSection,
@@ -12,7 +13,8 @@ import {
   TemperatureBottomSheet,
   TestMethodBottomSheet,
 } from "../components/application";
-
+import { getTestNames } from "../helpers/application";
+import { useReferenceStore } from "../store/referenceStore";
 import { ActionButton } from "../ui";
 import { useApplicationForm } from "../hooks/useApplicationForm";
 import { useTasksStore } from "../store/tasksStore";
@@ -47,40 +49,92 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
     control,
     reset,
     handleSubmit,
-    formState: { errors, isValid },
+    setValue,
+    formState: { errors },
   } = useForm<ApplicationFormData>({
     resolver: zodResolver(applicationSchema),
     mode: "onChange",
     defaultValues: {
       documentType: "NTZ",
       kpoNumber: "",
+      draftTemperature: "",
+      draftQuantity: "",
+      customTestMethod: "",
+      customStandard: "",
       materialName: "",
       topic: "",
       isUrgent: false,
       urgentReason: "",
       comment: "",
+      selectedTestMethod: "",
+      selectedStandard: "",
+      temperatures: [],
     },
   });
 
+  const isUrgent = watch("isUrgent");
+
+  useEffect(() => {
+    if (!isUrgent) {
+      setValue("urgentReason", "");
+    }
+  }, [isUrgent, setValue]);
   const isEditMode = mode === "edit";
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const testMethods = useReferenceStore((state) => state.testMethods);
+  const testNames = getTestNames(testMethods);
   const createTask = useTasksStore((state) => state.createTask);
   const updateTask = useTasksStore((state) => state.updateTask);
   const config = pageConfig[mode];
+  const form = useApplicationForm(setValue, watch);
+  const {
+    selectedTestMethod,
+    selectedStandard,
+    temperatures,
+    selectedMethod,
+    availableStandards,
+    draftTemperature,
+    draftQuantity,
+    customTestMethod,
+    customStandard,
+    setDraftTemperature,
+    setDraftQuantity,
+    setCustomTestMethod,
+    setCustomStandard,
+    selectTestMethod,
+    selectStandard,
+    handleDeleteTemperature,
+    handleToggleModulus,
+    handleSaveTemperature,
+    buildTaskPayload,
+    resetForm,
+  } = form;
 
-  const form = useApplicationForm();
+  const getFormValues = (task: Task): ApplicationFormData => ({
+    documentType: task.type,
+    kpoNumber: task.number ?? "",
+    draftTemperature: "",
+    draftQuantity: "",
+    customTestMethod: "",
+    customStandard: "",
+    materialName: task.materialName,
+    topic: task.topic ?? "",
+    isUrgent: task.isUrgent,
+    urgentReason: task.urgentReason ?? "",
+    comment: task.comment ?? "",
+    selectedTestMethod: task.testMethod,
+    selectedStandard: task.standard,
+    temperatures: task.temperatureConditions,
+  });
 
   useEffect(() => {
     if (!isEditMode || !id) return;
 
     getTask(id).then((task) => {
-      form.fillForm(task);
-
-      reset(form.getFormValues(task));
+      reset(getFormValues(task));
     });
-  }, [id, isEditMode, form, reset]);
+  }, [id, isEditMode, reset]);
 
   // SHEETS
   const [isTestMethodSheetOpen, setIsTestMethodSheetOpen] = useState(false);
@@ -92,7 +146,7 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
     setIsTestMethodSheetOpen(true);
   };
   const handleOpenStandard = () => {
-    if (!form.selectedTestMethod) return;
+    if (!selectedTestMethod) return;
 
     setIsStandardSheetOpen(true);
   };
@@ -103,24 +157,12 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
   // FORM SUBMISSION
 
   const onSubmit = async (data: ApplicationFormData) => {
-    if (
-      !form.selectedTestMethod ||
-      !form.selectedStandard ||
-      form.temperatures.length === 0
-    ) {
-      alert(
-        "Заполните испытание, стандарт и добавьте хотя бы одну температуру",
-      );
-
-      return;
-    }
-
-    const payload = form.buildTaskPayload(currentUser.id, data);
+    const payload = buildTaskPayload(currentUser.id, data);
 
     try {
       if (!isEditMode) {
         await createTask(payload);
-        form.resetForm();
+        resetForm();
         reset();
         return;
       }
@@ -136,6 +178,7 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
       );
     }
   };
+
   return (
     <div className="flex h-[100dvh] w-full flex-col bg-[var(--color-shell)]">
       <header className="px-6 pb-8 pt-14">
@@ -145,7 +188,7 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
         <p className="mt-3 text-sm text-white/70">{config.subtitle}</p>
       </header>
       <main className="flex-1 overflow-y-auto rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pb-24 pt-6">
-        <div className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <DocumentSection
             control={control}
             register={register}
@@ -155,56 +198,68 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
           />
           <TopicSection register={register} errors={errors} />
           <TestMethodSection
-            selectedTestMethod={form.selectedTestMethod}
-            selectedStandard={form.selectedStandard}
+            selectedTestMethod={selectedTestMethod}
+            selectedStandard={selectedStandard}
+            errors={errors}
             onOpenTestMethod={handleOpenTestMethod}
             onOpenStandard={handleOpenStandard}
             disabled={isEditMode}
           />
           <TemperatureSection
-            temperatures={form.temperatures}
-            selectedMethod={form.selectedMethod}
+            temperatures={temperatures}
+            selectedMethod={selectedMethod}
             onAddTemperature={handleAddTemperature}
-            onDeleteTemperature={form.handleDeleteTemperature}
-            onToggleModulus={form.handleToggleModulus}
+            onDeleteTemperature={handleDeleteTemperature}
+            onToggleModulus={handleToggleModulus}
+            errors={errors}
           />
           <PrioritySection
             control={control}
             register={register}
             watch={watch}
             errors={errors}
+            setValue={setValue}
           />
           <CommentSection
             register={register}
             errors={errors}
             isCommentSectionDisabled={isEditMode}
           />
-          <ActionButton onClick={handleSubmit(onSubmit)} disabled={!isValid}>
-            {config.submitText}
-          </ActionButton>
-        </div>
+
+          <ActionButton type="submit">{config.submitText}</ActionButton>
+        </form>
       </main>
       <TemperatureBottomSheet
         isOpen={isTemperatureSheetOpen}
         onClose={() => setIsTemperatureSheetOpen(false)}
-        temperature={form.newTemperature}
-        quantity={form.newQuantity}
-        onTemperatureChange={form.setNewTemperature}
-        onQuantityChange={form.setNewQuantity}
-        onSave={form.handleSaveTemperature}
+        temperature={draftTemperature}
+        quantity={draftQuantity}
+        onTemperatureChange={setDraftTemperature}
+        onQuantityChange={setDraftQuantity}
+        onSave={handleSaveTemperature}
       />
       <TestMethodBottomSheet
         isOpen={isTestMethodSheetOpen}
         onClose={() => setIsTestMethodSheetOpen(false)}
-        methods={form.testNames}
-        onSelect={form.handleTestMethodSelect}
+        methods={testNames}
+        customMethod={customTestMethod ?? ""}
+        setCustomMethod={setCustomTestMethod}
+        onSelect={(value) => {
+          selectTestMethod(value);
+          setIsTestMethodSheetOpen(false);
+        }}
       />
       <StandardBottomSheet
         isOpen={isStandardSheetOpen}
         onClose={() => setIsStandardSheetOpen(false)}
-        standards={form.availableStandards}
-        onSelect={form.handleStandardSelect}
-        selectedMethod={form.selectedTestMethod}
+        standards={availableStandards}
+        customStandard={customStandard ?? ""}
+        setCustomStandard={setCustomStandard}
+        onSelect={(value) => {
+          selectStandard(value);
+          setIsStandardSheetOpen(false);
+        }}
+        selectedMethod={selectedTestMethod}
       />
     </div>
   );

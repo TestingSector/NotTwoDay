@@ -5,6 +5,8 @@ type StandardBottomSheetProps = {
   isOpen: boolean;
   onClose: () => void;
   standards: string[];
+  customStandard: string;
+  setCustomStandard: (value: string) => void;
   onSelect: (value: string) => void;
   selectedMethod: string;
 };
@@ -37,18 +39,19 @@ export const StandardBottomSheet = ({
   isOpen,
   onClose,
   standards,
+  customStandard,
+  setCustomStandard,
   onSelect,
   selectedMethod,
 }: StandardBottomSheetProps) => {
   const [isCustomMode, setIsCustomMode] = useState(false);
-  const [customStandard, setCustomStandard] = useState("");
   useEffect(() => {
     if (!isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsCustomMode(false);
       setCustomStandard("");
     }
-  }, [isOpen]);
+  }, [isOpen, setCustomStandard]);
 
   const handleClose = () => {
     setIsCustomMode(false);
@@ -86,7 +89,7 @@ export const StandardBottomSheet = ({
 
           <FormInput
             value={customStandard}
-            onChange={setCustomStandard}
+            onChange={(event) => setCustomStandard(event.target.value)}
             placeholder="Введите стандарт"
           />
 

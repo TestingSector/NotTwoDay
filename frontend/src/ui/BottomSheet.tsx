@@ -1,4 +1,5 @@
 import { motion, useMotionValue } from "framer-motion";
+import { Backdrop } from "./Backdrop";
 
 type BottomSheetProps = {
   isOpen: boolean;
@@ -19,17 +20,7 @@ export const BottomSheet = ({
 }: BottomSheetProps) => {
   const y = useMotionValue(0);
   return (
-    <motion.div
-      className="fixed inset-0 z-50"
-      animate={{
-        backgroundColor: isOpen ? "rgba(0,0,0,0.4)" : "rgba(0,0,0,0)",
-      }}
-      transition={{ duration: 0.2 }}
-      style={{
-        pointerEvents: isOpen ? "auto" : "none",
-      }}
-      onClick={onClose}
-    >
+    <Backdrop isOpen={isOpen} onClick={onClose} opacity={0.4}>
       <motion.div
         onClick={(e) => e.stopPropagation()}
         style={{ y }}
@@ -73,6 +64,6 @@ export const BottomSheet = ({
 
         <div className="mt-4 flex-1 overflow-y-auto">{children}</div>
       </motion.div>
-    </motion.div>
+    </Backdrop>
   );
 };

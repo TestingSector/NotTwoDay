@@ -43,8 +43,33 @@ export const TemperatureBottomSheet = ({
           </p>
 
           <FormInput
+            type="text"
+            inputMode="text"
+            pattern="^-?\d*$"
+            autoComplete="off"
             value={temperature}
-            inputMode="numeric"
+            onKeyDown={(e) => {
+              if (
+                e.key === "." ||
+                e.key === "e" ||
+                e.key === "E" ||
+                e.key === "+"
+              ) {
+                e.preventDefault();
+              }
+            }}
+            onPaste={(e) => {
+              const paste = e.clipboardData.getData("text");
+              const input = e.currentTarget;
+              const nextValue =
+                input.value.slice(0, input.selectionStart ?? 0) +
+                paste +
+                input.value.slice(input.selectionEnd ?? input.value.length);
+
+              if (!/^-?\d*$/.test(nextValue)) {
+                e.preventDefault();
+              }
+            }}
             onChange={(e) => {
               const value = e.target.value;
 

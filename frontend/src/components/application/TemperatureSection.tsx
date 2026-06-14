@@ -14,6 +14,7 @@ type TemperatureSectionProps = {
   onDeleteTemperature: (index: number) => void;
   onToggleModulus: (index: number, value: boolean) => void;
   errors?: FieldErrors<ApplicationFormData>;
+  disabled?: boolean;
 };
 
 export const TemperatureSection = ({
@@ -23,6 +24,7 @@ export const TemperatureSection = ({
   onDeleteTemperature,
   onToggleModulus,
   errors,
+  disabled = false,
 }: TemperatureSectionProps) => {
   return (
     <ApplicationCard title="Температуры">
@@ -92,7 +94,12 @@ export const TemperatureSection = ({
         <button
           type="button"
           onClick={onAddTemperature}
-          className="rounded-[18px] border-2 border-dashed border-[var(--color-border)] py-4 text-sm font-medium text-[var(--color-text-secondary)] transition hover:bg-[var(--color-surface-secondary)]"
+          disabled={disabled}
+          className={`rounded-[18px] border-2 border-dashed border-[var(--color-border)] py-4 text-sm font-medium transition ${
+            disabled
+              ? "cursor-not-allowed border-[var(--color-text-disabled)] text-[var(--color-text-disabled)] opacity-50"
+              : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-secondary)]"
+          }`}
         >
           + Добавить температуру
         </button>

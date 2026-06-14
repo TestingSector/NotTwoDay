@@ -239,7 +239,13 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
         </h1>
         <p className="mt-3 text-sm text-white/70">{config.subtitle}</p>
       </header>
-      <main className="flex-1 overflow-y-auto rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pb-24 pt-6">
+      <main
+        className="min-h-0 flex-1 overflow-y-auto overscroll-contain rounded-t-[var(--radius-lg)] bg-[var(--color-surface)] px-4 pb-24 pt-6"
+        style={{
+          WebkitOverflowScrolling: "touch",
+          overscrollBehavior: "contain",
+        }}
+      >
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <DocumentSection
             control={control}
@@ -264,6 +270,7 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
             onDeleteTemperature={handleDeleteTemperature}
             onToggleModulus={handleToggleModulus}
             errors={errors}
+            disabled={!selectedTestMethod || !selectedStandard}
           />
           <PrioritySection
             control={control}

@@ -8,7 +8,7 @@ import {
   TaskInformation,
   TemperatureConditionsCard,
 } from "../components/taskDetails";
-import { ActionButton } from "../ui/ActionButton";
+import { ActionButton, Backdrop } from "../ui";
 import { useRef } from "react";
 import { getPrimaryTaskAction } from "../helpers/taskDetails/getPrimaryTaskAction";
 import { currentUser } from "../data/user/currentUser";
@@ -55,15 +55,7 @@ export const TaskDetailsSheet = ({
   };
 
   return (
-    <motion.div
-      className="fixed inset-0 z-50"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-      style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
-      onClick={onClose}
-    >
+    <Backdrop isOpen={isOpen} onClick={onClose} opacity={0.3}>
       <motion.div
         drag="y"
         style={{ y }}
@@ -168,6 +160,6 @@ export const TaskDetailsSheet = ({
           />
         </main>
       </motion.div>
-    </motion.div>
+    </Backdrop>
   );
 };

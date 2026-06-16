@@ -8,6 +8,7 @@ import { ProfilePage } from "../pages/ProfilePage";
 import { CreateApplicationPage } from "../pages/CreateApplicationPage";
 import { EditApplicationPage } from "../pages/EditApplicationPage";
 import { HistoryPage } from "../pages/HistoryPage";
+import { AuthPage } from "../pages/AuthPage";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -36,6 +37,10 @@ export const router = createBrowserRouter([
       {
         path: "history",
         element: <HistoryPage />,
+      },
+      {
+        path: "auth",
+        element: <AuthPage />,
       },
     ],
   },

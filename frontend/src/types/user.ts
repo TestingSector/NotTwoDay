@@ -7,20 +7,12 @@ export type UserRole =
 
 export type User = {
   id: string;
-
   firstName: string;
   lastName: string;
   middleName?: string;
-
   laboratory: string;
-
   role: UserRole;
-
   phoneNumber: string;
-
-  email?: string;
-
   createdAt: string;
-
   isApproved: boolean;
 };

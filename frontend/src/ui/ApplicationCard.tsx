@@ -1,5 +1,5 @@
 type ApplicationCardProps = {
-  title: string;
+  title?: string;
   children: React.ReactNode;
   className?: string;
 };

@@ -8,11 +8,11 @@ import {
 export enum UserRole {
   GUEST = 'guest',
 
-  CUSTOMER = 'customer',
+  DEVELOPER = 'developer',
 
   DISPATCHER = 'dispatcher',
 
-  ENGINEER = 'engineer',
+  TESTER = 'tester',
 
   ADMIN = 'admin',
 }
@@ -57,4 +57,7 @@ export class User {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @Column()
+  passwordHash!: string;
 }

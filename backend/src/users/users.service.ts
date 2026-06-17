@@ -5,13 +5,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
+
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './user.entity';
 import { UserRole } from './user.entity';
 import { ApproveUserDto } from './dto/approve-user.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { MOCK_USERS } from './users.data';
+import { CreateUserData } from './types/createUserdata';
 @Injectable()
 export class UsersService {
   constructor(
@@ -36,11 +37,17 @@ export class UsersService {
 
     return user;
   }
-
-  async create(createUserDto: CreateUserDto) {
+  async findByPhoneNumber(phoneNumber: string) {
+    return this.userRepository.findOne({
+      where: {
+        phoneNumber,
+      },
+    });
+  }
+  async create(createUserData: CreateUserData) {
     const existingUser = await this.userRepository.findOne({
       where: {
-        phoneNumber: createUserDto.phoneNumber,
+        phoneNumber: createUserData.phoneNumber,
       },
     });
 
@@ -49,12 +56,13 @@ export class UsersService {
     }
 
     const user = this.userRepository.create({
-      ...createUserDto,
+      ...createUserData,
       role: UserRole.GUEST,
     });
 
     return this.userRepository.save(user);
   }
+
   async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
 

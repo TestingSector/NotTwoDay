@@ -5,7 +5,7 @@ import { UserRole } from '../user.entity';
 export class UpdateUserRoleDto {
   @ApiProperty({
     enum: UserRole,
-    example: UserRole.ENGINEER,
+    example: UserRole.TESTER,
   })
   role!: UserRole;
 }

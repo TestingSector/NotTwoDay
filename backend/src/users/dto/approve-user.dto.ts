@@ -3,7 +3,7 @@ import { UserRole } from '../user.entity';
 export class ApproveUserDto {
   @ApiProperty({
     enum: UserRole,
-    example: UserRole.ENGINEER,
+    example: UserRole.TESTER,
     description:
       'guest - Гость, customer - Заказчик, dispatcher - Диспетчер, engineer - Испытатель, admin - Администратор',
   })

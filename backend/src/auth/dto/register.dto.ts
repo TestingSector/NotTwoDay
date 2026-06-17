@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateUserDto {
+export class RegisterDto {
   @ApiProperty({
     example: 'Дмитрий',
   })
@@ -23,7 +23,7 @@ export class CreateUserDto {
   laboratory!: string;
 
   @ApiProperty({
-    example: '+79991234567',
+    example: '79991234567',
   })
   phoneNumber!: string;
 

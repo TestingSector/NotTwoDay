@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { TasksModule } from './tasks/tasks.module';
 import { SystemSettingsModule } from './system-settings/system-settings.module';
 import { TestMethodsModule } from './test-methods/test-methods.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TestMethodsModule } from './test-methods/test-methods.module';
     TasksModule,
     SystemSettingsModule,
     TestMethodsModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

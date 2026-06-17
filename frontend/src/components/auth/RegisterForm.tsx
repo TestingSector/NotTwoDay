@@ -23,7 +23,7 @@ export const RegisterForm = () => {
       lastName: "",
       middleName: "",
       laboratory: "",
-      phoneNumber: "",
+      phoneNumber: "+7",
       password: "",
       confirmPassword: "",
     },

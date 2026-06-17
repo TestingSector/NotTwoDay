@@ -3,12 +3,15 @@ import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { toAuthUserDto } from './auth.mapper';
-
+import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async register(registerDto: RegisterDto) {
     const existingUser = await this.usersService.findByPhoneNumber(
@@ -56,6 +59,16 @@ export class AuthService {
         'Аккаунт ожидает подтверждения администратора',
       );
     }
-    return toAuthUserDto(user);
+    const payload = {
+      sub: user.id,
+      role: user.role,
+    };
+
+    const accessToken = await this.jwtService.signAsync(payload);
+
+    return {
+      accessToken,
+      user: toAuthUserDto(user),
+    };
   }
 }

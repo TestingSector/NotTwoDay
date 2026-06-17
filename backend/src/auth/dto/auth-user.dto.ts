@@ -13,7 +13,5 @@ export class AuthUserDto {
 
   role!: string;
 
-  isApproved!: boolean;
-
   createdAt!: Date;
 }

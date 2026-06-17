@@ -9,6 +9,5 @@ export const toAuthUserDto = (user: User): AuthUserDto => ({
   laboratory: user.laboratory,
   phoneNumber: user.phoneNumber,
   role: user.role,
-  isApproved: user.isApproved,
   createdAt: user.createdAt,
 });

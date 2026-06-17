@@ -86,23 +86,24 @@ export const TemperatureSection = ({
               ))}
           </div>
         ))}
-        {errors?.temperatures && (
-          <p className="mt-1 text-xs text-red-400">
-            {errors.temperatures.message}
-          </p>
-        )}
+
         <button
           type="button"
           onClick={onAddTemperature}
           disabled={disabled}
           className={`rounded-[18px] border-2 border-dashed border-[var(--color-border)] py-4 text-sm font-medium transition ${
             disabled
-              ? "cursor-not-allowed border-[var(--color-text-disabled)] text-[var(--color-text-disabled)] opacity-50"
+              ? "cursor-not-allowed border-[var(--color-text-disabled)] text-[var(--color-accent)] opacity-50"
               : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-secondary)]"
           }`}
         >
           + Добавить температуру
         </button>
+        {errors?.temperatures && (
+          <p className="pl-4 text-xs text-red-400">
+            {errors.temperatures.message}
+          </p>
+        )}
       </div>
     </ApplicationCard>
   );

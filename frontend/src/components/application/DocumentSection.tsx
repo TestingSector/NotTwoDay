@@ -73,13 +73,12 @@ export const DocumentSection = ({
           Номер КПО
         </label>
 
-        <FormInput {...register("kpoNumber")} placeholder="Введите номер КПО" />
-
-        {errors.kpoNumber && (
-          <p className="mt-1 text-xs text-red-400">
-            {errors.kpoNumber.message}
-          </p>
-        )}
+        <FormInput
+          {...register("kpoNumber")}
+          placeholder="Введите номер КПО"
+          error={!!errors.kpoNumber}
+          errorMessage={errors.kpoNumber?.message}
+        />
       </div>
     </ApplicationCard>
   );

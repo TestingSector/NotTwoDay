@@ -65,12 +65,9 @@ export const PrioritySection = ({
           {...register("urgentReason")}
           placeholder="Укажите причину срочности"
           disabled={disabled}
+          error={!!errors.urgentReason}
+          errorMessage={errors.urgentReason?.message}
         />
-        {errors.urgentReason && (
-          <p className="mt-1 text-xs text-red-400">
-            {errors.urgentReason.message}
-          </p>
-        )}
       </div>
     </ApplicationCard>
   );

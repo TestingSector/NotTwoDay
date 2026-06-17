@@ -14,13 +14,9 @@ export const TopicSection = ({ register, errors }: Props) => {
       <FormInput
         {...register("materialName")}
         placeholder="Введите название материала"
+        error={!!errors.materialName}
+        errorMessage={errors.materialName?.message}
       />
-
-      {errors.materialName && (
-        <p className="mt-1 text-xs text-red-400">
-          {errors.materialName.message}
-        </p>
-      )}
 
       <div className="mt-4">
         <FormInput

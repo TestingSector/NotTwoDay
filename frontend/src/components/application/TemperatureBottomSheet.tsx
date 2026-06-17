@@ -48,6 +48,8 @@ export const TemperatureBottomSheet = ({
             pattern="^-?\d*$"
             autoComplete="off"
             value={temperature}
+            error={!!temperatureError}
+            errorMessage={temperatureError}
             onKeyDown={(e) => {
               if (
                 e.key === "." ||
@@ -78,9 +80,6 @@ export const TemperatureBottomSheet = ({
               }
             }}
           />
-          {temperatureError && (
-            <p className="mt-1 text-xs text-red-400">{temperatureError}</p>
-          )}
         </div>
 
         <div>
@@ -91,6 +90,8 @@ export const TemperatureBottomSheet = ({
           <FormInput
             value={quantity}
             inputMode="numeric"
+            error={!!quantityError}
+            errorMessage={quantityError}
             onChange={(e) => {
               const value = e.target.value;
 
@@ -99,9 +100,6 @@ export const TemperatureBottomSheet = ({
               }
             }}
           />
-          {quantityError && (
-            <p className="mt-1 text-xs text-red-400">{quantityError}</p>
-          )}
         </div>
 
         <button

@@ -19,11 +19,9 @@ export const CommentSection = ({
         {...register("comment")}
         disabled={isCommentSectionDisabled}
         placeholder="Добавьте комментарий к заявке"
+        error={!!errors.comment}
+        errorMessage={errors.comment?.message}
       />
-
-      {errors.comment && (
-        <p className="mt-1 text-xs text-red-400">{errors.comment.message}</p>
-      )}
 
       <p className="mt-2 text-xs text-[var(--color-text-secondary)]">
         Заполняется при необходимости

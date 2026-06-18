@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { currentUser } from "../data/user/currentUser";
 import { useNavigate, useParams } from "react-router-dom";
 import type { Task } from "../types/task";
 import {
@@ -25,6 +24,7 @@ import {
   applicationSchema,
   type ApplicationFormData,
 } from "../schemas/applicationSchema";
+import { useCurrentUser } from "../helpers/useCurrentUser";
 
 type ApplicationFormPageProps = {
   mode: "create" | "edit";
@@ -75,7 +75,8 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
       temperatures: [],
     },
   });
-
+  const user = useCurrentUser();
+  // eslint-disable-next-line react-hooks/incompatible-library
   const isUrgent = watch("isUrgent");
 
   useEffect(() => {
@@ -90,6 +91,7 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
   const testNames = getTestNames(testMethods);
   const createTask = useTasksStore((state) => state.createTask);
   const updateTask = useTasksStore((state) => state.updateTask);
+
   const config = pageConfig[mode];
   const form = useApplicationForm(setValue, watch, setError);
   const {
@@ -206,7 +208,7 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
   // FORM SUBMISSION
 
   const onSubmit = async (data: ApplicationFormData) => {
-    const payload = buildTaskPayload(currentUser.id, data);
+    const payload = buildTaskPayload(user.id, data);
 
     try {
       if (!isEditMode) {

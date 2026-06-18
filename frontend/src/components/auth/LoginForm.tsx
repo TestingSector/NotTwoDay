@@ -4,6 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormData } from "../../schemas/loginSchema";
 import { InputMask } from "@react-input/mask";
 
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/authStore";
+
 export const LoginForm = () => {
   const {
     register,
@@ -19,8 +22,16 @@ export const LoginForm = () => {
     },
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log(data);
+  const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      await login(data);
+
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">

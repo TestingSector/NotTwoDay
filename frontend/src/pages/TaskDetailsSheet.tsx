@@ -11,9 +11,10 @@ import {
 import { ActionButton, Backdrop } from "../ui";
 import { useRef } from "react";
 import { getPrimaryTaskAction } from "../helpers/taskDetails/getPrimaryTaskAction";
-import { currentUser } from "../data/user/currentUser";
+
 import { useNavigate } from "react-router-dom";
 import { useTasksStore } from "../store/tasksStore";
+import { useCurrentUser } from "../helpers/useCurrentUser";
 
 type TaskDetailsSheetProps = {
   task: Task | null;
@@ -26,6 +27,7 @@ export const TaskDetailsSheet = ({
   isOpen,
   onClose,
 }: TaskDetailsSheetProps) => {
+  const user = useCurrentUser();
   const sheetRef = useRef<HTMLDivElement>(null);
   const dragControls = useDragControls();
   const y = useMotionValue(0);
@@ -125,7 +127,7 @@ export const TaskDetailsSheet = ({
             <ActionButton
               className="mt-6"
               onClick={async () => {
-                await acceptTask(task.id, currentUser.id);
+                await acceptTask(task.id, user.id);
                 onClose();
               }}
             >

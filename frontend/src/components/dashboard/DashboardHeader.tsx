@@ -1,7 +1,7 @@
-import { currentUser } from "../../data/user/currentUser";
+import { useCurrentUser } from "../../helpers/useCurrentUser";
 
 export const DashboardHeader = () => {
-  const user = currentUser;
+  const user = useCurrentUser();
   return (
     <>
       <div className="absolute -top-20 left-0 overflow-hidden">

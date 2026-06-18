@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { getTestMethods } from "../api";
 import type { TestMethod } from "../types/application";
+import { devtools } from "zustand/middleware";
 
 type ReferenceStore = {
   testMethods: TestMethod[];
@@ -8,14 +9,21 @@ type ReferenceStore = {
   loadTestMethods: () => Promise<void>;
 };
 
-export const useReferenceStore = create<ReferenceStore>((set) => ({
-  testMethods: [],
+export const useReferenceStore = create<ReferenceStore>()(
+  devtools(
+    (set) => ({
+      testMethods: [],
 
-  loadTestMethods: async () => {
-    const methods = await getTestMethods();
+      loadTestMethods: async () => {
+        const methods = await getTestMethods();
 
-    set({
-      testMethods: methods,
-    });
-  },
-}));
+        set({
+          testMethods: methods,
+        });
+      },
+    }),
+    {
+      name: "ReferenceStore",
+    },
+  ),
+);

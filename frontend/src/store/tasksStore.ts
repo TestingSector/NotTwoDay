@@ -9,7 +9,7 @@ import {
 } from "../api";
 import type { Task } from "../types/task";
 import type { TaskPayload } from "../types/taskPayload";
-
+import { devtools } from "zustand/middleware";
 type TasksStore = {
   tasks: Task[];
   isLoaded: boolean;
@@ -25,48 +25,55 @@ type TasksStore = {
   refreshTasks: () => Promise<void>;
 };
 
-export const useTasksStore = create<TasksStore>((set, get) => ({
-  tasks: [],
-  isLoaded: false,
+export const useTasksStore = create<TasksStore>()(
+  devtools(
+    (set, get) => ({
+      tasks: [],
+      isLoaded: false,
 
-  refreshTasks: async () => {
-    const tasks = await getTasksApi();
+      refreshTasks: async () => {
+        const tasks = await getTasksApi();
 
-    set({ tasks });
-  },
-  loadTasks: async () => {
-    const tasks = await getTasksApi();
+        set({ tasks });
+      },
+      loadTasks: async () => {
+        const tasks = await getTasksApi();
 
-    set({
-      tasks,
-      isLoaded: true,
-    });
-  },
+        set({
+          tasks,
+          isLoaded: true,
+        });
+      },
 
-  acceptTask: async (taskId, executorId) => {
-    await acceptTaskApi(taskId, executorId);
+      acceptTask: async (taskId, executorId) => {
+        await acceptTaskApi(taskId, executorId);
 
-    await get().refreshTasks();
-  },
+        await get().refreshTasks();
+      },
 
-  completeTask: async (taskId) => {
-    await completeTaskApi(taskId);
+      completeTask: async (taskId) => {
+        await completeTaskApi(taskId);
 
-    await get().refreshTasks();
-  },
-  deleteTask: async (taskId) => {
-    await deleteTaskApi(taskId);
+        await get().refreshTasks();
+      },
+      deleteTask: async (taskId) => {
+        await deleteTaskApi(taskId);
 
-    await get().refreshTasks();
-  },
+        await get().refreshTasks();
+      },
 
-  updateTask: async (taskId, payload) => {
-    await updateTaskApi(taskId, payload);
+      updateTask: async (taskId, payload) => {
+        await updateTaskApi(taskId, payload);
 
-    await get().refreshTasks();
-  },
-  createTask: async (payload) => {
-    await createTaskApi(payload);
-    await get().refreshTasks();
-  },
-}));
+        await get().refreshTasks();
+      },
+      createTask: async (payload) => {
+        await createTaskApi(payload);
+        await get().refreshTasks();
+      },
+    }),
+    {
+      name: "TasksStore",
+    },
+  ),
+);

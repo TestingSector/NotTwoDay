@@ -23,6 +23,7 @@ export class AuthService {
         'Пользователь с таким номером уже существует',
       );
     }
+
     const passwordHash = await bcrypt.hash(registerDto.password, 10);
 
     const user = await this.usersService.create({
@@ -34,9 +35,17 @@ export class AuthService {
       passwordHash,
     });
 
-    return toAuthUserDto(user);
-  }
+    const payload = {
+      sub: user.id,
+    };
 
+    const accessToken = await this.jwtService.signAsync(payload);
+
+    return {
+      accessToken,
+      user: toAuthUserDto(user),
+    };
+  }
   async login(loginDto: LoginDto) {
     const user = await this.usersService.findByPhoneNumber(
       loginDto.phoneNumber,

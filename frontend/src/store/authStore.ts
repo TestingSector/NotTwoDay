@@ -3,18 +3,20 @@ import { create } from "zustand";
 import {
   getCurrentUser as getCurrentUserApi,
   login as loginApi,
+  register as registerApi,
 } from "../api/auth";
 
 import type { User } from "../types/user";
 import type { LoginFormData } from "../schemas/loginSchema";
 import { devtools } from "zustand/middleware";
+import type { RegisterFormData } from "../schemas/registerSchema";
 type AuthStore = {
   user: User | null;
 
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: LoginFormData) => Promise<void>;
-
+  register: (data: RegisterFormData) => Promise<void>;
   loadCurrentUser: () => Promise<void>;
 
   logout: () => void;
@@ -30,6 +32,17 @@ export const useAuthStore = create<AuthStore>()(
       login: async (credentials) => {
         const { user, accessToken } = await loginApi(credentials);
         console.log("LOGIN RESPONSE", user, accessToken);
+        localStorage.setItem("accessToken", accessToken);
+
+        set({
+          user,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+      },
+      register: async (data) => {
+        const { user, accessToken } = await registerApi(data);
+
         localStorage.setItem("accessToken", accessToken);
 
         set({

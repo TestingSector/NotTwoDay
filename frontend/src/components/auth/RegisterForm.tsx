@@ -8,6 +8,8 @@ import {
   type RegisterFormData,
 } from "../../schemas/registerSchema";
 import { InputMask } from "@react-input/mask";
+import { useAuthStore } from "../../store/authStore";
+import { useNavigate } from "react-router-dom";
 
 export const RegisterForm = () => {
   const {
@@ -29,8 +31,18 @@ export const RegisterForm = () => {
     },
   });
 
-  const onSubmit = (data: RegisterFormData) => {
-    console.log(data);
+  const registration = useAuthStore((state) => state.register);
+
+  const navigate = useNavigate();
+
+  const onSubmit = async (data: RegisterFormData) => {
+    try {
+      await registration(data);
+
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

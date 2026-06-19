@@ -63,11 +63,7 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new BadRequestException('Неверный номер телефона или пароль');
     }
-    if (!user.isApproved) {
-      throw new BadRequestException(
-        'Аккаунт ожидает подтверждения администратора',
-      );
-    }
+
     const payload = {
       sub: user.id,
       role: user.role,

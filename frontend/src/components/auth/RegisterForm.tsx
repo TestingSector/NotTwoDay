@@ -74,7 +74,6 @@ export const RegisterForm = () => {
         errorMessage={errors.laboratory?.message}
         {...register("laboratory")}
       />
-
       <Controller
         name="phoneNumber"
         control={control}
@@ -91,7 +90,6 @@ export const RegisterForm = () => {
           />
         )}
       />
-
       <FormInput
         placeholder="Пароль"
         type="password"

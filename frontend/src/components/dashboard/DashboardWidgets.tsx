@@ -1,14 +1,41 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FolderKanban, Plus, History } from "lucide-react";
 import { QuickLinkCard } from "./QuickLinkCard";
 import { StatCard } from "./StatCard";
 import { useTasksStore } from "../../store/tasksStore";
 import { getTaskStats } from "../../helpers/task";
-
+import { useCurrentUser } from "../../helpers/useCurrentUser";
+import {
+  canCreateApplication,
+  canViewHistory,
+  canViewMyTasks,
+} from "../../helpers/permissions";
+import { toast } from "sonner";
 export const DashboardWidgets = () => {
   const tasks = useTasksStore((state) => state.tasks);
   const { pendingCount, activeCount, urgentCount } = getTaskStats(tasks);
-
+  const user = useCurrentUser();
+  const navigate = useNavigate();
+  const links = [
+    {
+      title: "Мои задачи",
+      to: "/my-tasks",
+      icon: FolderKanban,
+      visible: canViewMyTasks(user.role),
+    },
+    {
+      title: "История задач",
+      to: "/history",
+      icon: History,
+      visible: canViewHistory(user.role),
+    },
+  ];
+  const handleCreateApplication = () => {
+    if (!canCreateApplication(user.role)) {
+      return toast.error("У вас недостаточно прав");
+    }
+    navigate("/create-application");
+  };
   return (
     <div className="mt-5 snap-x snap-mandatory overflow-x-auto">
       <div className="flex min-w-max gap-3">
@@ -34,25 +61,26 @@ export const DashboardWidgets = () => {
               borderColor="#F59E0B80"
               backgroundColor="#F59E0B70"
             />
-            <Link
-              to="/create-application"
+
+            <button
+              onClick={handleCreateApplication}
               className="flex h-[64px] items-center justify-center rounded-[18px] bg-[var(--color-accent)]"
             >
               <Plus size={24} className="text-white" />
-            </Link>
+            </button>
           </div>
         </div>
 
-        <div className="w-[42%] shrink-0 snap-start">
-          <QuickLinkCard
-            to="/my-tasks"
-            title="Мои задачи"
-            icon={FolderKanban}
-          />
-        </div>
-        <div className="w-[42%] shrink-0 snap-start">
-          <QuickLinkCard to="/history" title="История задач" icon={History} />
-        </div>
+        {links
+          .filter((link) => link.visible)
+          .map((link) => (
+            <div
+              key={link.to}
+              className="h-[136px] w-[42%] shrink-0 snap-start"
+            >
+              <QuickLinkCard to={link.to} title={link.title} icon={link.icon} />
+            </div>
+          ))}
       </div>
     </div>
   );

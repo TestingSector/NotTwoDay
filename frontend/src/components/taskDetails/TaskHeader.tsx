@@ -4,7 +4,12 @@ import { getTaskTypeLabel } from "../../helpers/shared";
 import type { Task } from "../../types/task";
 import { useState } from "react";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { useCurrentUser } from "../../helpers/useCurrentUser";
 
+import {
+  canDeleteApplication,
+  canEditApplication,
+} from "../../helpers/permissions";
 type TaskHeaderProps = {
   task: Task;
   dragControls: DragControls;
@@ -20,7 +25,10 @@ export const TaskHeader = ({
   onDelete,
 }: TaskHeaderProps) => {
   const [isActionsOpen, setIsActionsOpen] = useState(false);
+  const user = useCurrentUser();
 
+  const canManageTask =
+    canEditApplication(user.role) || canDeleteApplication(user.role);
   return (
     <motion.header
       className="px-5 pb-5 pt-4"
@@ -32,16 +40,18 @@ export const TaskHeader = ({
       </div>
 
       <div className="relative text-center">
-        <button
-          className="absolute right-0 top-0 rounded-full p-2 transition hover:bg-black/5"
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsActionsOpen((prev) => !prev);
-          }}
-        >
-          <MoreVertical size={20} />
-        </button>
+        {canManageTask && (
+          <button
+            className="absolute right-0 top-0 rounded-full p-2 transition hover:bg-black/5"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsActionsOpen((prev) => !prev);
+            }}
+          >
+            <MoreVertical size={20} />
+          </button>
+        )}
 
         <h1 className="text-[26px] font-semibold tracking-[-0.03em] text-[var(--color-shell)]">
           {getTaskTypeLabel(task.type)} №{task.number}
@@ -70,21 +80,25 @@ export const TaskHeader = ({
                 transition={{ duration: 0.12 }}
                 className="absolute right-0 top-10 z-50 w-52 origin-top-right overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg"
               >
-                <button
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-black/5"
-                  onClick={onEdit}
-                >
-                  <Pencil size={18} />
-                  Редактировать
-                </button>
+                {canEditApplication(user.role) && (
+                  <button
+                    className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-black/5"
+                    onClick={onEdit}
+                  >
+                    <Pencil size={18} />
+                    Редактировать
+                  </button>
+                )}
 
-                <button
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left text-red-600 hover:bg-red-50"
-                  onClick={onDelete}
-                >
-                  <Trash2 size={18} />
-                  Удалить
-                </button>
+                {canDeleteApplication(user.role) && (
+                  <button
+                    className="flex w-full items-center gap-3 px-4 py-3 text-left text-red-600 hover:bg-red-50"
+                    onClick={onDelete}
+                  >
+                    <Trash2 size={18} />
+                    Удалить
+                  </button>
+                )}
               </motion.div>
             </>
           )}

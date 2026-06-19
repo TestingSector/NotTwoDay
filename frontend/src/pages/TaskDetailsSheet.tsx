@@ -11,7 +11,7 @@ import {
 import { ActionButton, Backdrop } from "../ui";
 import { useRef } from "react";
 import { getPrimaryTaskAction } from "../helpers/taskDetails/getPrimaryTaskAction";
-
+import { canCompleteTask, canAcceptTask } from "../helpers/permissions";
 import { useNavigate } from "react-router-dom";
 import { useTasksStore } from "../store/tasksStore";
 import { useCurrentUser } from "../helpers/useCurrentUser";
@@ -123,7 +123,7 @@ export const TaskDetailsSheet = ({
             conditions={task.temperatureConditions}
           />
 
-          {primaryAction === "accept" && (
+          {primaryAction === "accept" && canAcceptTask(user.role) && (
             <ActionButton
               className="mt-6"
               onClick={async () => {
@@ -135,7 +135,7 @@ export const TaskDetailsSheet = ({
             </ActionButton>
           )}
 
-          {primaryAction === "complete" && (
+          {primaryAction === "complete" && canCompleteTask(user.role) && (
             <ActionButton
               className="mt-6"
               onClick={async () => {

@@ -18,7 +18,7 @@ type AuthStore = {
   login: (credentials: LoginFormData) => Promise<void>;
   register: (data: RegisterFormData) => Promise<void>;
   loadCurrentUser: () => Promise<void>;
-
+  setUser: (user: User) => void;
   logout: () => void;
 };
 
@@ -86,6 +86,9 @@ export const useAuthStore = create<AuthStore>()(
           user: null,
           isAuthenticated: false,
         });
+      },
+      setUser: (user) => {
+        set({ user });
       },
     }),
     {

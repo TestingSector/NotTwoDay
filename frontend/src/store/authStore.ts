@@ -31,7 +31,6 @@ export const useAuthStore = create<AuthStore>()(
 
       login: async (credentials) => {
         const { user, accessToken } = await loginApi(credentials);
-        console.log("LOGIN RESPONSE", user, accessToken);
         localStorage.setItem("accessToken", accessToken);
 
         set({

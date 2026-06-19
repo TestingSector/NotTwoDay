@@ -1,8 +1,8 @@
 export type UserRole =
   | "guest"
-  | "customer"
+  | "developer"
   | "dispatcher"
-  | "engineer"
+  | "tester"
   | "admin";
 
 export type User = {
@@ -14,5 +14,4 @@ export type User = {
   role: UserRole;
   phoneNumber: string;
   createdAt: string;
-  isApproved: boolean;
 };

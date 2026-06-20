@@ -2,6 +2,7 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -10,7 +11,6 @@ import { Task, TaskStatus } from './task.entity';
 import { User } from '../users/user.entity';
 import { SystemSettingsService } from '../system-settings/system-settings.service';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { MOCK_TASKS } from './tasks.data';
 
 @Injectable()
 export class TasksService {
@@ -52,10 +52,10 @@ export class TasksService {
 
     return task;
   }
-  async create(createTaskDto: CreateTaskDto) {
+  async create(createTaskDto: CreateTaskDto, creatorId: string) {
     const creator = await this.userRepository.findOne({
       where: {
-        id: createTaskDto.creatorId,
+        id: creatorId,
       },
     });
 
@@ -65,17 +65,15 @@ export class TasksService {
 
     let number = createTaskDto.number;
     if (createTaskDto.type === 'KPO' && !createTaskDto.number) {
-      throw new BadRequestException('KPO number is required');
+      throw new BadRequestException('Номер КПО обязателен!');
     }
     if (!createTaskDto.materialName?.trim()) {
-      throw new BadRequestException('Material name is required');
+      throw new BadRequestException('Марка материала обязательна!');
     }
     if (createTaskDto.type === 'NTZ') {
       number = String(await this.systemSettingsService.incrementNtzCounter());
     }
-    if (!createTaskDto.materialName?.trim()) {
-      throw new BadRequestException('Material name is required');
-    }
+
     const task = this.taskRepository.create({
       creator,
 
@@ -108,7 +106,9 @@ export class TasksService {
     const task = await this.findOne(taskId);
 
     if (task.status !== TaskStatus.PENDING) {
-      throw new BadRequestException('Only pending tasks can be edited');
+      throw new BadRequestException(
+        'Редактировать можно только задачи в статусе "в ожидании" ',
+      );
     }
 
     task.materialName = updateTaskDto.materialName ?? task.materialName;
@@ -138,14 +138,16 @@ export class TasksService {
     });
 
     if (!task) {
-      throw new NotFoundException('Task not found');
+      throw new NotFoundException('Задача не найдена.');
     }
 
     if (task.executor) {
-      throw new BadRequestException('Task already taken');
+      throw new BadRequestException('Задача уже взята в работу!');
     }
     if (task.status === TaskStatus.COMPLETED) {
-      throw new BadRequestException('Completed task cannot be accepted');
+      throw new BadRequestException(
+        'Завершенную задачу нельзя взять в работу!',
+      );
     }
 
     const executor = await this.userRepository.findOne({
@@ -155,7 +157,7 @@ export class TasksService {
     });
 
     if (!executor) {
-      throw new NotFoundException('Executor not found');
+      throw new NotFoundException('Исполнитель не найден!');
     }
 
     task.executor = executor;
@@ -165,7 +167,7 @@ export class TasksService {
     return this.taskRepository.save(task);
   }
 
-  async completeTask(taskId: string) {
+  async completeTask(taskId: string, userId: string) {
     const task = await this.taskRepository.findOne({
       where: {
         id: taskId,
@@ -176,21 +178,24 @@ export class TasksService {
     });
 
     if (!task) {
-      throw new NotFoundException('Task not found');
+      throw new NotFoundException('Задача не найдена');
     }
 
     if (task.status !== TaskStatus.ACTIVE) {
-      throw new BadRequestException('Only active tasks can be completed');
+      throw new BadRequestException('Завершить можно только активные задачи!');
     }
     if (!task.executor) {
-      throw new BadRequestException('Task has no executor');
+      throw new BadRequestException('У задачи нет исполнителя!');
+    }
+    if (task.executor.id !== userId) {
+      throw new ForbiddenException('Вы не являетесь исполнителем задачи');
     }
     task.status = TaskStatus.COMPLETED;
     task.completedAt = new Date();
 
     return this.taskRepository.save(task);
   }
-  async unassignTask(taskId: string) {
+  async unassignTask(taskId: string, userId: string) {
     const task = await this.taskRepository.findOne({
       where: {
         id: taskId,
@@ -201,17 +206,21 @@ export class TasksService {
     });
 
     if (!task) {
-      throw new NotFoundException('Task not found');
+      throw new NotFoundException('Задача не найдена!');
     }
 
     if (task.status === TaskStatus.COMPLETED) {
-      throw new BadRequestException('Completed task cannot be unassigned');
+      throw new BadRequestException(
+        'Завершенная задача не может быть снята с работы!',
+      );
     }
 
     if (!task.executor) {
-      throw new BadRequestException('Task has no executor');
+      throw new BadRequestException('У задачи нет исполнителя!');
     }
-
+    if (task.executor.id !== userId) {
+      throw new ForbiddenException('Вы не являетесь исполнителем задачи');
+    }
     task.executor = null;
     task.acceptedAt = undefined;
     task.status = TaskStatus.PENDING;
@@ -227,35 +236,5 @@ export class TasksService {
     return {
       message: 'Task deleted',
     };
-  }
-
-  async seed() {
-    const users = await this.userRepository.find();
-
-    const gubin = users.find((u) => u.lastName === 'Губин');
-    const ivanov = users.find((u) => u.lastName === 'Иванов');
-
-    const nacharkina = users.find((u) => u.lastName === 'Начаркина');
-    const kovalenko = users.find((u) => u.lastName === 'Коваленко');
-    const userMap = {
-      nacharkina,
-      kovalenko,
-      gubin,
-      ivanov,
-    };
-
-    if (!gubin || !ivanov || !nacharkina || !kovalenko) {
-      throw new NotFoundException('Seed users not found');
-    }
-
-    const tasks = MOCK_TASKS.map((task) => ({
-      ...task,
-      creator: userMap[task.creator],
-      executor: task.executor ? userMap[task.executor] : null,
-    }));
-
-    await this.taskRepository.save(tasks);
-
-    return this.findAll();
   }
 }

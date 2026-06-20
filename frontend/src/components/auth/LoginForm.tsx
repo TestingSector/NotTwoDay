@@ -2,11 +2,9 @@ import { FormInput, ActionButton } from "../../ui";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormData } from "../../schemas/loginSchema";
-import { InputMask } from "@react-input/mask";
-
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
-
+import { PatternFormat } from "react-number-format";
 export const LoginForm = () => {
   const {
     register,
@@ -17,17 +15,19 @@ export const LoginForm = () => {
     resolver: zodResolver(loginSchema),
     mode: "onSubmit",
     defaultValues: {
-      phoneNumber: "+7",
+      phoneNumber: "",
       password: "",
     },
   });
-
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
   const onSubmit = async (data: LoginFormData) => {
+    console.log(data);
     try {
-      await login(data);
-
+      await login({
+        ...data,
+        phoneNumber: `7${data.phoneNumber}`,
+      });
       navigate("/");
     } catch (error) {
       console.error(error);
@@ -39,15 +39,27 @@ export const LoginForm = () => {
         name="phoneNumber"
         control={control}
         render={({ field }) => (
-          <InputMask
-            component={FormInput}
-            mask="+7 (___) ___-__-__"
-            replacement={{ _: /\d/ }}
-            showMask
-            {...field}
+          <PatternFormat
+            customInput={FormInput}
+            format="+7 (###) ###-##-##"
+            allowEmptyFormatting
+            mask="_"
+            value={field.value}
+            onValueChange={(values) => {
+              let value = values.value;
+
+              if (value.startsWith("7")) {
+                value = value.slice(1);
+              }
+
+              if (value.startsWith("8")) {
+                value = value.slice(1);
+              }
+
+              field.onChange(value);
+            }}
             error={!!errors.phoneNumber}
             errorMessage={errors.phoneNumber?.message}
-            type="tel"
           />
         )}
       />

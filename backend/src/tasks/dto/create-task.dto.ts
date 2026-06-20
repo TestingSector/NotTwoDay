@@ -2,11 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTaskDto {
   @ApiProperty({
-    example: '599c0229-811b-4399-85f4-39517f0a4961',
-  })
-  creatorId!: string;
-
-  @ApiProperty({
     example: 'NTZ',
   })
   type!: string;

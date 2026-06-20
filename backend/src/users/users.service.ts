@@ -11,7 +11,6 @@ import { User } from './user.entity';
 import { UserRole } from './user.entity';
 import { ApproveUserDto } from './dto/approve-user.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
-import { MOCK_USERS } from './users.data';
 import { CreateUserData } from './types/createUserdata';
 @Injectable()
 export class UsersService {
@@ -32,17 +31,19 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Пользователь не найден');
     }
 
     return user;
   }
   async findByPhoneNumber(phoneNumber: string) {
-    return this.userRepository.findOne({
-      where: {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .addSelect('user.passwordHash')
+      .where('user.phoneNumber = :phoneNumber', {
         phoneNumber,
-      },
-    });
+      })
+      .getOne();
   }
   async create(createUserData: CreateUserData) {
     const existingUser = await this.userRepository.findOne({
@@ -52,7 +53,7 @@ export class UsersService {
     });
 
     if (existingUser) {
-      throw new BadRequestException('Phone number already exists');
+      throw new BadRequestException('Данный номер уже используется!');
     }
 
     const user = this.userRepository.create({
@@ -75,7 +76,7 @@ export class UsersService {
     const user = await this.findOne(id);
 
     if (user.isApproved) {
-      throw new BadRequestException('User already approved');
+      throw new BadRequestException('Пользователь уже подтвержден');
     }
 
     user.isApproved = true;
@@ -90,7 +91,7 @@ export class UsersService {
     await this.userRepository.remove(user);
 
     return {
-      message: 'User deleted',
+      message: 'Пользователь удален',
     };
   }
 
@@ -100,21 +101,5 @@ export class UsersService {
     user.role = updateUserRoleDto.role;
 
     return this.userRepository.save(user);
-  }
-
-  async seed() {
-    for (const userData of MOCK_USERS) {
-      const exists = await this.userRepository.findOne({
-        where: {
-          phoneNumber: userData.phoneNumber,
-        },
-      });
-
-      if (!exists) {
-        await this.userRepository.save(userData);
-      }
-    }
-
-    return this.userRepository.find();
   }
 }

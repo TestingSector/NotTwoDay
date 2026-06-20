@@ -24,7 +24,6 @@ import {
   applicationSchema,
   type ApplicationFormData,
 } from "../schemas/applicationSchema";
-import { useCurrentUser } from "../helpers/useCurrentUser";
 
 type ApplicationFormPageProps = {
   mode: "create" | "edit";
@@ -75,7 +74,6 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
       temperatures: [],
     },
   });
-  const user = useCurrentUser();
   // eslint-disable-next-line react-hooks/incompatible-library
   const isUrgent = watch("isUrgent");
 
@@ -208,7 +206,7 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
   // FORM SUBMISSION
 
   const onSubmit = async (data: ApplicationFormData) => {
-    const payload = buildTaskPayload(user.id, data);
+    const payload = buildTaskPayload(data);
 
     try {
       if (!isEditMode) {

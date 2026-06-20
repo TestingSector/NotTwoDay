@@ -1,1 +1,1 @@
-export const PHONE_REGEX = /^7\d{10}$/;
+export const PHONE_REGEX = /^9\d{9}$/;

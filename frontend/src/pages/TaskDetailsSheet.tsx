@@ -127,7 +127,7 @@ export const TaskDetailsSheet = ({
             <ActionButton
               className="mt-6"
               onClick={async () => {
-                await acceptTask(task.id, user.id);
+                await acceptTask(task.id);
                 onClose();
               }}
             >

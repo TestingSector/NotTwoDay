@@ -5,16 +5,21 @@ import {
   Get,
   Param,
   Patch,
-  Post,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApproveUserDto } from './dto/approve-user.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from './user.entity';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
+  @Roles(UserRole.ADMIN, UserRole.DISPATCHER)
   @Get()
   findAll() {
     return this.usersService.findAll();
@@ -27,7 +32,7 @@ export class UsersController {
   ) {
     return this.usersService.findOne(id);
   }
-
+  @Roles(UserRole.ADMIN)
   @Patch(':id')
   update(
     @Param('id')
@@ -37,7 +42,7 @@ export class UsersController {
   ) {
     return this.usersService.update(id, updateUserDto);
   }
-
+  @Roles(UserRole.ADMIN)
   @Patch(':id/approve')
   approve(
     @Param('id')
@@ -49,6 +54,7 @@ export class UsersController {
     return this.usersService.approve(id, approveUserDto);
   }
 
+  @Roles(UserRole.ADMIN)
   @Delete(':id')
   remove(
     @Param('id')
@@ -57,6 +63,7 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 
+  @Roles(UserRole.ADMIN)
   @Patch(':id/role')
   updateRole(
     @Param('id')
@@ -65,9 +72,5 @@ export class UsersController {
     updateUserRoleDto: UpdateUserRoleDto,
   ) {
     return this.usersService.updateRole(id, updateUserRoleDto);
-  }
-  @Post('seed')
-  seed() {
-    return this.usersService.seed();
   }
 }

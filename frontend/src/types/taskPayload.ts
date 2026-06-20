@@ -1,8 +1,6 @@
 import type { DocumentType } from "./application";
 
 export type TaskPayload = {
-  creatorId: string;
-
   type: DocumentType;
 
   number?: string;

@@ -58,6 +58,8 @@ export class User {
   @CreateDateColumn()
   createdAt!: Date;
 
-  @Column()
+  @Column({
+    select: false,
+  })
   passwordHash!: string;
 }

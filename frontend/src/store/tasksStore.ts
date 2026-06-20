@@ -16,7 +16,7 @@ type TasksStore = {
 
   loadTasks: () => Promise<void>;
 
-  acceptTask: (taskId: string, executorId: string) => Promise<void>;
+  acceptTask: (taskId: string) => Promise<void>;
 
   completeTask: (taskId: string) => Promise<void>;
   deleteTask: (taskId: string) => Promise<void>;
@@ -45,8 +45,8 @@ export const useTasksStore = create<TasksStore>()(
         });
       },
 
-      acceptTask: async (taskId, executorId) => {
-        await acceptTaskApi(taskId, executorId);
+      acceptTask: async (taskId) => {
+        await acceptTaskApi(taskId);
 
         await get().refreshTasks();
       },

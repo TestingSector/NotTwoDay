@@ -11,7 +11,11 @@ import { isModulusAvailable } from "../helpers/application";
 import { useReferenceStore } from "../store/referenceStore";
 import type { TaskPayload } from "../types/taskPayload";
 import type { ApplicationFormData } from "../schemas/applicationSchema";
-import type { UseFormSetValue, UseFormWatch, UseFormSetError } from "react-hook-form";
+import type {
+  UseFormSetValue,
+  UseFormWatch,
+  UseFormSetError,
+} from "react-hook-form";
 
 export const useApplicationForm = (
   setValue: UseFormSetValue<ApplicationFormData>,
@@ -85,7 +89,11 @@ export const useApplicationForm = (
     const temperature = Number(temperatureValue);
 
     if (!isTemperatureUnique(temperatures, temperature)) {
-      return { success: false, modal: true, message: "Такая температура уже добавлена" };
+      return {
+        success: false,
+        modal: true,
+        message: "Такая температура уже добавлена",
+      };
     }
 
     if (!selectedTestMethod || !selectedStandard) {
@@ -166,11 +174,7 @@ export const useApplicationForm = (
     resetCustomDrafts();
   };
 
-  const buildTaskPayload = (
-    creatorId: string,
-    formData: ApplicationFormData,
-  ): TaskPayload => ({
-    creatorId,
+  const buildTaskPayload = (formData: ApplicationFormData): TaskPayload => ({
     type: formData.documentType,
     number: formData.documentType === "KPO" ? formData.kpoNumber : undefined,
     materialName: formData.materialName.trim(),

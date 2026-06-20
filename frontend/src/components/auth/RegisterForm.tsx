@@ -7,9 +7,10 @@ import {
   registerSchema,
   type RegisterFormData,
 } from "../../schemas/registerSchema";
-import { InputMask } from "@react-input/mask";
+
 import { useAuthStore } from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
+import { PatternFormat } from "react-number-format";
 
 export const RegisterForm = () => {
   const {
@@ -25,7 +26,7 @@ export const RegisterForm = () => {
       lastName: "",
       middleName: "",
       laboratory: "",
-      phoneNumber: "+7",
+      phoneNumber: "",
       password: "",
       confirmPassword: "",
     },
@@ -37,8 +38,10 @@ export const RegisterForm = () => {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      await registration(data);
-
+      await registration({
+        ...data,
+        phoneNumber: `7${data.phoneNumber}`,
+      });
       navigate("/");
     } catch (error) {
       console.error(error);
@@ -78,15 +81,21 @@ export const RegisterForm = () => {
         name="phoneNumber"
         control={control}
         render={({ field }) => (
-          <InputMask
-            component={FormInput}
-            mask="+7 (___) ___-__-__"
-            replacement={{ _: /\d/ }}
-            showMask
-            {...field}
+          <PatternFormat
+            customInput={FormInput}
+            format="+7 (###) ###-##-##"
+            allowEmptyFormatting
+            mask="_"
+            value={field.value}
+            onValueChange={(values) => {
+              console.log(values);
+
+              const value = values.value.replace(/^[78]/, "");
+
+              field.onChange(value);
+            }}
             error={!!errors.phoneNumber}
             errorMessage={errors.phoneNumber?.message}
-            type="tel"
           />
         )}
       />

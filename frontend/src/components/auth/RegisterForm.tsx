@@ -11,6 +11,7 @@ import {
 import { useAuthStore } from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
 import { PatternFormat } from "react-number-format";
+import { toast } from "sonner";
 
 export const RegisterForm = () => {
   const {
@@ -41,6 +42,9 @@ export const RegisterForm = () => {
       ...data,
       phoneNumber: `7${data.phoneNumber}`,
     });
+    toast.success(
+      "Добро пожаловать в NotTwoDay. Ваш запрос отправлен на рассмотрение администратору!",
+    );
     navigate("/");
   };
 

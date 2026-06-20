@@ -5,6 +5,7 @@ import { loginSchema, type LoginFormData } from "../../schemas/loginSchema";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { PatternFormat } from "react-number-format";
+import { toast } from "sonner";
 export const LoginForm = () => {
   const {
     register,
@@ -26,7 +27,7 @@ export const LoginForm = () => {
       ...data,
       phoneNumber: `7${data.phoneNumber}`,
     });
-
+    toast.success("Добро пожаловать!");
     navigate("/");
   };
   return (

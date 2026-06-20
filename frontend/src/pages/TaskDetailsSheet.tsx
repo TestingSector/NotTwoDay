@@ -15,6 +15,7 @@ import { canCompleteTask, canAcceptTask } from "../helpers/permissions";
 import { useNavigate } from "react-router-dom";
 import { useTasksStore } from "../store/tasksStore";
 import { useCurrentUser } from "../helpers/useCurrentUser";
+import { toast } from "sonner";
 
 type TaskDetailsSheetProps = {
   task: Task | null;
@@ -48,12 +49,9 @@ export const TaskDetailsSheet = ({
 
     if (!confirmed) return;
 
-    try {
-      await deleteTask(task.id);
-      onClose();
-    } catch {
-      alert("Не удалось удалить заявку");
-    }
+    await deleteTask(task.id);
+    onClose();
+    toast.success("Задача удалена!");
   };
 
   return (
@@ -129,6 +127,7 @@ export const TaskDetailsSheet = ({
               onClick={async () => {
                 await acceptTask(task.id);
                 onClose();
+                toast.success("Задача взята в работу");
               }}
             >
               Взять в работу
@@ -141,6 +140,7 @@ export const TaskDetailsSheet = ({
               onClick={async () => {
                 await completeTask(task.id);
                 onClose();
+                toast.success("Задача завершена");
               }}
             >
               Завершить работу

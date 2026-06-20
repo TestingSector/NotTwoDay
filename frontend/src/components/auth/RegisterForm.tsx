@@ -11,6 +11,8 @@ import {
 import { useAuthStore } from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
 import { PatternFormat } from "react-number-format";
+import { toast } from "sonner";
+import axios from "axios";
 
 export const RegisterForm = () => {
   const {
@@ -44,7 +46,12 @@ export const RegisterForm = () => {
       });
       navigate("/");
     } catch (error) {
-      console.error(error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message);
+        return;
+      }
+
+      toast.error("Не удалось зарегистрироваться");
     }
   };
 
@@ -88,10 +95,7 @@ export const RegisterForm = () => {
             mask="_"
             value={field.value}
             onValueChange={(values) => {
-              console.log(values);
-
               const value = values.value.replace(/^[78]/, "");
-
               field.onChange(value);
             }}
             error={!!errors.phoneNumber}

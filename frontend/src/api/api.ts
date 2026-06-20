@@ -3,12 +3,16 @@ import axios from "axios";
 export const api = axios.create({
   baseURL: "http://192.168.200.208:3000",
 });
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("accessToken");
+api.interceptors.response.use(
+  (response) => response,
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("accessToken");
 
-  return config;
-});
+      window.location.href = "/login";
+    }
+
+    return Promise.reject(error);
+  },
+);

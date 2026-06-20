@@ -5,6 +5,8 @@ import { loginSchema, type LoginFormData } from "../../schemas/loginSchema";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { PatternFormat } from "react-number-format";
+import axios from "axios";
+import { toast } from "sonner";
 export const LoginForm = () => {
   const {
     register,
@@ -22,15 +24,20 @@ export const LoginForm = () => {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
   const onSubmit = async (data: LoginFormData) => {
-    console.log(data);
     try {
       await login({
         ...data,
         phoneNumber: `7${data.phoneNumber}`,
       });
+
       navigate("/");
     } catch (error) {
-      console.error(error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message);
+        return;
+      }
+
+      toast.error("Ошибка авторизации");
     }
   };
   return (

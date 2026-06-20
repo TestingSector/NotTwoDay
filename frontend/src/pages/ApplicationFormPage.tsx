@@ -14,7 +14,7 @@ import {
 } from "../components/application";
 import { getTestNames } from "../helpers/application";
 import { useReferenceStore } from "../store/referenceStore";
-import { ActionButton, ErrorModal } from "../ui";
+import { ActionButton } from "../ui";
 import { useApplicationForm } from "../hooks/useApplicationForm";
 import { useTasksStore } from "../store/tasksStore";
 import { getTask } from "../api";
@@ -24,6 +24,8 @@ import {
   applicationSchema,
   type ApplicationFormData,
 } from "../schemas/applicationSchema";
+import { toast } from "sonner";
+import axios from "axios";
 
 type ApplicationFormPageProps = {
   mode: "create" | "edit";
@@ -146,10 +148,6 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
   const [isTestMethodSheetOpen, setIsTestMethodSheetOpen] = useState(false);
   const [isTemperatureSheetOpen, setIsTemperatureSheetOpen] = useState(false);
   const [isStandardSheetOpen, setIsStandardSheetOpen] = useState(false);
-  const [globalAlert, setGlobalAlert] = useState<{
-    message: string;
-    title?: string;
-  } | null>(null);
 
   // Test method & standard
   const handleOpenTestMethod = () => {
@@ -184,10 +182,7 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
     setDraftQuantity("");
     clearErrors(["draftTemperature", "draftQuantity"]);
     setIsTemperatureSheetOpen(false);
-    setTimeout(
-      () => setGlobalAlert({ message: result.message, title: "Ошибка" }),
-      40,
-    );
+    setTimeout(() => toast.error(result.message), 40);
   };
 
   const handleSelectTestMethod = (value: string, isCustom = false) => {
@@ -211,23 +206,31 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
     try {
       if (!isEditMode) {
         await createTask(payload);
+
+        toast.success("Заявка создана");
+
         resetForm();
         reset();
+        navigate(-1);
         return;
       }
 
       if (!id) return;
+
       await updateTask(id, payload);
+
+      toast.success("Изменения сохранены");
+
       navigate(-1);
     } catch (error) {
-      console.error(error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message);
+        return;
+      }
 
-      setGlobalAlert({
-        message: isEditMode
-          ? "Не удалось обновить заявку"
-          : "Не удалось создать заявку",
-        title: "Ошибка",
-      });
+      toast.error(
+        isEditMode ? "Не удалось обновить заявку" : "Не удалось создать заявку",
+      );
     }
   };
 
@@ -316,13 +319,6 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
         onSelect={(value, isCustom) => handleSelectStandard(value, isCustom)}
         selectedMethod={selectedTestMethod}
       />
-      {globalAlert && (
-        <ErrorModal
-          title={globalAlert.title}
-          message={globalAlert.message}
-          onClose={() => setGlobalAlert(null)}
-        />
-      )}
     </div>
   );
 };

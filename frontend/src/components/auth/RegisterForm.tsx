@@ -11,8 +11,6 @@ import {
 import { useAuthStore } from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
 import { PatternFormat } from "react-number-format";
-import { toast } from "sonner";
-import axios from "axios";
 
 export const RegisterForm = () => {
   const {
@@ -39,20 +37,11 @@ export const RegisterForm = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (data: RegisterFormData) => {
-    try {
-      await registration({
-        ...data,
-        phoneNumber: `7${data.phoneNumber}`,
-      });
-      navigate("/");
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message);
-        return;
-      }
-
-      toast.error("Не удалось зарегистрироваться");
-    }
+    await registration({
+      ...data,
+      phoneNumber: `7${data.phoneNumber}`,
+    });
+    navigate("/");
   };
 
   return (

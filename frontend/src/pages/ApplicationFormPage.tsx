@@ -25,7 +25,6 @@ import {
   type ApplicationFormData,
 } from "../schemas/applicationSchema";
 import { toast } from "sonner";
-import axios from "axios";
 
 type ApplicationFormPageProps = {
   mode: "create" | "edit";
@@ -203,35 +202,24 @@ export const ApplicationFormPage = ({ mode }: ApplicationFormPageProps) => {
   const onSubmit = async (data: ApplicationFormData) => {
     const payload = buildTaskPayload(data);
 
-    try {
-      if (!isEditMode) {
-        await createTask(payload);
+    if (!isEditMode) {
+      await createTask(payload);
 
-        toast.success("Заявка создана");
+      toast.success("Заявка создана");
 
-        resetForm();
-        reset();
-        navigate(-1);
-        return;
-      }
-
-      if (!id) return;
-
-      await updateTask(id, payload);
-
-      toast.success("Изменения сохранены");
-
+      resetForm();
+      reset();
       navigate(-1);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message);
-        return;
-      }
-
-      toast.error(
-        isEditMode ? "Не удалось обновить заявку" : "Не удалось создать заявку",
-      );
+      return;
     }
+
+    if (!id) return;
+
+    await updateTask(id, payload);
+
+    toast.success("Изменения сохранены");
+
+    navigate(-1);
   };
 
   return (

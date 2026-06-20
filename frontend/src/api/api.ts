@@ -1,17 +1,15 @@
 import axios from "axios";
+import { toast } from "sonner";
 
 export const api = axios.create({
   baseURL: "http://192.168.200.208:3000",
 });
 api.interceptors.response.use(
   (response) => response,
-
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("accessToken");
+    const message = error.response?.data?.message ?? "Произошла ошибка";
 
-      window.location.href = "/login";
-    }
+    toast.error(message);
 
     return Promise.reject(error);
   },

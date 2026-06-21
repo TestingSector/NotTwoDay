@@ -11,6 +11,7 @@ import { HistoryPage } from "../pages/HistoryPage";
 import { AuthPage } from "../pages/AuthPage";
 import { PublicRoute } from "./PublicRoute";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { UsersPage } from "../pages/UsersPage";
 export const router = createBrowserRouter([
   {
     element: <PublicRoute />,
@@ -52,6 +53,10 @@ export const router = createBrowserRouter([
           {
             path: "history",
             element: <HistoryPage />,
+          },
+          {
+            path: "users",
+            element: <UsersPage />,
           },
         ],
       },

@@ -1,5 +1,5 @@
 import type { Task } from "../../types/task";
-import { formatTaskDate } from "../../helpers/shared/formatDate";
+import { formatDate } from "../../helpers/shared/formatDate";
 import { getShortName } from "../../helpers/user";
 import {
   FileText,
@@ -22,7 +22,7 @@ export const TestCard = ({ task, isFirst, onClick }: TestCardProps) => {
   const creator = task.creator;
   const executor = task.executor;
   const completionDate =
-    isCompleted && task.completedAt ? formatTaskDate(task.completedAt) : null;
+    isCompleted && task.completedAt ? formatDate(task.completedAt) : null;
 
   return (
     <article
@@ -43,20 +43,13 @@ export const TestCard = ({ task, isFirst, onClick }: TestCardProps) => {
 
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="grid grid-cols-[1fr_auto] gap-x-4">
-            <h2
-              className="line-clamp-2
-                text-[15px]
-                font-semibold
-                leading-[1.2]
-                tracking-[-0.01em]
-                text-[var(--color-text)]"
-            >
+            <h2 className="line-clamp-2 text-[15px] font-semibold leading-[1.2] tracking-[-0.01em] text-[var(--color-text)]">
               Испытание на {task.testMethod.toLowerCase()}
             </h2>
 
             <div className="w-[76px] justify-self-center">
               {task.isUrgent && !isCompleted && (
-                <div className="justify-self-center text-center rounded-[12px] border border-[var(--color-accent)] px-3 py-1 text-[11px] font-medium text-[var(--color-accent)]">
+                <div className="justify-self-center rounded-[12px] border border-[var(--color-accent)] px-3 py-1 text-center text-[11px] font-medium text-[var(--color-accent)]">
                   Срочно
                 </div>
               )}
@@ -77,7 +70,7 @@ export const TestCard = ({ task, isFirst, onClick }: TestCardProps) => {
               </span>
             </p>
 
-            <div className="mt-1  justify-self-center text-center">
+            <div className="mt-1 justify-self-center text-center">
               <p className="text-[12px] font-medium text-[var(--color-text)]">
                 {task.temperatureConditions.reduce(
                   (sum, item) => sum + item.quantity,
@@ -115,7 +108,7 @@ export const TestCard = ({ task, isFirst, onClick }: TestCardProps) => {
             </div>
 
             <span className="justify-self-center text-[12px] text-[var(--color-text-muted)]">
-              {formatTaskDate(task.createdAt)}
+              {formatDate(task.createdAt)}
             </span>
 
             {isActive && executor && (
@@ -131,7 +124,7 @@ export const TestCard = ({ task, isFirst, onClick }: TestCardProps) => {
                   </span>
                 </div>
 
-                <span className="pt-1 justify-self-center text-[12px] text-[var(--color-success)]">
+                <span className="justify-self-center pt-1 text-[12px] text-[var(--color-success)]">
                   В работе
                 </span>
               </>
@@ -150,7 +143,7 @@ export const TestCard = ({ task, isFirst, onClick }: TestCardProps) => {
                   </span>
                 </div>
 
-                <span className="pt-1 justify-self-center text-[12px] text-[var(--color-text-muted)]">
+                <span className="justify-self-center pt-1 text-[12px] text-[var(--color-text-muted)]">
                   {completionDate}
                 </span>
               </>

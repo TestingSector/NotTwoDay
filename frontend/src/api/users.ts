@@ -1,7 +1,7 @@
-import axios from "axios";
+import { api } from "./api";
 
 export const getUsers = async () => {
-  const response = await axios.get("http://localhost:3000/users");
+  const response = await api.get("/users");
 
   return response.data;
 };
